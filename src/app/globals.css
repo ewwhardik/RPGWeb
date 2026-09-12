@@ -27,41 +27,8 @@
   --color-crimson-700: #b91c1c;
 }
 
-/* Light Mode: Warm, Tactile Fantasy Tavern Parchment with Dark, Crisp Inks */
-:root {
-  --bg-surface: #f7f5ef;
-  --bg-card: #ffffff;
-  --bg-card-subtle: #faf8f2;
-  --text-primary: #1c1917;
-  --text-secondary: #44403c;
-  --text-muted: #78716c;
-  --border-card: #e2d9c8;
-  --border-card-strong: #c4b59d;
-  
-  --btn-gold-bg: #d97706;
-  --btn-gold-border: #b45309;
-  --btn-gold-shadow: #78350f;
-  --btn-gold-text: #ffffff;
-
-  --btn-emerald-bg: #059669;
-  --btn-emerald-border: #047857;
-  --btn-emerald-shadow: #064e3b;
-  --btn-emerald-text: #ffffff;
-
-  --btn-dark-bg: #1e293b;
-  --btn-dark-border: #0f172a;
-  --btn-dark-shadow: #020617;
-  --btn-dark-text: #ffffff;
-  
-  --btn-crimson-bg: #b91c1c;
-  --btn-crimson-border: #991b1b;
-  --btn-crimson-shadow: #7f1d1d;
-  --btn-crimson-text: #ffffff;
-
-  --shadow-rpg-panel: 0 4px 20px -2px rgba(44, 30, 14, 0.08), 0 0 0 1px rgba(180, 140, 75, 0.18);
-}
-
-/* Dark Mode: Deep Obsidian Tavern with Luminous Amber & Golden Embers */
+/* Deep Obsidian Tavern Theme with Luminous Amber & Golden Embers */
+:root,
 .dark {
   --bg-surface: #0b0e14;
   --bg-card: #121822;

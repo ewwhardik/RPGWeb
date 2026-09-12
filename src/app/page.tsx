@@ -19,11 +19,8 @@ import {
   MessageSquare,
   Smile,
   Keyboard,
-  Sun,
-  Moon,
   Scroll,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import { calculateLevelFromTotalXp } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
 import HeroDiorama3D from "@/components/HeroDiorama3D";
@@ -102,12 +99,7 @@ export default function DashboardPage() {
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
 
-  // Theme state
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    setMounted(true);
     setIsMuted(soundFx.getMuted());
     fetchCurrentUser();
   }, []);
@@ -387,23 +379,6 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Dark / Light Mode Toggle */}
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playClick();
-                  setTheme(theme === "dark" ? "light" : "dark");
-                }}
-                className="p-2 rounded-lg bg-card border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-300 transition-colors shadow-sm"
-                title={mounted && theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              >
-                {mounted && theme === "dark" ? (
-                  <Sun className="w-4 h-4 text-amber-400" />
-                ) : (
-                  <Moon className="w-4 h-4 text-stone-700 dark:text-amber-300" />
-                )}
-              </button>
-
               {/* Audio Mute Switch */}
               <button
                 type="button"
