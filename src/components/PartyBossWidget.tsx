@@ -31,6 +31,25 @@ interface PartyMemberData {
   };
 }
 
+interface PartyBattleLog {
+  id: string;
+  username: string;
+  message: string;
+  actionType: string;
+  createdAt: string;
+}
+
+export interface PartyBuffItem {
+  id: string;
+  name: string;
+  casterName: string;
+  icon: string;
+  effectType: string;
+  multiplier: number;
+  expiresAt: string;
+  description: string;
+}
+
 interface PartyData {
   id: string;
   name: string;
@@ -38,6 +57,10 @@ interface PartyData {
   bossName: string;
   bossMaxHp: number;
   bossCurrentHp: number;
+  bossRage?: number;
+  mvpUserId?: string | null;
+  battleTicker?: PartyBattleLog[];
+  activeBuffs?: PartyBuffItem[];
   bossInfo: {
     name: string;
     maxHp: number;
@@ -426,17 +449,40 @@ export default function PartyBossWidget({
         </p>
 
         {/* Boss HP Bar */}
-        <div className="w-full bg-stone-950 dark:bg-background h-4 rounded-full overflow-hidden p-0.5 border border-stone-700 dark:border-slate-800 mb-3 shadow-inner">
+        <div className="w-full bg-stone-950 dark:bg-background h-3.5 rounded-full overflow-hidden p-0.5 border border-stone-700 dark:border-slate-800 mb-2 shadow-inner">
           <div
             className={`h-full rounded-full transition-all duration-500 ${hpColor}`}
             style={{ width: `${hpPercent}%` }}
           />
         </div>
 
+        {/* Boss Rage Meter */}
+        <div className="mb-3">
+          <div className="flex items-center justify-between text-[10px] font-mono font-bold mb-1">
+            <span className="flex items-center gap-1 text-orange-400">
+              <Flame className={`w-3 h-3 ${(party.bossRage ?? 0) >= 70 ? "text-red-500 animate-bounce" : "text-orange-400"}`} />
+              BOSS RAGE METER:
+            </span>
+            <span className={(party.bossRage ?? 0) >= 70 ? "text-red-400 font-black animate-pulse" : "text-stone-400"}>
+              {party.bossRage ?? 0}% / 100% {(party.bossRage ?? 0) >= 70 && "⚠️ RETALIATION IMMINENT!"}
+            </span>
+          </div>
+          <div className="w-full bg-stone-950 dark:bg-background h-2 rounded-full overflow-hidden p-0.5 border border-stone-800 shadow-inner">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                (party.bossRage ?? 0) >= 70
+                  ? "bg-gradient-to-r from-orange-500 via-red-500 to-rose-600 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse"
+                  : "bg-gradient-to-r from-yellow-600 to-orange-500"
+              }`}
+              style={{ width: `${party.bossRage ?? 0}%` }}
+            />
+          </div>
+        </div>
+
         {/* Action Controls: Rally Cheer & Weakness info */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-stone-800 dark:border-slate-800">
           <span className="text-[10px] text-stone-400 dark:text-slate-400">
-            ⚔️ Weakness: Finish your daily quests to inflict direct raid strikes.
+            ⚔️ Weakness: Finish your daily quests to inflict direct raid strikes. Missed dailies fuel Boss Rage!
           </span>
 
           <button
@@ -450,6 +496,54 @@ export default function PartyBossWidget({
             <span>{cheerCooldown ? "Morale Echoing..." : "Rally Guild (+25 Dmg)"}</span>
           </button>
         </div>
+
+        {/* Active Guild Party Buffs */}
+        {party.activeBuffs && party.activeBuffs.length > 0 && (
+          <div className="mt-3 pt-2.5 border-t border-stone-800/80">
+            <div className="text-[10px] font-mono font-bold text-amber-300 mb-1.5 flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-amber-400" />
+              <span>ACTIVE GUILD BUFFS ({party.activeBuffs.length}):</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {party.activeBuffs.map((buff) => (
+                <div
+                  key={buff.id}
+                  className="p-2 rounded-lg bg-amber-950/40 border border-amber-500/40 text-[11px] flex items-center justify-between gap-2 shadow-sm"
+                >
+                  <div>
+                    <div className="font-bold text-amber-200 flex items-center gap-1.5">
+                      <span>✨</span>
+                      <span>{buff.name}</span>
+                    </div>
+                    <div className="text-[10px] text-stone-400">
+                      Cast by <span className="text-stone-300 font-semibold">{buff.casterName}</span> • {buff.description}
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-900/60 text-amber-300 border border-amber-600/40 flex-shrink-0">
+                    24H ACTIVE
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Live Party Battle Ticker */}
+        {party.battleTicker && party.battleTicker.length > 0 && (
+          <div className="mt-3 pt-2.5 border-t border-stone-800/80">
+            <div className="text-[10px] font-mono font-bold text-stone-400 mb-1 flex items-center gap-1">
+              <span>⚡ LIVE GUILD COMBAT LOG:</span>
+            </div>
+            <div className="space-y-1 max-h-20 overflow-y-auto pr-1 text-[11px] font-mono scrollbar-thin">
+              {party.battleTicker.slice(0, 4).map((log) => (
+                <div key={log.id} className="flex items-center gap-1.5 text-stone-300">
+                  <span className="text-amber-400 font-bold">[{log.username}]</span>
+                  <span className="truncate">{log.message}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {actionSuccess && (
@@ -474,6 +568,7 @@ export default function PartyBossWidget({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {party.members.map((member) => {
             const isMe = member.user.username === currentUsername;
+            const isMvp = party.mvpUserId === member.user.id;
             return (
               <div
                 key={member.id}
@@ -490,6 +585,11 @@ export default function PartyBossWidget({
                   <div>
                     <div className="text-xs font-bold flex items-center gap-1.5">
                       <span>{member.user.username}</span>
+                      {isMvp && (
+                        <span className="text-[9px] bg-gradient-to-r from-amber-400 to-yellow-500 text-black px-1.5 py-0.2 rounded font-black tracking-wide shadow-sm flex items-center gap-0.5">
+                          👑 MVP
+                        </span>
+                      )}
                       {isMe && (
                         <span className="text-[9px] bg-amber-200 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 px-1 rounded border border-amber-400 dark:border-amber-500/30 font-bold">
                           YOU

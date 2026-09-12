@@ -10,6 +10,14 @@ export interface AuthUserData {
   level: number;
   xp: number;
   gold: number;
+  hp?: number;
+  maxHp?: number;
+  mp?: number;
+  maxMp?: number;
+  isSleeping?: boolean;
+  currentPet?: string | null;
+  currentMount?: string | null;
+  characterClass?: string;
   streakCount: number;
   title: string;
   avatar: string;

@@ -59,7 +59,8 @@ export async function applyBossDamage(
 ): Promise<BossDamageResult | null> {
   if (damage <= 0) return null;
 
-  return await prisma.$transaction(async (tx) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
     const party = await tx.party.findUnique({
       where: { id: partyId },
       include: {
@@ -132,15 +133,103 @@ export async function applyBossDamage(
       });
     }
 
-    return {
-      damageDealt: damage,
-      bossName: party.bossName,
-      bossDefeated: true,
-      bossCurrentHp: 0,
-      bossMaxHp: party.bossMaxHp,
-      rewardGold,
-      rewardXp,
-      nextBossName: nextTier.name,
-    };
-  });
+      return {
+        damageDealt: damage,
+        bossName: party.bossName,
+        bossDefeated: true,
+        bossCurrentHp: 0,
+        bossMaxHp: party.bossMaxHp,
+        rewardGold,
+        rewardXp,
+        nextBossName: nextTier.name,
+      };
+    });
+  } catch (err) {
+    console.error("applyBossDamage error:", err);
+    return null;
+  }
 }
+
+export interface BossRageResult {
+  currentRage: number;
+  rageStrike: boolean;
+  strikeDamage: number;
+  bossName: string;
+}
+
+/**
+ * Increment boss rage due to a missed daily or negative habit.
+ * If rage reaches 100%, triggers a retaliatory Rage Strike on all party members.
+ */
+export async function applyBossRage(
+  partyId: string,
+  rageIncrement: number = 15
+): Promise<BossRageResult | null> {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const party = await tx.party.findUnique({
+        where: { id: partyId },
+        include: { members: true },
+      });
+
+      if (!party) return null;
+
+      const newRage = (party.bossRage ?? 0) + rageIncrement;
+
+      if (newRage < 100) {
+        await tx.party.update({
+          where: { id: partyId },
+          data: { bossRage: newRage },
+        });
+
+        return {
+          currentRage: newRage,
+          rageStrike: false,
+          strikeDamage: 0,
+          bossName: party.bossName,
+        };
+      }
+
+      // RAGE STRIKE! Boss reaches 100 Rage
+      const strikeDamage = 15;
+
+      await tx.party.update({
+        where: { id: partyId },
+        data: { bossRage: 0 },
+      });
+
+      // Inflict damage to all party members (minimum 1 HP)
+      for (const member of party.members) {
+        const u = await tx.user.findUnique({ where: { id: member.userId } });
+        if (u) {
+          const nextHp = Math.max(1, u.hp - strikeDamage);
+          await tx.user.update({
+            where: { id: member.userId },
+            data: { hp: nextHp },
+          });
+
+          await tx.activityLog.create({
+            data: {
+              userId: member.userId,
+              actionType: "BOSS_RAGE_STRIKE",
+              message: `⚠️ BOSS RETALIATION! ${party.bossName} unleashed a 100% Rage Strike for -${strikeDamage} HP across the guild!`,
+              xpChange: 0,
+              goldChange: 0,
+            },
+          });
+        }
+      }
+
+      return {
+        currentRage: 0,
+        rageStrike: true,
+        strikeDamage,
+        bossName: party.bossName,
+      };
+    });
+  } catch (err) {
+    console.error("applyBossRage error:", err);
+    return null;
+  }
+}
+

@@ -87,7 +87,7 @@ export function calculateDiminishingReturnsMultiplier(
 }
 
 /**
- * Applies class passives to base quest rewards (reference: Habitica class mechanics).
+ * Applies class passives to base quest rewards.
  */
 export function applyClassPassives(
   characterClass: CharacterClassType,

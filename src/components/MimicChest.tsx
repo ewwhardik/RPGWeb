@@ -22,6 +22,37 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
   const [quote, setQuote] = useState<string | null>(null);
   const [claimedReward, setClaimedReward] = useState(false);
 
+  // Compute Agitation Gauge
+  const agitationPercent = claimedReward
+    ? 100
+    : Math.min(100, Math.round((clickedTimes / 3) * 100));
+
+  const agitationLabel = claimedReward
+    ? "Snoozing (Content) 💤"
+    : clickedTimes >= 2
+    ? "High Agitation ⚠️"
+    : clickedTimes >= 1
+    ? "Curious Growl 👁️"
+    : "Dormant Box 😴";
+
+  const agitationColor = claimedReward
+    ? "bg-emerald-500"
+    : clickedTimes >= 2
+    ? "bg-red-500 animate-pulse"
+    : clickedTimes >= 1
+    ? "bg-amber-500"
+    : "bg-stone-500";
+
+  const chestEmoji = claimedReward
+    ? "💤"
+    : clickedTimes >= 3
+    ? "🦖"
+    : clickedTimes === 2
+    ? "🧰"
+    : clickedTimes === 1
+    ? "📦"
+    : "🎁";
+
   function handleClick() {
     soundFx.playClick();
     const nextCount = clickedTimes + 1;
@@ -40,24 +71,37 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
   }
 
   return (
-    <div className="rpg-panel border border-stone-200 dark:border-amber-900/60 p-4 text-center bg-card shadow-sm">
+    <div className="rpg-panel border border-stone-200 dark:border-amber-900/60 p-4 text-center bg-card shadow-sm transition-all">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-bold font-title text-amber-950 dark:text-amber-300">
           Suspicious Antique Chest
         </span>
         <span className="text-[10px] font-bold text-amber-900 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800/60 px-2 py-0.5 rounded">
-          Curiosity Hazard
+          {agitationLabel}
         </span>
       </div>
 
+      {/* Agitation Danger Progress Bar */}
+      <div className="w-full bg-stone-900/80 rounded-full h-1.5 overflow-hidden mb-2 border border-stone-800">
+        <div
+          className={`h-full transition-all duration-300 ${agitationColor}`}
+          style={{ width: `${Math.max(12, agitationPercent)}%` }}
+        />
+      </div>
+
       <motion.div
-        whileHover={{ scale: 1.12, rotate: [0, -6, 6, -6, 0] }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.15, rotate: [0, -8, 8, -8, 0] }}
+        whileTap={{ scale: 0.88 }}
+        animate={
+          clickedTimes >= 2 && !claimedReward
+            ? { x: [-2, 2, -2, 2, 0], transition: { repeat: Infinity, duration: 0.3 } }
+            : {}
+        }
         onClick={handleClick}
-        className="cursor-pointer select-none py-3 text-5xl inline-block drop-shadow-xl"
+        className="cursor-pointer select-none py-2.5 text-5xl inline-block drop-shadow-xl"
         title="Poke the suspicious chest"
       >
-        🎁
+        {chestEmoji}
       </motion.div>
 
       <div className="mt-1 h-16 flex items-center justify-center">
@@ -88,7 +132,7 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
         whileTap={{ scale: 0.96 }}
         type="button"
         onClick={handleClick}
-        className="btn-dark text-xs py-2 px-3 mt-3 w-full flex items-center justify-center gap-1.5"
+        className="btn-dark text-xs py-2 px-3 mt-3 w-full flex items-center justify-center gap-1.5 shadow-sm"
       >
         <Sparkles className="w-3.5 h-3.5 text-amber-400" />
         <span>Inspect Chest Closely</span>

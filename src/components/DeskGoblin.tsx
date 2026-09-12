@@ -28,10 +28,24 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
   );
   const [feeding, setFeeding] = useState(false);
   const [isWiggling, setIsWiggling] = useState(false);
+  const [pokeCount, setPokeCount] = useState(0);
+  const [fedCount, setFedCount] = useState(0);
+
+  // Compute dynamic playful mood
+  const mood = fedCount >= 3
+    ? { name: "Sugar Rush", emoji: "⚡", tagClass: "text-amber-300 border-amber-500/60 bg-amber-950/50" }
+    : fedCount >= 1
+    ? { name: "Snack Satisfied", emoji: "🍪", tagClass: "text-emerald-300 border-emerald-500/60 bg-emerald-950/50" }
+    : pokeCount >= 6
+    ? { name: "Extremely Irritated", emoji: "💥", tagClass: "text-red-300 border-red-500/60 bg-red-950/50" }
+    : pokeCount >= 3
+    ? { name: "Scheming Mischief", emoji: "😈", tagClass: "text-violet-300 border-violet-500/60 bg-violet-950/50" }
+    : { name: "Vigilant Goblin", emoji: "🧌", tagClass: "text-amber-400 border-amber-500/40 bg-amber-950/30" };
 
   function handlePoke() {
     soundFx.playClick();
     setIsWiggling(true);
+    setPokeCount((prev) => prev + 1);
     setTimeout(() => setIsWiggling(false), 500);
     const quote = GOBLIN_POKES[Math.floor(Math.random() * GOBLIN_POKES.length)];
     setDialogue(quote);
@@ -54,6 +68,7 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
       const data = await res.json();
       if (res.ok) {
         setDialogue(data.message);
+        setFedCount((prev) => prev + 1);
         onFeedSuccess(data.newGold, data.sanityGain);
         setIsWiggling(true);
         setTimeout(() => setIsWiggling(false), 700);
@@ -89,9 +104,14 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
               </h4>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
-            <span className="text-[10px] font-bold text-amber-900 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.2 rounded border border-amber-300 dark:border-amber-800/60">
-              Desk Goblin in Residence
-            </span>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[10px] font-bold text-amber-900 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.2 rounded border border-amber-300 dark:border-amber-800/60">
+                Desk Goblin
+              </span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border transition-all ${mood.tagClass}`}>
+                {mood.emoji} {mood.name}
+              </span>
+            </div>
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import {
   applyClassPassives,
 } from "@/lib/classes";
 
-describe("Depth Mechanics - Character Classes & Passives (Habitica reference)", () => {
+describe("Depth Mechanics: Character Classes and Passives", () => {
   it("should have all 4 distinct playable character classes configured", () => {
     expect(CHARACTER_CLASSES.WARRIOR).toBeDefined();
     expect(CHARACTER_CLASSES.MAGE).toBeDefined();

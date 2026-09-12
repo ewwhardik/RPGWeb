@@ -24,6 +24,13 @@ export async function GET() {
       avatar: user.avatar,
       characterClass: user.characterClass,
       prestigeLevel: user.prestigeLevel,
+      hp: user.hp ?? 50,
+      maxHp: user.maxHp ?? 50,
+      mp: user.mp ?? 50,
+      maxMp: user.maxMp ?? 50,
+      isSleeping: user.isSleeping ?? false,
+      currentPet: user.currentPet ?? null,
+      currentMount: user.currentMount ?? null,
       stats: user.stats,
       inventory: user.inventory,
     };

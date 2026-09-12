@@ -53,6 +53,41 @@ export async function GET() {
       return b.user.xp - a.user.xp;
     });
 
+    const mvpUserId = party.members.length > 0 ? party.members[0].user.id : null;
+
+    // Fetch recent party battle ticker events
+    const memberUserIds = party.members.map((m) => m.user.id);
+    const recentLogs = await prisma.activityLog.findMany({
+      where: {
+        userId: { in: memberUserIds },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    });
+
+    const battleTicker = recentLogs.map((log) => {
+      const member = party.members.find((m) => m.user.id === log.userId);
+      return {
+        id: log.id,
+        username: member?.user.username || "Adventurer",
+        message: log.message,
+        actionType: log.actionType,
+        createdAt: log.createdAt,
+      };
+    });
+
+    const { parsePartyBuffs } = await import("@/lib/partyBuffs");
+    const activeBuffs = parsePartyBuffs(membership.party.activeBuffs);
+
+    let activeQuest = null;
+    if (membership.party.activeQuest) {
+      try {
+        activeQuest = JSON.parse(membership.party.activeQuest);
+      } catch {
+        activeQuest = null;
+      }
+    }
+
     return NextResponse.json({
       inParty: true,
       party: {
@@ -62,7 +97,12 @@ export async function GET() {
         bossName: membership.party.bossName,
         bossMaxHp: membership.party.bossMaxHp,
         bossCurrentHp: membership.party.bossCurrentHp,
+        bossRage: membership.party.bossRage ?? 0,
+        activeBuffs,
+        activeQuest,
         bossInfo,
+        mvpUserId,
+        battleTicker,
         members: membership.party.members.map((m) => ({
           id: m.id,
           joinedAt: m.joinedAt,

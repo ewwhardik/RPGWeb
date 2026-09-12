@@ -79,7 +79,7 @@ export async function PATCH(
           statPoints: DIFFICULTY_MULTIPLIERS[task.difficulty as QuestDifficulty]?.statPoints || 2,
         };
 
-        // Apply class perks (Habitica reference)
+        // Apply class passive perks
         const { finalRewards, perkMessages } = applyClassPassives(
           charClass,
           questCategory,

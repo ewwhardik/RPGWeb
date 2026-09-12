@@ -29,15 +29,15 @@ describe('Prestige API', () => {
   });
 
   it('rejects unauthenticated requests', async () => {
-    (requireAuth as any).mockResolvedValue(null);
+    vi.mocked(requireAuth).mockResolvedValue(null);
     const req = new NextRequest('http://localhost/api/user/prestige', { method: 'POST' });
     const res = await POST(req);
     expect(res.status).toBe(401);
   });
 
   it('rejects if user level is below 50', async () => {
-    (requireAuth as any).mockResolvedValue({ userId: '1' });
-    (prisma.user.findUnique as any).mockResolvedValue({ id: '1', level: 49 });
+    vi.mocked(requireAuth).mockResolvedValue({ userId: '1', email: 'test@hero.realm', username: 'TestHero' });
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: '1', level: 49 } as never);
     
     const req = new NextRequest('http://localhost/api/user/prestige', { method: 'POST' });
     const res = await POST(req);
@@ -47,8 +47,8 @@ describe('Prestige API', () => {
   });
 
   it('allows prestige at level 50', async () => {
-    (requireAuth as any).mockResolvedValue({ userId: '1' });
-    (prisma.user.findUnique as any).mockResolvedValue({ id: '1', level: 50, prestigeLevel: 0, stats: {} });
+    vi.mocked(requireAuth).mockResolvedValue({ userId: '1', email: 'test@hero.realm', username: 'TestHero' });
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: '1', level: 50, prestigeLevel: 0, stats: {} } as never);
     
     const req = new NextRequest('http://localhost/api/user/prestige', { method: 'POST' });
     const res = await POST(req);

@@ -15,12 +15,25 @@ model User {
   level          Int             @default(1)
   xp             Int             @default(0)
   gold           Int             @default(50)
+  hp             Int             @default(50) // Hero Health (Max 50)
+  maxHp          Int             @default(50)
+  mp             Int             @default(50) // Hero Mana (Max 50)
+  maxMp          Int             @default(50)
+  isSleeping     Boolean         @default(false) // Rest at the Inn (Vacation Mode)
+  currentPet     String?         // Equipped Pet identifier
+  currentMount   String?         // Equipped Mount identifier
   streakCount    Int             @default(1)
   lastActiveDate DateTime        @default(now())
   title          String          @default("Novice Procrastinator")
   avatar         String          @default("warrior")
   characterClass String          @default("WARRIOR") // WARRIOR, MAGE, ROGUE, PALADIN
   prestigeLevel  Int             @default(0) // Mechanics for Rebirth/Prestige
+  vaultPulls     Int             @default(0) // Gacha pull counter for Relic Vault pity
+  chronoShards   Int             @default(0) // Seasonal Battle Pass currency
+  loginDayCount  Int             @default(1) // Cumulative login days (1 to 50)
+  lastLoginDate  DateTime        @default(now())
+  claimedLoginDays String        @default("") // Comma-separated claimed days e.g. "1,2,3"
+  dayStartHour   Int             @default(0) // Custom Day Start (0-6 AM)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
@@ -29,6 +42,8 @@ model User {
   inventory      UserInventory[]
   logs           ActivityLog[]
   partyMember    PartyMember?
+  pets           UserPet[]
+  challenges     ChallengeParticipant[]
 }
 
 model UserStats {
@@ -56,21 +71,49 @@ model UserStats {
 model Task {
   id             String    @id @default(cuid())
   userId         String
+  type           String    @default("TODO") // HABIT, DAILY, TODO, REWARD
   title          String
   description    String?
   category       String    @default("INTELLECT")
   difficulty     String    @default("MEDIUM")
   xpReward       Int       @default(50)
   goldReward     Int       @default(15)
-  status         String    @default("TODO")
+  status         String    @default("TODO") // TODO, COMPLETED, ABANDONED
   dueDate        DateTime?
   completedAt    DateTime?
   isRecurring    Boolean   @default(false)
   recurrenceType String?   // DAILY, WEEKLY, MONTHLY
+  
+  // Core task dynamics
+  value          Float     @default(0) // Score determining redness / greenness
+  up             Boolean   @default(true) // Habit positive (+) enabled
+  down           Boolean   @default(false) // Habit negative (-) enabled
+  counterUp      Int       @default(0) // Habit positive score clicks
+  counterDown    Int       @default(0) // Habit negative score clicks
+  repeatDays     String?   @default("0,1,2,3,4,5,6") // Dailies active days (0=Sun..6=Sat)
+  completedToday Boolean   @default(false) // Daily completed status for today
+  streak         Int       @default(0) // Daily or habit consecutive streak
+  cost           Int?      // Gold cost for custom rewards
+  checklist      String?   // Subtasks JSON array: [{"id": "...", "text": "...", "completed": false}]
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserPet {
+  id         String   @id @default(cuid())
+  userId     String
+  species    String   // Wolf, Tiger, Bear, Dragon, Fox, Owl
+  potionType String   @default("Base") // Base, Golden, Shadow, Moss
+  feedCount  Int      @default(0) // 0 to 50 fullness
+  isMount    Boolean  @default(false) // Matures to mount at 50 feedCount
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, species, potionType])
 }
 
 model Item {
@@ -124,6 +167,9 @@ model Party {
   bossName      String        @default("The Dread Procrastination Wyrm")
   bossMaxHp     Int           @default(2500)
   bossCurrentHp Int           @default(2500)
+  bossRage      Int           @default(0) // 0-100 Rage Meter, triggers Rage Strike at 100
+  activeBuffs   String?       @default("{}") // JSON string of 24h party buffs
+  activeQuest   String?       // JSON string of narrative quest progress { questId, progress, target, stage }
   createdAt     DateTime      @default(now())
 
   members       PartyMember[]
@@ -137,4 +183,31 @@ model PartyMember {
 
   party    Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  category    String   @default("GENERAL")
+  prizePool   Int      @default(100)
+  creatorId   String
+  tasksJson   String   // JSON list of template tasks
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+
+  participants ChallengeParticipant[]
+}
+
+model ChallengeParticipant {
+  id          String   @id @default(cuid())
+  challengeId String
+  userId      String
+  joinedAt    DateTime @default(now())
+  isCompleted Boolean  @default(false)
+
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
 }
