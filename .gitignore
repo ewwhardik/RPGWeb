@@ -45,3 +45,12 @@ next-env.d.ts
 *.db-journal
 *.sqlite
 
+# agents & ai assistant tooling
+.agents/
+AGENTS.md
+skills-lock.json
+.cursor/
+.claude/
+.windsurf/
+.copilot/
+
