@@ -34,6 +34,7 @@ import ActivityChronicle from "@/components/ActivityChronicle";
 import AuthModal from "@/components/AuthModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ClassSelectModal from "@/components/ClassSelectModal";
+import PartyBossWidget from "@/components/PartyBossWidget";
 import { CharacterClassType } from "@/lib/classes";
 
 interface UserProfile {
@@ -88,6 +89,7 @@ export default function DashboardPage() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
   const [decayAlerts, setDecayAlerts] = useState<string[]>([]);
   const [levelUpData, setLevelUpData] = useState<{ level: number; title: string } | null>(null);
+  const [raidToast, setRaidToast] = useState<{ message: string; isVictory: boolean } | null>(null);
 
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
@@ -200,6 +202,22 @@ export default function DashboardPage() {
             level: data.newLevel,
             title: data.newTitle,
           });
+        }
+
+        if (data.partyRaid) {
+          if (data.partyRaid.bossDefeated) {
+            setRaidToast({
+              message: `Boss Vanquished! ${data.partyRaid.bossName} fell! Guild earned +100 Gold & +150 XP!`,
+              isVictory: true,
+            });
+            soundFx.playLevelUp();
+          } else {
+            setRaidToast({
+              message: `Raid Strike: Slashed ${data.partyRaid.damageDealt} HP off ${data.partyRaid.bossName}!`,
+              isVictory: false,
+            });
+          }
+          setTimeout(() => setRaidToast(null), 4500);
         }
       }
     } catch (err) {
@@ -427,6 +445,19 @@ export default function DashboardPage() {
               />
             </div>
           </section>
+
+          {/* Guild Warboard & Cooperative Boss Raid */}
+          {user && (
+            <section>
+              <PartyBossWidget
+                currentUsername={user.username}
+                onBossDefeated={() => {
+                  fetchCurrentUser();
+                  fetchLogs();
+                }}
+              />
+            </section>
+          )}
 
           {/* Quest Board & Sidebar */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -704,6 +735,20 @@ export default function DashboardPage() {
             fetchLogs();
           }}
         />
+
+        {/* Floating Boss Raid Alert Toast */}
+        {raidToast && (
+          <div
+            className={`fixed bottom-6 right-6 z-50 p-4 rounded-xl shadow-2xl border flex items-center gap-3 transition-all ${
+              raidToast.isVictory
+                ? "bg-amber-950/95 border-amber-500 text-amber-200 shadow-amber-900/30"
+                : "bg-red-950/95 border-red-500 text-red-200 shadow-red-900/30"
+            }`}
+          >
+            <span className="text-xl">{raidToast.isVictory ? "🏆" : "⚔️"}</span>
+            <div className="text-xs font-bold font-title">{raidToast.message}</div>
+          </div>
+        )}
       </div>
     </ErrorBoundary>
   );

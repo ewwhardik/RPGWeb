@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { calculateLevelFromTotalXp, DIFFICULTY_MULTIPLIERS, QuestCategory, QuestDifficulty } from "@/lib/rpgEngine";
 import { updateQuestActionSchema } from "@/lib/validations";
 import { CharacterClassType, calculateDiminishingReturnsMultiplier, applyClassPassives } from "@/lib/classes";
+import { BOSS_TIERS } from "@/lib/partyBoss";
 
 export async function PATCH(
   req: Request,
@@ -171,18 +172,108 @@ export async function PATCH(
           },
         });
 
+        // Party Guild Boss Raid Damage
+        let partyRaidResult = null;
+        const partyMembership = await tx.partyMember.findUnique({
+          where: { userId: freshUser.id },
+          include: {
+            party: {
+              include: {
+                members: true,
+              },
+            },
+          },
+        });
+
+        if (partyMembership && partyMembership.party) {
+          const party = partyMembership.party;
+          let raidDamage = Math.max(15, Math.floor(xpEarned * 0.5));
+          if (freshUser.characterClass === "PALADIN") {
+            raidDamage = Math.floor(raidDamage * 1.2);
+          }
+
+          const currentHp = party.bossCurrentHp;
+          const newHp = Math.max(0, currentHp - raidDamage);
+
+          if (newHp > 0) {
+            await tx.party.update({
+              where: { id: party.id },
+              data: { bossCurrentHp: newHp },
+            });
+            partyRaidResult = {
+              damageDealt: raidDamage,
+              bossName: party.bossName,
+              bossDefeated: false,
+              bossCurrentHp: newHp,
+              bossMaxHp: party.bossMaxHp,
+            };
+          } else {
+            // Boss Defeated!
+            const rewardGold = 100;
+            const rewardXp = 150;
+            const currentIndex = BOSS_TIERS.findIndex((b) => b.name === party.bossName);
+            const nextTier =
+              currentIndex >= 0 && currentIndex < BOSS_TIERS.length - 1
+                ? BOSS_TIERS[currentIndex + 1]
+                : BOSS_TIERS[0];
+
+            await tx.party.update({
+              where: { id: party.id },
+              data: {
+                bossName: nextTier.name,
+                bossMaxHp: nextTier.maxHp,
+                bossCurrentHp: nextTier.maxHp,
+              },
+            });
+
+            for (const member of party.members) {
+              await tx.user.update({
+                where: { id: member.userId },
+                data: {
+                  gold: { increment: rewardGold },
+                  xp: { increment: rewardXp },
+                },
+              });
+
+              await tx.activityLog.create({
+                data: {
+                  userId: member.userId,
+                  actionType: "PARTY_BOSS_DEFEAT",
+                  message: `Guild Raid Victory! ${freshUser.username} struck down ${party.bossName} while completing a quest! Guild earned +${rewardGold} Gold & +${rewardXp} XP!`,
+                  goldChange: rewardGold,
+                  xpChange: rewardXp,
+                },
+              });
+            }
+
+            partyRaidResult = {
+              damageDealt: raidDamage,
+              bossName: party.bossName,
+              bossDefeated: true,
+              bossCurrentHp: 0,
+              bossMaxHp: party.bossMaxHp,
+              rewardGold,
+              rewardXp,
+              nextBossName: nextTier.name,
+            };
+          }
+        }
+
         return {
           updatedTask,
           updatedUser: {
             ...updatedUser,
+            gold: partyRaidResult?.bossDefeated ? updatedUser.gold + 100 : updatedUser.gold,
+            xp: partyRaidResult?.bossDefeated ? updatedUser.xp + 150 : updatedUser.xp,
             stats: updatedStats,
           },
           rewards: {
-            xp: xpEarned,
-            gold: goldEarned,
+            xp: xpEarned + (partyRaidResult?.bossDefeated ? 150 : 0),
+            gold: goldEarned + (partyRaidResult?.bossDefeated ? 100 : 0),
             statCategory: questCategory,
             statBonus,
           },
+          partyRaid: partyRaidResult,
           perkMessages,
           diminishingNotice: diminishing.notice,
           didLevelUp,
@@ -199,6 +290,7 @@ export async function PATCH(
         task: result.updatedTask,
         user: result.updatedUser,
         rewards: result.rewards,
+        partyRaid: result.partyRaid,
         perkMessages: result.perkMessages,
         diminishingNotice: result.diminishingNotice,
         didLevelUp: result.didLevelUp,

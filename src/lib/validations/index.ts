@@ -77,3 +77,28 @@ export const buyItemSchema = z.object({
 export const equipItemSchema = z.object({
   itemId: z.string().min(1, "Item ID is required to equip or unequip."),
 });
+
+export const createPartySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(3, "Guild title must be at least 3 characters.")
+    .max(40, "Guild title cannot exceed 40 characters."),
+});
+
+export const joinPartySchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .min(3, "Guild code must be at least 3 characters.")
+    .max(20, "Guild code cannot exceed 20 characters."),
+});
+
+export const partyActionSchema = z.object({
+  action: z.enum(["CREATE", "JOIN", "LEAVE", "CHEER"], {
+    message: "Action must be CREATE, JOIN, LEAVE, or CHEER.",
+  }),
+  name: z.string().trim().min(3).max(40).optional(),
+  code: z.string().trim().min(3).max(20).optional(),
+});
+
