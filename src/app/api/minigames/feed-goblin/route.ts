@@ -2,30 +2,66 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
-const GOBLIN_FOOD_RESPONSES = [
-  "Bartholomew unhinges his jaw, swallows the salted crumb whole, and lets out a tiny burp of contentment.",
-  "Bartholomew inspects the offering, sniffs it suspiciously, and devours it with wild goblin glee.",
-  "Bartholomew wipes his greasy paws on your virtual desktop. 'Acceptable tribute, mortal. I will spare your keyboard today.'",
-  "Bartholomew does a chaotic little victory jig! 'Crunchy! Salty! Excellent! Your tasks are slightly less irritating now!'",
-];
+const TREAT_CONFIG = {
+  samosa: {
+    name: "Garam Samosa & Mint Chutney",
+    cost: 5,
+    sanityGain: 2,
+    quotes: [
+      "CRUNCH! Bartholomew devours the crispy Garam Samosa with spicy mint chutney! 'Wah! That spices up my goblin soul!'",
+      "Bartholomew dips the samosa crust in tangy imli chutney. 'Now THIS is authentic goblin nourishment! May your code compile without bugs.'",
+      "Bartholomew wipes samosa crumbs on your desk blotter. 'A spiced pastry worthy of the royal guild! I spare your router today!'",
+    ],
+  },
+  chai: {
+    name: "Kadak Cutting Chai",
+    cost: 8,
+    sanityGain: 4,
+    quotes: [
+      "SLURP! Bartholomew sips boiling adrak cutting chai from a glass tumbler. 'Aha! Pure cosmic ginger energy coursing through my goblin blood!'",
+      "Bartholomew balances the cutting chai glass with goblin dexterity. 'Kadak chai fuels dharma! Go conquer that overdue daily now!'",
+      "Bartholomew blows on the steaming chai foam. 'Double ginger, cardamom essence... I feel my goblin IQ doubling already!'",
+    ],
+  },
+  kaju_katli: {
+    name: "Kaju Katli of Supreme Focus",
+    cost: 15,
+    sanityGain: 8,
+    quotes: [
+      "Bartholomew's eyes shine like emeralds seeing the silver foil on pure cashew diamond paste! 'A royal offering! I bless your RNG forever!'",
+      "Bartholomew savors the sweet kaju katli in blissful silence. 'Divine sweetness. Your karma is immaculate today, hero.'",
+      "Bartholomew nibbles the cashew diamond delicately. 'Only the finest adventurers provide kaju katli. Procrastination has been banished!'",
+    ],
+  },
+};
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized goblin whisperer." }, { status: 401 });
     }
 
-    if (user.gold < 5) {
+    let treatKey: keyof typeof TREAT_CONFIG = "samosa";
+    try {
+      const body = await req.json();
+      if (body && body.treatType && TREAT_CONFIG[body.treatType as keyof typeof TREAT_CONFIG]) {
+        treatKey = body.treatType as keyof typeof TREAT_CONFIG;
+      }
+    } catch {}
+
+    const treat = TREAT_CONFIG[treatKey];
+
+    if (user.gold < treat.cost) {
       return NextResponse.json(
-        { error: "Bartholomew requires at least 5 Gold to purchase high-grade tavern cracker crumbs." },
+        { error: `Bartholomew requires at least ${treat.cost} Gold to prepare ${treat.name}.` },
         { status: 400 }
       );
     }
 
-    const newGold = user.gold - 5;
+    const newGold = user.gold - treat.cost;
     const responseQuote =
-      GOBLIN_FOOD_RESPONSES[Math.floor(Math.random() * GOBLIN_FOOD_RESPONSES.length)];
+      treat.quotes[Math.floor(Math.random() * treat.quotes.length)];
 
     await prisma.$transaction([
       prisma.user.update({
@@ -34,14 +70,14 @@ export async function POST() {
       }),
       prisma.userStats.update({
         where: { userId: user.id },
-        data: { sanity: { increment: 2 } },
+        data: { sanity: { increment: treat.sanityGain } },
       }),
       prisma.activityLog.create({
         data: {
           userId: user.id,
           actionType: "GOBBLIN_FED",
-          message: `Fed Bartholomew the Desk Goblin (5 Gold). +2 Sanity gained.`,
-          goldChange: -5,
+          message: `Fed Bartholomew ${treat.name} (${treat.cost} Gold). +${treat.sanityGain} Sanity gained.`,
+          goldChange: -treat.cost,
         },
       }),
     ]);
@@ -49,8 +85,9 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       message: responseQuote,
+      treatName: treat.name,
       newGold,
-      sanityGain: 2,
+      sanityGain: treat.sanityGain,
     });
   } catch (error) {
     console.error("Feed goblin error:", error);

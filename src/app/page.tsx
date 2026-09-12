@@ -49,6 +49,8 @@ import ChronoCodexModal from "@/components/ChronoCodexModal";
 import CosmicDarshanModal from "@/components/CosmicDarshanModal";
 import QuestScrollsModal from "@/components/QuestScrollsModal";
 import GuildChallengesModal from "@/components/GuildChallengesModal";
+import SamsaraHeatmap from "@/components/SamsaraHeatmap";
+import { setupAutoSync } from "@/lib/offlineSync";
 import { getTodayKingdomWeather, KingdomWeather } from "@/lib/weatherEngine";
 import { MysteryDropItem } from "@/lib/taskEngine";
 import { CharacterClassType } from "@/lib/classes";
@@ -124,7 +126,7 @@ export default function DashboardPage() {
   const [isQuestScrollsModalOpen, setIsQuestScrollsModalOpen] = useState(false);
   const [isChallengesModalOpen, setIsChallengesModalOpen] = useState(false);
   const [todayWeather] = useState<KingdomWeather>(getTodayKingdomWeather());
-  const [ambience, setAmbience] = useState<"hearth" | "dungeon" | null>(null);
+  const [ambience, setAmbience] = useState<"hearth" | "dungeon" | "tanpura" | null>(null);
   const [decayAlerts, setDecayAlerts] = useState<string[]>([]);
   const [levelUpData, setLevelUpData] = useState<{ level: number; title: string } | null>(null);
   const [raidToast, setRaidToast] = useState<{ message: string; isVictory: boolean } | null>(null);
@@ -205,6 +207,16 @@ export default function DashboardPage() {
       fetchTasks();
       fetchLogs();
     }
+
+    const cleanupSync = setupAutoSync((res) => {
+      if (res.synced > 0) {
+        spawnCombatText(`🔄 Synced ${res.synced} offline quest actions!`, "xp");
+        fetchCurrentUser();
+        fetchLogs();
+      }
+    });
+
+    return () => cleanupSync();
   }, [user, fetchTasks, fetchLogs]);
 
   function handleToggleSound() {
@@ -317,15 +329,37 @@ export default function DashboardPage() {
           );
         }
 
-        // Spawn Floating Combat Text
+        // Spawn Floating Combat Text with Vedic Masala Crits
         if (data.shardGain) {
           spawnCombatText(`+${data.shardGain} Shards`, "shard");
         }
         if (data.raidResult?.damageDealt) {
-          spawnCombatText(`-${data.raidResult.damageDealt} Raid DMG!`, "crit");
+          if (data.raidResult.damageDealt >= 50) {
+            spawnCombatText(`🔱 SUDARSHANA CRIT! -${data.raidResult.damageDealt} DMG!`, "vedic");
+            soundFx.playTempleBell();
+          } else {
+            spawnCombatText(`-${data.raidResult.damageDealt} Raid DMG!`, "crit");
+          }
+        }
+        if (data.raidResult?.bossDefeated) {
+          spawnCombatText("👑 DHARMA TRIUMPHS! BOSS SLAIN!", "vedic");
+          soundFx.playTempleBell();
         }
         if (data.rageResult?.rageStrike) {
           spawnCombatText(`⚠️ RAGE STRIKE: -${data.rageResult.strikeDamage} HP!`, "damage");
+        }
+
+        // Playful Vedic Masala floater on high focus
+        if (direction === "up" && Math.random() < 0.28) {
+          const vedicPhrases = [
+            "🔱 DHARMA UPHELD!",
+            "☕ CHAI BOOST!",
+            "🧘 SHANTI RESTORED",
+            "🔥 TAPASYA REIGNITED!",
+            "⚡ BRAHMASTRA FOCUS!",
+          ];
+          const phrase = vedicPhrases[Math.floor(Math.random() * vedicPhrases.length)];
+          spawnCombatText(phrase, "vedic");
         }
 
         if (data.fainted) {
@@ -354,7 +388,18 @@ export default function DashboardPage() {
         }
       }
     } catch (err) {
-      console.error("Task score error:", err);
+      console.error("Task score offline fallback:", err);
+      try {
+        const { queueOfflineAction } = await import("@/lib/offlineSync");
+        await queueOfflineAction({
+          endpoint: `/api/tasks/${taskId}/score`,
+          method: "POST",
+          payload: { direction },
+          description: `Score task ${taskId} (${direction})`,
+        });
+        spawnCombatText("📦 Saved Offline (Auto-syncs online)", "mana");
+        soundFx.play("stamp");
+      } catch {}
     }
   };
 
@@ -368,6 +413,10 @@ export default function DashboardPage() {
       soundFx.startDungeonAmbience();
       setAmbience("dungeon");
       spawnCombatText("Dungeon Echo Ambience Channeled", "mana");
+    } else if (ambience === "dungeon") {
+      soundFx.startTanpuraDrone();
+      setAmbience("tanpura");
+      spawnCombatText("Meditative Tanpura Drone Chanted (136.1 Hz Om)", "gold");
     } else {
       soundFx.stopAmbience();
       setAmbience(null);
@@ -410,6 +459,19 @@ export default function DashboardPage() {
         });
         setTimeout(() => setRaidToast(null), 4000);
         soundFx.playLevelUp();
+      } else if (rewardId === "kadak_chai") {
+        const newMp = Math.min(user.maxMp || 50, user.mp + 30);
+        const newGold = user.gold - cost;
+        setUser((prev) => (prev ? { ...prev, mp: newMp, gold: newGold } : null));
+        spawnCombatText("☕ KADAK CHAI SURGE! (+30 MP)", "mana");
+        soundFx.play("streak");
+      } else if (rewardId === "amrit_rasayana") {
+        const newHp = Math.min(user.maxHp || 50, user.hp + 30);
+        const bonusXp = 20;
+        const newGold = user.gold - cost;
+        setUser((prev) => (prev ? { ...prev, hp: newHp, xp: prev.xp + bonusXp, gold: newGold } : null));
+        spawnCombatText("✨ AMRIT RASAYANA! (+30 HP, +20 XP)", "vedic");
+        soundFx.playTempleBell();
       }
       fetchCurrentUser();
       fetchLogs();
@@ -556,14 +618,18 @@ export default function DashboardPage() {
                     ? "bg-amber-950/80 border-amber-500 text-amber-300 animate-pulse shadow-[0_0_12px_rgba(245,158,11,0.3)]"
                     : ambience === "dungeon"
                     ? "bg-blue-950/80 border-cyan-500 text-cyan-300 animate-pulse shadow-[0_0_12px_rgba(6,182,212,0.3)]"
+                    : ambience === "tanpura"
+                    ? "bg-purple-950/80 border-purple-400 text-purple-200 animate-pulse shadow-[0_0_14px_rgba(168,85,247,0.4)]"
                     : "bg-white/[0.06] hover:bg-white/[0.12] border-white/10 text-stone-400 hover:text-amber-300"
                 }`}
                 title={
                   ambience === "hearth"
                     ? "Ambience: Tavern Hearth (Click for Dungeon Echo)"
                     : ambience === "dungeon"
-                    ? "Ambience: Dungeon Echo (Click to Silence)"
-                    : "Enable Procedural Ambience (Hearth / Dungeon)"
+                    ? "Ambience: Dungeon Echo (Click for Meditative Tanpura 136.1Hz)"
+                    : ambience === "tanpura"
+                    ? "Ambience: Meditative Tanpura Drone 136.1Hz (Click to Silence)"
+                    : "Enable Procedural Ambience (Hearth / Dungeon / Tanpura)"
                 }
               >
                 <Sparkles className="w-4 h-4" />
@@ -941,6 +1007,23 @@ export default function DashboardPage() {
                 onBossDefeated={() => {
                   fetchCurrentUser();
                   fetchLogs();
+                }}
+              />
+            </section>
+          )}
+
+          {/* Samsara Cognitive Energy Heatmap & Purushartha Radar */}
+          {user && (
+            <section id="samsara-heatmap-section">
+              <SamsaraHeatmap
+                userStats={{
+                  level: user.level,
+                  hp: user.hp,
+                  maxHp: user.maxHp,
+                  mp: user.mp,
+                  maxMp: user.maxMp,
+                  streakCount: user.streakCount,
+                  prestigeLevel: user.prestigeLevel,
                 }}
               />
             </section>

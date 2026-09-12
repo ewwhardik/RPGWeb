@@ -141,6 +141,14 @@ describe("Karmaraj Core Task Engine", () => {
       const potion = STANDARD_SHOP_REWARDS.find((r) => r.id === "health_potion");
       expect(potion).toBeDefined();
       expect(potion?.cost).toBe(25);
+
+      const chai = STANDARD_SHOP_REWARDS.find((r) => r.id === "kadak_chai");
+      expect(chai).toBeDefined();
+      expect(chai?.manaAmount).toBe(30);
+
+      const amrit = STANDARD_SHOP_REWARDS.find((r) => r.id === "amrit_rasayana");
+      expect(amrit).toBeDefined();
+      expect(amrit?.healAmount).toBe(30);
     });
   });
 });

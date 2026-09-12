@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { partyActionSchema } from "@/lib/validations";
-import { generatePartyCode, applyBossDamage, BOSS_TIERS } from "@/lib/partyBoss";
+import { generatePartyCode, applyBossDamage, BOSS_TIERS, getBossPhase } from "@/lib/partyBoss";
 
 export async function GET() {
   try {
@@ -101,6 +101,7 @@ export async function GET() {
         activeBuffs,
         activeQuest,
         bossInfo,
+        bossPhase: getBossPhase(membership.party.bossCurrentHp, membership.party.bossMaxHp),
         mvpUserId,
         battleTicker,
         members: membership.party.members.map((m) => ({

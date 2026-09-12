@@ -13,7 +13,7 @@ class SoundEngine {
   private lastComboTimestamp: number = 0;
   private ambientGain: GainNode | null = null;
   private ambientNodes: (AudioNode | number)[] = [];
-  private currentAmbience: "hearth" | "dungeon" | null = null;
+  private currentAmbience: "hearth" | "dungeon" | "tanpura" | null = null;
   private tactileProfile: "thock" | "wax" | "crystal" = "thock";
   private lastPlayedTimestamps: Map<string, number> = new Map();
 
@@ -316,6 +316,116 @@ class SoundEngine {
     } catch {}
   }
 
+  /**
+   * Procedural Meditative Tanpura Drone (136.1 Hz Cosmic Om / Vedic Sa)
+   * Simulates traditional 4-string acoustic Tanpura with jawari overtone shimmer
+   */
+  public startTanpuraDrone() {
+    if (this.isMuted || this.currentAmbience === "tanpura") return;
+    this.stopAmbience();
+
+    try {
+      this.initContext();
+      if (!this.ctx) return;
+
+      this.currentAmbience = "tanpura";
+      const masterGain = this.ctx.createGain();
+      masterGain.gain.setValueAtTime(0.001, this.ctx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0.16, this.ctx.currentTime + 2.5);
+      masterGain.connect(this.ctx.destination);
+      this.ambientGain = masterGain;
+
+      // 1. Cosmic Om Base Drone (136.1 Hz Sa + 204.15 Hz Pa)
+      const saFreq = 136.1;
+      const paFreq = 204.15;
+
+      const oscSa = this.ctx.createOscillator();
+      oscSa.type = "sine";
+      oscSa.frequency.setValueAtTime(saFreq, this.ctx.currentTime);
+
+      const oscPa = this.ctx.createOscillator();
+      oscPa.type = "sine";
+      oscPa.frequency.setValueAtTime(paFreq, this.ctx.currentTime);
+
+      // Low Kharaj drone
+      const oscKharaj = this.ctx.createOscillator();
+      oscKharaj.type = "triangle";
+      oscKharaj.frequency.setValueAtTime(saFreq / 2, this.ctx.currentTime); // 68.05 Hz
+
+      // Resonant Jawari Filter (swept gently by LFO for acoustic string buzz)
+      const jawariFilter = this.ctx.createBiquadFilter();
+      jawariFilter.type = "bandpass";
+      jawariFilter.frequency.setValueAtTime(650, this.ctx.currentTime);
+      jawariFilter.Q.setValueAtTime(2.5, this.ctx.currentTime);
+
+      const lfo = this.ctx.createOscillator();
+      const lfoGain = this.ctx.createGain();
+      lfo.type = "sine";
+      lfo.frequency.setValueAtTime(0.22, this.ctx.currentTime); // 0.22 Hz breathing wave
+      lfoGain.gain.setValueAtTime(280, this.ctx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(jawariFilter.frequency);
+      lfo.start();
+
+      const droneGain = this.ctx.createGain();
+      droneGain.gain.setValueAtTime(0.22, this.ctx.currentTime);
+
+      oscSa.connect(jawariFilter);
+      oscPa.connect(jawariFilter);
+      oscKharaj.connect(jawariFilter);
+      jawariFilter.connect(droneGain);
+      droneGain.connect(masterGain);
+
+      oscSa.start();
+      oscPa.start();
+      oscKharaj.start();
+
+      this.ambientNodes.push(oscSa, oscPa, oscKharaj, jawariFilter, lfo, lfoGain, droneGain);
+
+      // 2. Hypnotic 4-String Pluck Cycle (Pa -> Jod Sa -> Lar Sa -> Kharaj Sa)
+      const strings = [paFreq, saFreq * 2, saFreq * 2.003, saFreq];
+      let stringIdx = 0;
+
+      const pluckInterval = window.setInterval(() => {
+        if (!this.ctx || !this.ambientGain || this.currentAmbience !== "tanpura") return;
+        const now = this.ctx.currentTime;
+        const freq = strings[stringIdx % strings.length];
+        stringIdx++;
+
+        const pluckOsc = this.ctx.createOscillator();
+        const overtoneOsc = this.ctx.createOscillator();
+        const pFilter = this.ctx.createBiquadFilter();
+        const pGain = this.ctx.createGain();
+
+        pluckOsc.type = "sawtooth";
+        pluckOsc.frequency.setValueAtTime(freq, now);
+
+        overtoneOsc.type = "triangle";
+        overtoneOsc.frequency.setValueAtTime(freq * 2, now);
+
+        pFilter.type = "lowpass";
+        pFilter.frequency.setValueAtTime(1400, now);
+        pFilter.frequency.exponentialRampToValueAtTime(350, now + 3.2);
+
+        pGain.gain.setValueAtTime(0.001, now);
+        pGain.gain.linearRampToValueAtTime(0.12, now + 0.06);
+        pGain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+        pluckOsc.connect(pFilter);
+        overtoneOsc.connect(pFilter);
+        pFilter.connect(pGain);
+        pGain.connect(masterGain);
+
+        pluckOsc.start(now);
+        overtoneOsc.start(now);
+        pluckOsc.stop(now + 3.3);
+        overtoneOsc.stop(now + 3.3);
+      }, 1450);
+
+      this.ambientNodes.push(pluckInterval);
+    } catch {}
+  }
+
   public stopAmbience() {
     if (!this.ctx || !this.ambientGain) {
       this.currentAmbience = null;
@@ -345,8 +455,60 @@ class SoundEngine {
     this.currentAmbience = null;
   }
 
-  public getAmbienceState(): "hearth" | "dungeon" | null {
+  public getAmbienceState(): "hearth" | "dungeon" | "tanpura" | null {
     return this.currentAmbience;
+  }
+
+  /**
+   * Sacred Temple Bell (Ghanta) Inharmonic Bronze Gong
+   * Resonates at 432 Hz Solfeggio with natural acoustic decay & stereo beating
+   */
+  public playTempleBell() {
+    if (this.isMuted) return;
+    this.triggerHaptic([30, 40, 20]);
+    try {
+      this.initContext();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+
+      const partials = [
+        { freq: 432, gain: 0.28, decay: 3.5 },
+        { freq: 435.5, gain: 0.18, decay: 3.2 }, // Beating shimmer
+        { freq: 864, gain: 0.16, decay: 2.8 },
+        { freq: 1296, gain: 0.11, decay: 2.1 },
+        { freq: 1728, gain: 0.08, decay: 1.5 },
+      ];
+
+      partials.forEach(({ freq, gain, decay }) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.linearRampToValueAtTime(gain, now + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + decay);
+      });
+    } catch {}
+  }
+
+  /**
+   * Mobile Haptic Vibration API
+   */
+  public triggerHaptic(pattern: number | number[] = [15, 30, 15]) {
+    if (typeof window !== "undefined" && typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate(pattern);
+      } catch {}
+    }
   }
 
   /**
@@ -477,6 +639,7 @@ class SoundEngine {
 
   public playHabitPlus() {
     if (this.isMuted) return;
+    this.triggerHaptic([20]);
     this.playComboChime();
     if (!this.playFile("habit_plus", 0.45)) {
       this.playCoin();
@@ -485,6 +648,7 @@ class SoundEngine {
 
   public playHabitMinus() {
     if (this.isMuted) return;
+    this.triggerHaptic([40, 30, 40]);
     this.comboCount = 0;
     if (!this.playFile("habit_minus", 0.45)) {
       this.playError();
@@ -493,6 +657,7 @@ class SoundEngine {
 
   public playDailyComplete() {
     if (this.isMuted) return;
+    this.triggerHaptic([20, 30, 20]);
     this.playComboChime();
     if (!this.playFile("daily_complete", 0.5)) {
       this.playStamp();
@@ -501,6 +666,7 @@ class SoundEngine {
 
   public playTodoComplete() {
     if (this.isMuted) return;
+    this.triggerHaptic([15, 25, 15]);
     this.playComboChime();
     if (!this.playFile("todo_complete", 0.5)) {
       this.playStamp();
@@ -509,6 +675,7 @@ class SoundEngine {
 
   public playRewardBuy() {
     if (this.isMuted) return;
+    this.triggerHaptic([25, 25]);
     if (!this.playFile("reward_buy", 0.5)) {
       this.playPurchase();
     }
@@ -516,6 +683,7 @@ class SoundEngine {
 
   public playLevelUp() {
     if (this.isMuted) return;
+    this.triggerHaptic([35, 40, 60, 40, 100]);
     if (!this.playFile("level_up", 0.6)) {
       this.playLevelUpSynth();
     }
@@ -523,6 +691,7 @@ class SoundEngine {
 
   public playFaint() {
     if (this.isMuted) return;
+    this.triggerHaptic([100, 60, 100]);
     this.comboCount = 0;
     if (!this.playFile("faint", 0.55)) {
       this.playError();
@@ -531,6 +700,7 @@ class SoundEngine {
 
   public playLootDrop() {
     if (this.isMuted) return;
+    this.triggerHaptic([20, 40]);
     if (!this.playFile("loot_drop", 0.55)) {
       this.playCoin();
     }
@@ -538,6 +708,7 @@ class SoundEngine {
 
   public playAchievement() {
     if (this.isMuted) return;
+    this.triggerHaptic([30, 30, 60, 30, 80]);
     if (!this.playFile("achievement", 0.6)) {
       this.playLevelUpSynth();
     }
@@ -545,6 +716,7 @@ class SoundEngine {
 
   public playSpellCast() {
     if (this.isMuted) return;
+    this.triggerHaptic([25, 35]);
     try {
       this.initContext();
       if (!this.ctx) return;
@@ -706,3 +878,7 @@ class SoundEngine {
 }
 
 export const soundFx = new SoundEngine();
+
+export function triggerHaptic(pattern: number | number[] = [15, 30, 15]) {
+  soundFx.triggerHaptic(pattern);
+}

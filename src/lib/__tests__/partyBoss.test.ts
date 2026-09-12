@@ -44,4 +44,24 @@ describe("Party Guild and Boss Raid Mechanics", () => {
     const overkillRemaining = Math.max(0, remainingHp - fatalHit);
     expect(overkillRemaining).toBe(0);
   });
+
+  it("calculates 3-phase boss states correctly (Sthira, Maya Shield, Krodha Enrage)", async () => {
+    const { getBossPhase } = await import("../partyBoss");
+    const maxHp = 4000;
+
+    // >60% -> Sthira
+    const phase1 = getBossPhase(3000, maxHp);
+    expect(phase1.phase).toBe("STHIRA");
+    expect(phase1.reductionRatio).toBe(0);
+
+    // 25% - 60% -> Maya Shield
+    const phase2 = getBossPhase(1800, maxHp);
+    expect(phase2.phase).toBe("MAYA_SHIELD");
+    expect(phase2.reductionRatio).toBe(0.35);
+
+    // <= 25% -> Krodha Enrage
+    const phase3 = getBossPhase(800, maxHp);
+    expect(phase3.phase).toBe("KRODHA_ENRAGE");
+    expect(phase3.reductionRatio).toBe(0);
+  });
 });

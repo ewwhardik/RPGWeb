@@ -7,12 +7,12 @@ export interface CombatTextEventDetail {
   text: string;
   x: number;
   y: number;
-  type: "xp" | "gold" | "crit" | "mana" | "damage" | "shard";
+  type: "xp" | "gold" | "crit" | "mana" | "damage" | "shard" | "vedic";
 }
 
 export function spawnCombatText(
   text: string,
-  type: "xp" | "gold" | "crit" | "mana" | "damage" | "shard" = "xp",
+  type: "xp" | "gold" | "crit" | "mana" | "damage" | "shard" | "vedic" = "xp",
   coords?: { x: number; y: number }
 ) {
   if (typeof window === "undefined") return;
@@ -58,6 +58,8 @@ export default function FloatingCombatText() {
 
   const getTypeStyles = (type: CombatTextEventDetail["type"]) => {
     switch (type) {
+      case "vedic":
+        return "text-amber-300 text-xl font-black drop-shadow-[0_0_16px_rgba(245,158,11,1)] animate-bounce tracking-widest uppercase border-y border-amber-400/60 py-0.5 px-2 bg-stone-950/80 rounded-md shadow-2xl";
       case "crit":
         return "text-red-400 text-xl font-black drop-shadow-[0_0_12px_rgba(239,68,68,0.9)] animate-bounce tracking-wide";
       case "xp":
@@ -88,6 +90,7 @@ export default function FloatingCombatText() {
             top: item.y,
           }}
         >
+          {item.type === "vedic" && <span>🔱</span>}
           {item.type === "crit" && <span>⚡</span>}
           {item.type === "gold" && <span>🪙</span>}
           {item.type === "shard" && <span>⏳</span>}

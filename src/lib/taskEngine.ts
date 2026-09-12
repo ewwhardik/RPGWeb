@@ -494,6 +494,25 @@ export const STANDARD_SHOP_REWARDS = [
     icon: "PackageOpen",
     type: "ARMOIRE",
   },
+  {
+    id: "kadak_chai",
+    title: "Kadak Masala Chai",
+    description: "Brewed with fresh ginger, cardamom & clove. Instantly restores 30 Mana and grants fiery vigilance.",
+    cost: 20,
+    icon: "Coffee",
+    type: "MANA",
+    manaAmount: 30,
+  },
+  {
+    id: "amrit_rasayana",
+    title: "Amrit Rasayana Elixir",
+    description: "Sacred Ayurvedic nectar of immortality. Restores 30 Health and infuses 20 Karma XP.",
+    cost: 50,
+    icon: "Sparkles",
+    type: "POTION",
+    healAmount: 30,
+    xpAmount: 20,
+  },
 ];
 
 /**

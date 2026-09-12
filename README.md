@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/Three.js-3D%20Engine-black?style=flat-square&logo=three.js" alt="Three.js" />
   <img src="https://img.shields.io/badge/Tailwind-v4-cyan?style=flat-square&logo=tailwindcss" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Prisma-6.4.1-teal?style=flat-square&logo=prisma" alt="Prisma" />
-  <img src="https://img.shields.io/badge/Vitest-95%20Passed%20(100%25)-emerald?style=flat-square&logo=vitest" alt="Vitest Tests" />
+  <img src="https://img.shields.io/badge/Vitest-98%20Passed%20(100%25)-emerald?style=flat-square&logo=vitest" alt="Vitest Tests" />
 </p>
 
 ---
@@ -89,9 +89,49 @@ By fusing modern software architecture—**Next.js 16 Turbopack**, **React 19**,
 - 30-tier seasonal shard progression (*Season 1: Citadel of the Void*) unlocking companions, armors, and mounts.
 - Deterministic 24-hour date-hashed weather (*Golden Dawn*, *Tempest of Resolve*, *Solar Eclipse*, *Tavern Mists*).
 
-### 12. Playful Interactive Systems
-- **Bartholomew the Desk Goblin**: Procrastination goblin in residence with dynamic mood states (*Sugar Rush ⚡*, *Snack Satisfied 🍪*, *Scheming Mischief 😈*, *Extremely Irritated 💥*, *Vigilant Goblin 🧌*), tactile pokes, and snack feeding.
+### 12. Playful Interactive Systems & Indian Masala Flavor
+- **Bartholomew the Procrastination Goblin**: Indian Masala banter (*"Sharma ji ka beta just solved 5 Leetcode hards while you stared at your phone!"*, *"Straighten that spine, dost! You look like a cold jalebi."*, *"Feed me kadak chai before I steal your keyboard!"*), dynamic mood states (*Sugar Rush ⚡*, *Chai High ☕*, *Samosa Coma 🥟*, *Scheming Mischief 😈*, *Vigilant 🧌*), and 3 Desi treat options (*Garam Samosa*, *Kadak Chai*, *Kaju Katli of Supreme Focus*).
+- **Desi Tavern Rewards**: Kadak Masala Chai (+30 MP, ginger & clove vigilance) and Amrit Rasayana Elixir (+30 HP, +20 XP, Ayurvedic nectar).
+- **Sanskrit Combat Floating Text**: Critical strikes and boosts with authentic Vedic battle cries (*"🔱 SUDARSHANA CRIT!"*, *"👑 DHARMA TRIUMPHS!"*, *"☕ CHAI BOOST!"*, *"🧘 SHANTI RESTORED"*, *"⚡ BRAHMASTRA FOCUS!"*).
 - **Suspicious Antique Mimic Chest**: 4-stage Agitation Danger Meter (*Dormant Box 😴* $\rightarrow$ *Curious Growl 👁️* $\rightarrow$ *High Agitation ⚠️* $\rightarrow$ *Mimic Awakened! 🦖* spitting out 10 Gold).
+
+### 13. Phase 1: Real-Time SSE Party Combat Synchronization
+- **Server-Sent Events (SSE) Hub** (`/api/party/stream`): Zero-overhead live event stream delivering real-time boss damage updates, party attacks, and rage alerts across all guild members simultaneously.
+- **Heartbeat Resilience**: Built-in 25-second keep-alive pings (`: ping\n\n`) preventing proxy timeouts and stale connections.
+- **Live Connection Badge**: Real-time status indicator (`SSE Live` / `SSE Offline`) on the guild raid warboard.
+
+### 14. Phase 2: Offline-First PWA & IndexedDB Queue
+- **Service Worker Shell** (`public/sw.js`): Caches application shell, web fonts, and audio synthesis profiles for instant offline boot.
+- **IndexedDB Action Queue** (`src/lib/offlineSync.ts`): All task scoring and habit clicks performed while offline are queued in pure IndexedDB and automatically replayed with exponential backoff retry upon reconnection.
+- **Mobile Native Haptics** (`triggerHaptic`): Multi-pattern sensory feedback for habits, level-up milestones, and combat strikes on supported mobile devices.
+
+### 15. Phase 3: Procedural 3-Phase Indian Mythic Boss AI
+- **Vedic Mythic Boss Tiers**:
+  - *Kumbhakarna the Sloth Colossus* (3,000 HP)
+  - *Mahishasura of Chaos* (4,500 HP)
+  - *Rahu the Eclipse Shadow* (6,000 HP)
+  - *Maya the Illusion Weaver* (8,000 HP)
+- **3 Dynamic Boss Phases**:
+  - **Phase 1: Sthira (Fortitude)**: Boss HP $> 60\%$. Standard combat resistance.
+  - **Phase 2: Maya Shield**: Boss HP $25\% - 60\%$. 35% damage reduction against brute physical tasks unless pierced by **Intellect** or **Sanity** routines.
+  - **Phase 3: Krodha Enrage**: Boss HP $\le 25\%$. Crimson glowing aura, 2x rage accumulation, and heightened party risk.
+
+### 16. Phase 4: Discord & Telegram Webhook Dispatcher
+- **Multi-Platform Guild Alerts**: Dispatches rich Discord embeds and Telegram Markdown messages for boss damage, enraged states, and boss defeats.
+- **Interactive Configuration Modal**: In-app webhook setup modal allowing guild leaders to paste their Discord or Telegram webhooks and test live dispatch with a single click.
+
+### 17. Phase 5: Samsara Cognitive Energy Heatmap & Purushartha Radar
+- **52-Week Karma Heatmap** (`SamsaraHeatmap.tsx`): 365-day interactive punchcard displaying completion density across 1 Year, 90 Days, and 30 Days timeframes with detailed hover tooltips.
+- **Purushartha 4-Chakra Balance Tracker**: Visual radar monitoring balance across the four classical Vedic life aims:
+  - **Dharma (Duty & Discipline)**: Dailies and moral habits.
+  - **Artha (Wealth & Career)**: Deep technical work, financial planning, productivity.
+  - **Kama (Pleasure & Wellness)**: Creative routines, physical fitness, leisure rewards.
+  - **Moksha (Liberation & Mind)**: Meditation, reading, dopamine fasting, sleep quality.
+
+### 18. Phase 6: Meditative Tanpura Drone & Temple Ghanta Synthesizer
+- **Cosmic Om Tanpura Drone**: Generates continuous meditative Indian classical drone tuned to $136.1\text{ Hz}$ (Vedic Sa / Cosmic Om), with resonant Pa ($204.15\text{ Hz}$), high Sa ($272.2\text{ Hz}$), low Kharaj Sa ($68.05\text{ Hz}$), jawari overtone filtering, and authentic 4-string strumming cycle.
+- **Authentic Temple Bell (Ghanta)**: Multi-oscillator physical modeling synthesizer producing inharmonic bronze bell partials ($432\text{ Hz}$, $864\text{ Hz}$, $1296\text{ Hz}$, $1728\text{ Hz}$) with slow beating exponential decay.
+- **Ambience Selector**: Cycle between Hearth $\rightarrow$ Dungeon $\rightarrow$ Tanpura $\rightarrow$ Mute.
 
 ---
 
@@ -147,7 +187,7 @@ By fusing modern software architecture—**Next.js 16 Turbopack**, **React 19**,
 
 ---
 
-## 🧪 Comprehensive Verification Suite (95 Tests)
+## 🧪 Comprehensive Verification Suite (98 Tests)
 
 The test suite runs with **Vitest 5** and validates all critical math, state machines, and security boundaries:
 
@@ -158,18 +198,19 @@ npx vitest run
 | Test Suite File | Tests | Validated Logic |
 | :--- | :---: | :--- |
 | `src/lib/__tests__/advancedSystems.test.ts` | 15 | Party buffs, Custom Day Start (CDS), overdue bounties, Darshan milestones |
-| `src/lib/__tests__/taskEngine.test.ts` | 15 | Mystery drops, habit scoring, streak calculations, pet maturity |
+| `src/lib/__tests__/taskEngine.test.ts` | 15 | Mystery drops, habit scoring, streak calculations, Desi shop items |
 | `src/lib/__tests__/validations.test.ts` | 18 | Zod input sanitization, passwords, emails, quest enums, party codes |
 | `src/lib/__tests__/addictionPhases.test.ts` | 10 | Weather date hash determinism, 30-tier battle pass, boss rage boundaries, pentatonic scales |
 | `src/lib/__tests__/depthMechanics.test.ts` | 7 | Class archetype buffs, diminishing returns scaling, category decay |
 | `src/lib/__tests__/rpgEngine.test.ts` | 7 | Non-linear XP curve, level boundaries, difficulty multipliers |
 | `src/lib/__tests__/economy.test.ts` | 5 | Shop purchases, insufficient gold rejection, cursed sanity penalties |
 | `src/lib/__tests__/streakSystem.test.ts` | 5 | Consecutive day increments, same-day preservation, missed day resets |
+| `src/lib/__tests__/partyBoss.test.ts` | 5 | 3-Phase mythic boss AI (Sthira/Maya Shield/Krodha Enrage), damage scaling, Paladin bonuses |
 | `src/lib/__tests__/rateLimit.test.ts` | 4 | Sliding-window limiter, threshold blocking, window reset, client IP extraction |
-| `src/lib/__tests__/partyBoss.test.ts` | 4 | Boss damage calculation, Paladin bonuses, defeat boundaries, code generator |
 | `src/lib/__tests__/prestige.test.ts` | 3 | Prestige rebirth reset, stat retention, level qualification |
+| `src/lib/__tests__/offlineSync.test.ts` | 2 | Pure IndexedDB offline transaction queue, optimistic FIFO replay |
 | `src/lib/__tests__/health.test.ts` | 2 | Health check payload integrity and latency reporting |
-| **TOTAL** | **95** | **100% Passing Unit Tests Across 12 Suites** |
+| **TOTAL** | **98** | **100% Passing Unit Tests Across 13 Suites** |
 
 ---
 

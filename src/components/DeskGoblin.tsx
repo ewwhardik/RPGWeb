@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundFx } from "@/lib/audio";
-import { MessageSquare, Cookie, ChevronUp, ChevronDown, Sparkles } from "lucide-react";
+import { MessageSquare, ChevronUp, ChevronDown, Sparkles } from "lucide-react";
 
 interface DeskGoblinProps {
   gold: number;
@@ -11,36 +11,41 @@ interface DeskGoblinProps {
 }
 
 const GOBLIN_POKES = [
-  "Hey! Don't poke me, go finish your backlog!",
-  "I see pending quests. Would be a real shame if I spilled coffee on your router.",
-  "Your posture is currently shaped like a cooked shrimp. Straighten up, adventurer!",
-  "If you do not do your quest today, I am going to hide your left shoe.",
-  "What? I am busy staring menacingly at your unread notifications.",
-  "You have been staring at this glass pane for a while. Blink, mortal, blink!",
-  "Every time you procrastinate, my goblin heart grows half a size colder.",
-  "Look at you, crossing off items like a functioning adult. I am disgusted and proud.",
+  "Beta, Sharma ji ka beta already finished 5 daily quests and reached Level 40 before 6 AM! What are you doing?!",
+  "Arre bhai, one more notification and my third eye is opening in rage! Drink some Kadak Chai!",
+  "Is this a task list or an epic Mahabharata of pending bugs? Finish your Dharma first!",
+  "You call this tapasya? I have seen more focus in a Mumbai local train at peak hour! Get back to questing!",
+  "Where is my Garam Samosa?! Give me a samosa or I will curse your next loot drop with 100% rust!",
+  "Your posture is currently shaped like a fried jalebi. Straighten up, adventurer!",
+  "Focus, babu! Focus! The mind wanders like a monkey in Vrindavan without your daily checklists.",
+  "Look at you, crossing off items like a functioning adult. I am both disgusted and proud.",
+  "Hey! Don't poke me, go finish your backlog or I will tell your relatives you're doomscrolling!",
+  "Bhai, your daily streak is looking fragile. One missed quest and Kumbhakarna wakes up!",
 ];
 
 export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [dialogue, setDialogue] = useState(
-    "Greetings, meatbag. I am Bartholomew, your court appointed procrastination goblin."
+    "Arre meatbag! I am Bartholomew, your court-appointed Desi procrastination goblin. Do your dharma!"
   );
   const [feeding, setFeeding] = useState(false);
   const [isWiggling, setIsWiggling] = useState(false);
   const [pokeCount, setPokeCount] = useState(0);
   const [fedCount, setFedCount] = useState(0);
+  const [lastFedTreat, setLastFedTreat] = useState<string>("");
 
   // Compute dynamic playful mood
   const mood = fedCount >= 3
-    ? { name: "Sugar Rush", emoji: "⚡", tagClass: "text-amber-300 border-amber-500/60 bg-amber-950/50" }
+    ? { name: "Royal Kaju Bliss", emoji: "💎", tagClass: "text-amber-300 border-amber-500/60 bg-amber-950/50" }
+    : lastFedTreat === "chai"
+    ? { name: "Kadak Chai Energized", emoji: "☕", tagClass: "text-orange-300 border-orange-500/60 bg-orange-950/50" }
     : fedCount >= 1
-    ? { name: "Snack Satisfied", emoji: "🍪", tagClass: "text-emerald-300 border-emerald-500/60 bg-emerald-950/50" }
+    ? { name: "Samosa Satisfied", emoji: "🥟", tagClass: "text-emerald-300 border-emerald-500/60 bg-emerald-950/50" }
     : pokeCount >= 6
-    ? { name: "Extremely Irritated", emoji: "💥", tagClass: "text-red-300 border-red-500/60 bg-red-950/50" }
+    ? { name: "Sharmaji Level Fury", emoji: "💥", tagClass: "text-red-300 border-red-500/60 bg-red-950/50" }
     : pokeCount >= 3
     ? { name: "Scheming Mischief", emoji: "😈", tagClass: "text-violet-300 border-violet-500/60 bg-violet-950/50" }
-    : { name: "Vigilant Goblin", emoji: "🧌", tagClass: "text-amber-400 border-amber-500/40 bg-amber-950/30" };
+    : { name: "Dharmic Watchman", emoji: "🧌", tagClass: "text-amber-400 border-amber-500/40 bg-amber-950/30" };
 
   function handlePoke() {
     soundFx.playClick();
@@ -51,11 +56,14 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
     setDialogue(quote);
   }
 
-  async function handleFeed() {
-    if (gold < 5 || feeding) {
-      if (gold < 5) {
+  async function handleFeed(treatType: "samosa" | "chai" | "kaju_katli" = "samosa") {
+    const costMap = { samosa: 5, chai: 8, kaju_katli: 15 };
+    const cost = costMap[treatType];
+
+    if (gold < cost || feeding) {
+      if (gold < cost) {
         soundFx.playError();
-        setDialogue("You are broke! 5 Gold or no snacks. I do not run a goblin soup kitchen.");
+        setDialogue(`Arre kanjoos! You need ${cost} Gold for this treat. I do not run a free langar here!`);
       }
       return;
     }
@@ -64,11 +72,16 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
     soundFx.playCoin();
 
     try {
-      const res = await fetch("/api/minigames/feed-goblin", { method: "POST" });
+      const res = await fetch("/api/minigames/feed-goblin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ treatType }),
+      });
       const data = await res.json();
       if (res.ok) {
         setDialogue(data.message);
         setFedCount((prev) => prev + 1);
+        setLastFedTreat(treatType);
         onFeedSuccess(data.newGold, data.sanityGain);
         setIsWiggling(true);
         setTimeout(() => setIsWiggling(false), 700);
@@ -152,28 +165,55 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
               </motion.div>
             </AnimatePresence>
 
-            {/* Interaction Buttons */}
-            <div className="flex items-center gap-2 pt-0.5">
+            {/* Interaction Buttons: Poke & Indian Snacks */}
+            <div className="space-y-2 pt-0.5">
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={handlePoke}
-                className="btn-dark text-xs py-2 px-3 flex-1 flex items-center justify-center gap-1.5 font-bold shadow-sm"
+                className="w-full btn-dark text-xs py-2 px-3 flex items-center justify-center gap-1.5 font-bold shadow-sm"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
-                <span>Poke Goblin</span>
+                <span>Poke Bartholomew</span>
               </motion.button>
-              <motion.button
-                whileTap={gold >= 5 && !feeding ? { scale: 0.95 } : {}}
-                type="button"
-                onClick={handleFeed}
-                disabled={feeding || gold < 5}
-                className="btn-gold text-xs py-2 px-3 flex-1 flex items-center justify-center gap-1.5 font-bold shadow-sm"
-                title="Feeds Bartholomew for 5 Gold (+2 Sanity)"
-              >
-                <Cookie className="w-3.5 h-3.5" />
-                <span>Feed (5g)</span>
-              </motion.button>
+
+              <div className="grid grid-cols-3 gap-1.5">
+                <motion.button
+                  whileTap={gold >= 5 && !feeding ? { scale: 0.95 } : {}}
+                  type="button"
+                  onClick={() => handleFeed("samosa")}
+                  disabled={feeding || gold < 5}
+                  className="btn-gold text-[11px] py-1.5 px-2 flex flex-col items-center justify-center font-bold shadow-sm disabled:opacity-50"
+                  title="Feed Garam Samosa for 5 Gold (+2 Sanity)"
+                >
+                  <span className="text-sm">🥟</span>
+                  <span>Samosa (5g)</span>
+                </motion.button>
+
+                <motion.button
+                  whileTap={gold >= 8 && !feeding ? { scale: 0.95 } : {}}
+                  type="button"
+                  onClick={() => handleFeed("chai")}
+                  disabled={feeding || gold < 8}
+                  className="btn-gold text-[11px] py-1.5 px-2 flex flex-col items-center justify-center font-bold shadow-sm disabled:opacity-50 bg-gradient-to-r from-orange-600 to-amber-600"
+                  title="Feed Kadak Cutting Chai for 8 Gold (+4 Sanity)"
+                >
+                  <span className="text-sm">☕</span>
+                  <span>Chai (8g)</span>
+                </motion.button>
+
+                <motion.button
+                  whileTap={gold >= 15 && !feeding ? { scale: 0.95 } : {}}
+                  type="button"
+                  onClick={() => handleFeed("kaju_katli")}
+                  disabled={feeding || gold < 15}
+                  className="btn-gold text-[11px] py-1.5 px-2 flex flex-col items-center justify-center font-bold shadow-sm disabled:opacity-50 bg-gradient-to-r from-amber-400 to-yellow-300 text-stone-950"
+                  title="Feed Kaju Katli for 15 Gold (+8 Sanity)"
+                >
+                  <span className="text-sm">💎</span>
+                  <span>Kaju Katli (15g)</span>
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         )}

@@ -16,6 +16,8 @@ import {
   PackageOpen,
   ChevronDown,
   ChevronUp,
+  Coffee,
+  Sparkles,
 } from "lucide-react";
 import {
   getHabitColorDetails,
@@ -923,6 +925,12 @@ export default function TaskBoardGrid({
                         )}
                         {shopItem.icon === "PackageOpen" && (
                           <PackageOpen className="w-4 h-4 text-amber-400" />
+                        )}
+                        {shopItem.icon === "Coffee" && (
+                          <Coffee className="w-4 h-4 text-amber-500" />
+                        )}
+                        {shopItem.icon === "Sparkles" && (
+                          <Sparkles className="w-4 h-4 text-emerald-400" />
                         )}
                       </div>
 

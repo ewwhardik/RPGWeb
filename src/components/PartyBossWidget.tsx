@@ -13,6 +13,11 @@ import {
   Compass,
   AlertTriangle,
   Megaphone,
+  Link2,
+  Radio,
+  Zap,
+  X,
+  Bell,
 } from "lucide-react";
 import { soundFx } from "@/lib/audio";
 
@@ -92,6 +97,15 @@ export default function PartyBossWidget({
   const [copiedCode, setCopiedCode] = useState(false);
   const [cheerCooldown, setCheerCooldown] = useState(false);
 
+  // Webhooks & Live Real-Time Stream
+  const [isWebhookModalOpen, setIsWebhookModalOpen] = useState(false);
+  const [discordUrlInput, setDiscordUrlInput] = useState("");
+  const [telegramBotTokenInput, setTelegramBotTokenInput] = useState("");
+  const [telegramChatIdInput, setTelegramChatIdInput] = useState("");
+  const [webhookSaving, setWebhookSaving] = useState(false);
+  const [webhookStatusMsg, setWebhookStatusMsg] = useState("");
+  const [isStreamConnected, setIsStreamConnected] = useState(false);
+
   const fetchParty = useCallback(async () => {
     try {
       const res = await fetch("/api/party");
@@ -113,6 +127,105 @@ export default function PartyBossWidget({
   useEffect(() => {
     fetchParty();
   }, [fetchParty]);
+
+  // Real-Time Server-Sent Events (SSE) Guild Combat Channel
+  useEffect(() => {
+    if (!inParty || !party?.id) {
+      setIsStreamConnected(false);
+      return;
+    }
+
+    let es: EventSource | null = null;
+    try {
+      es = new EventSource("/api/party/stream");
+      es.onopen = () => setIsStreamConnected(true);
+      es.onerror = () => setIsStreamConnected(false);
+      es.onmessage = (e) => {
+        try {
+          const event = JSON.parse(e.data);
+          if (event.type === "BOSS_DAMAGE") {
+            setParty((prev) => {
+              if (!prev) return null;
+              return {
+                ...prev,
+                bossCurrentHp: event.payload.bossCurrentHp,
+                bossMaxHp: event.payload.bossMaxHp,
+                bossName: event.payload.bossName || prev.bossName,
+              };
+            });
+            soundFx.play("spell");
+          } else if (event.type === "BOSS_RAGE") {
+            setParty((prev) => {
+              if (!prev) return null;
+              return {
+                ...prev,
+                bossRage: event.payload.currentRage,
+              };
+            });
+            if (event.payload.rageStrike) {
+              soundFx.play("death");
+            }
+          } else if (event.type === "BOSS_DEFEAT") {
+            soundFx.playTempleBell();
+            fetchParty();
+            if (onBossDefeated) onBossDefeated();
+          }
+        } catch {}
+      };
+    } catch {
+      setIsStreamConnected(false);
+    }
+
+    return () => {
+      if (es) es.close();
+      setIsStreamConnected(false);
+    };
+  }, [inParty, party?.id, fetchParty, onBossDefeated]);
+
+  const openWebhookModal = async () => {
+    soundFx.playClick();
+    setIsWebhookModalOpen(true);
+    setWebhookStatusMsg("");
+    try {
+      const res = await fetch("/api/party/webhook");
+      const data = await res.json();
+      if (res.ok && data.settings) {
+        setDiscordUrlInput(data.settings.discordUrl || "");
+        setTelegramBotTokenInput(data.settings.telegramBotToken || "");
+        setTelegramChatIdInput(data.settings.telegramChatId || "");
+      }
+    } catch {}
+  };
+
+  const handleSaveWebhooks = async (testAction: boolean = false) => {
+    soundFx.playClick();
+    setWebhookSaving(true);
+    setWebhookStatusMsg("");
+    try {
+      const res = await fetch("/api/party/webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          discordUrl: discordUrlInput.trim(),
+          telegramBotToken: telegramBotTokenInput.trim(),
+          telegramChatId: telegramChatIdInput.trim(),
+          testAction,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        soundFx.play("coin");
+        setWebhookStatusMsg(data.message || "Webhook configuration updated!");
+      } else {
+        soundFx.play("error");
+        setWebhookStatusMsg(data.error || "Failed to update webhooks.");
+      }
+    } catch {
+      setWebhookStatusMsg("Failed to reach webhook endpoint.");
+    } finally {
+      setWebhookSaving(false);
+    }
+  };
 
   async function handleCreateGuild(e: React.FormEvent) {
     e.preventDefault();
@@ -394,6 +507,30 @@ export default function PartyBossWidget({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Real-time SSE Stream Status */}
+          <span
+            className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-full font-mono font-bold transition-all ${
+              isStreamConnected
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                : "bg-stone-800/60 text-stone-400 border border-stone-700"
+            }`}
+            title={isStreamConnected ? "Real-Time Combat Stream Connected via SSE" : "Synchronizing with Warboard..."}
+          >
+            <Radio className={`w-3 h-3 ${isStreamConnected ? "animate-pulse text-emerald-400" : "text-stone-500"}`} />
+            <span>{isStreamConnected ? "LIVE RAID" : "SYNCING"}</span>
+          </span>
+
+          {/* Webhooks button */}
+          <button
+            type="button"
+            onClick={openWebhookModal}
+            className="text-xs py-1 px-2.5 rounded-lg bg-stone-100 dark:bg-card border border-stone-300 dark:border-slate-700 text-stone-700 dark:text-slate-300 hover:text-amber-400 hover:border-amber-500 flex items-center gap-1.5 transition-all font-bold"
+            title="Configure Discord & Telegram Guild Webhooks"
+          >
+            <Link2 className="w-3.5 h-3.5 text-amber-500" />
+            <span className="hidden sm:inline">Webhooks</span>
+          </button>
+
           {/* Invite Code button */}
           <button
             type="button"
@@ -426,58 +563,99 @@ export default function PartyBossWidget({
         </div>
       </div>
 
-      {/* Boss Raid Arena Card */}
-      <div className="p-4 rounded-xl bg-stone-900 text-stone-100 dark:bg-[#0e141d] dark:text-slate-100 border border-red-900/60 dark:border-red-950/60 shadow-inner relative overflow-hidden">
-        {/* Subtle red background glow */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 rounded-full blur-2xl pointer-events-none" />
+      {/* Boss Raid Arena Card with 3-Phase Procedural AI State */}
+      {(() => {
+        const phaseRatio = party.bossMaxHp > 0 ? party.bossCurrentHp / party.bossMaxHp : 1;
+        const phaseData =
+          phaseRatio > 0.6
+            ? {
+                phase: "STHIRA",
+                badge: "🛡️ Phase 1: Sthira (Stable)",
+                desc: "The boss stands resolute. Normal physical and arcane quest strikes pierce with full impact.",
+                cardBorder: "border-red-900/60 dark:border-red-950/60",
+                glow: "bg-red-600/10",
+                badgeColor: "bg-stone-800 text-stone-200 border-stone-700",
+              }
+            : phaseRatio > 0.25
+            ? {
+                phase: "MAYA_SHIELD",
+                badge: "🔮 Phase 2: Maya Shield Active",
+                desc: "Illusion Veil raised! Physical strikes deflected (-35% DMG). Only INTELLECT & SANITY tasks pierce for true damage!",
+                cardBorder: "border-purple-600/80 shadow-[0_0_20px_rgba(168,85,247,0.2)]",
+                glow: "bg-purple-600/20",
+                badgeColor: "bg-purple-950 text-purple-300 border-purple-500 animate-pulse",
+              }
+            : {
+                phase: "KRODHA_ENRAGE",
+                badge: "🔥 Phase 3: Krodha Enrage",
+                desc: "CRITICAL BERSERK! Missed dailies generate 2x Rage accumulation. Slay the titan before total retaliation!",
+                cardBorder: "border-rose-600/90 shadow-[0_0_25px_rgba(244,63,94,0.3)]",
+                glow: "bg-rose-600/30",
+                badgeColor: "bg-rose-950 text-rose-200 border-rose-500 animate-bounce",
+              };
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-            <h4 className="text-sm font-bold font-title text-red-300 flex items-center gap-1.5">
-              <Swords className="w-4 h-4 text-red-400" />
-              {party.bossName}
-            </h4>
-          </div>
-          <div className="text-[11px] font-mono font-bold text-stone-300 dark:text-slate-300">
-            {party.bossCurrentHp.toLocaleString()} / {party.bossMaxHp.toLocaleString()} HP ({hpPercent}%)
-          </div>
-        </div>
+        return (
+          <div className={`p-4 rounded-xl bg-stone-900 text-stone-100 dark:bg-[#0e141d] dark:text-slate-100 border ${phaseData.cardBorder} shadow-inner relative overflow-hidden transition-all duration-500`}>
+            {/* Ambient Phasic Glow */}
+            <div className={`absolute top-0 right-0 w-36 h-36 ${phaseData.glow} rounded-full blur-2xl pointer-events-none transition-all duration-500`} />
 
-        <p className="text-xs text-stone-300 dark:text-slate-300 italic mb-2">
-          &ldquo;{party.bossInfo?.humorQuote}&rdquo;
-        </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                <h4 className="text-sm font-bold font-title text-red-300 flex items-center gap-1.5">
+                  <Swords className="w-4 h-4 text-red-400" />
+                  {party.bossName}
+                </h4>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border ${phaseData.badgeColor}`}>
+                  {phaseData.badge}
+                </span>
+                <div className="text-[11px] font-mono font-bold text-stone-300 dark:text-slate-300">
+                  {party.bossCurrentHp.toLocaleString()} / {party.bossMaxHp.toLocaleString()} HP ({hpPercent}%)
+                </div>
+              </div>
+            </div>
 
-        {/* Boss HP Bar */}
-        <div className="w-full bg-stone-950 dark:bg-background h-3.5 rounded-full overflow-hidden p-0.5 border border-stone-700 dark:border-slate-800 mb-2 shadow-inner">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${hpColor}`}
-            style={{ width: `${hpPercent}%` }}
-          />
-        </div>
+            <p className="text-xs text-stone-300 dark:text-slate-300 italic mb-1.5">
+              &ldquo;{party.bossInfo?.humorQuote}&rdquo;
+            </p>
 
-        {/* Boss Rage Meter */}
-        <div className="mb-3">
-          <div className="flex items-center justify-between text-[10px] font-mono font-bold mb-1">
-            <span className="flex items-center gap-1 text-orange-400">
-              <Flame className={`w-3 h-3 ${(party.bossRage ?? 0) >= 70 ? "text-red-500 animate-bounce" : "text-orange-400"}`} />
-              BOSS RAGE METER:
-            </span>
-            <span className={(party.bossRage ?? 0) >= 70 ? "text-red-400 font-black animate-pulse" : "text-stone-400"}>
-              {party.bossRage ?? 0}% / 100% {(party.bossRage ?? 0) >= 70 && "⚠️ RETALIATION IMMINENT!"}
-            </span>
-          </div>
-          <div className="w-full bg-stone-950 dark:bg-background h-2 rounded-full overflow-hidden p-0.5 border border-stone-800 shadow-inner">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                (party.bossRage ?? 0) >= 70
-                  ? "bg-gradient-to-r from-orange-500 via-red-500 to-rose-600 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse"
-                  : "bg-gradient-to-r from-yellow-600 to-orange-500"
-              }`}
-              style={{ width: `${party.bossRage ?? 0}%` }}
-            />
-          </div>
-        </div>
+            <div className="text-[11px] text-amber-200/90 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5 mb-2.5 flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+              <span>{phaseData.desc}</span>
+            </div>
+
+            {/* Boss HP Bar */}
+            <div className="w-full bg-stone-950 dark:bg-background h-3.5 rounded-full overflow-hidden p-0.5 border border-stone-700 dark:border-slate-800 mb-2 shadow-inner">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${hpColor}`}
+                style={{ width: `${hpPercent}%` }}
+              />
+            </div>
+
+            {/* Boss Rage Meter */}
+            <div className="mb-3">
+              <div className="flex items-center justify-between text-[10px] font-mono font-bold mb-1">
+                <span className="flex items-center gap-1 text-orange-400">
+                  <Flame className={`w-3 h-3 ${(party.bossRage ?? 0) >= 70 ? "text-red-500 animate-bounce" : "text-orange-400"}`} />
+                  BOSS RAGE METER:
+                </span>
+                <span className={(party.bossRage ?? 0) >= 70 ? "text-red-400 font-black animate-pulse" : "text-stone-400"}>
+                  {party.bossRage ?? 0}% / 100% {(party.bossRage ?? 0) >= 70 && "⚠️ RETALIATION IMMINENT!"}
+                </span>
+              </div>
+              <div className="w-full bg-stone-950 dark:bg-background h-2 rounded-full overflow-hidden p-0.5 border border-stone-800 shadow-inner">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    (party.bossRage ?? 0) >= 70
+                      ? "bg-gradient-to-r from-orange-500 via-red-500 to-rose-600 shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse"
+                      : "bg-gradient-to-r from-yellow-600 to-orange-500"
+                  }`}
+                  style={{ width: `${party.bossRage ?? 0}%` }}
+                />
+              </div>
+            </div>
 
         {/* Action Controls: Rally Cheer & Weakness info */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-stone-800 dark:border-slate-800">
@@ -545,6 +723,8 @@ export default function PartyBossWidget({
           </div>
         )}
       </div>
+    );
+  })()}
 
       {actionSuccess && (
         <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 text-xs flex items-center gap-2">
@@ -611,6 +791,109 @@ export default function PartyBossWidget({
           })}
         </div>
       </div>
+
+      {/* Webhook Configuration Modal */}
+      {isWebhookModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="rpg-panel max-w-lg w-full p-6 relative shadow-2xl border-2 border-amber-500/40 bg-stone-900 text-stone-100 rounded-2xl">
+            <button
+              type="button"
+              onClick={() => setIsWebhookModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-stone-400 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                <Bell className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold font-title text-amber-300">
+                  Guild Webhook Dispatcher
+                </h3>
+                <p className="text-xs text-stone-400">
+                  Broadcast raid strikes, crits, and boss rage alerts to Discord & Telegram
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 my-5">
+              <div>
+                <label className="block text-xs font-bold text-stone-300 mb-1 flex items-center gap-1.5">
+                  <span>🎮 Discord Webhook URL</span>
+                </label>
+                <input
+                  type="url"
+                  value={discordUrlInput}
+                  onChange={(e) => setDiscordUrlInput(e.target.value)}
+                  placeholder="https://discord.com/api/webhooks/..."
+                  className="w-full bg-stone-950 border border-stone-700 rounded-lg px-3.5 py-2 text-xs font-mono text-stone-100 placeholder:text-stone-600 focus:outline-none focus:border-amber-500"
+                />
+                <span className="text-[10px] text-stone-500 mt-0.5 block">
+                  Sends formatted rich embeds for critical strikes (50+ DMG) & boss defeat
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-300 mb-1 flex items-center gap-1.5">
+                  <span>✈️ Telegram Bot Token & Chat ID</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input
+                    type="password"
+                    value={telegramBotTokenInput}
+                    onChange={(e) => setTelegramBotTokenInput(e.target.value)}
+                    placeholder="Bot Token (e.g. 123456:ABC-DEF)"
+                    className="w-full bg-stone-950 border border-stone-700 rounded-lg px-3 py-2 text-xs font-mono text-stone-100 placeholder:text-stone-600 focus:outline-none focus:border-amber-500"
+                  />
+                  <input
+                    type="text"
+                    value={telegramChatIdInput}
+                    onChange={(e) => setTelegramChatIdInput(e.target.value)}
+                    placeholder="Chat / Channel ID (e.g. -100...)"
+                    className="w-full bg-stone-950 border border-stone-700 rounded-lg px-3 py-2 text-xs font-mono text-stone-100 placeholder:text-stone-600 focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              {webhookStatusMsg && (
+                <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-mono">
+                  {webhookStatusMsg}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-white/10">
+              <button
+                type="button"
+                disabled={webhookSaving}
+                onClick={() => handleSaveWebhooks(true)}
+                className="btn-dark text-xs py-2 px-3.5 font-bold border-amber-500/40 text-amber-300 hover:bg-amber-500/10 disabled:opacity-50"
+              >
+                Send Test Signal
+              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsWebhookModalOpen(false)}
+                  className="px-3 py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={webhookSaving}
+                  onClick={() => handleSaveWebhooks(false)}
+                  className="btn-gold text-xs py-2 px-4 font-bold shadow-md disabled:opacity-50"
+                >
+                  {webhookSaving ? "Saving..." : "Save Webhooks"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

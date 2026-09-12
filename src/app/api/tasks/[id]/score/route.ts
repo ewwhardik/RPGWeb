@@ -244,7 +244,15 @@ export async function POST(
         const xpDiff = Math.max(10, updatedXp - freshUser.xp);
         const baseDamage = Math.max(15, Math.floor(xpDiff * 0.6));
         const finalRaidDamage = Math.round(baseDamage * partyRaidMult);
-        raidResult = await applyBossDamage(membership.partyId, finalRaidDamage, user.username);
+        raidResult = await applyBossDamage(
+          membership.partyId,
+          finalRaidDamage,
+          user.username,
+          task.category
+        );
+        if (raidResult?.shieldBlockedDamage && raidResult.shieldBlockedDamage > 0) {
+          message += ` (🔮 Maya Shield absorbed ${raidResult.shieldBlockedDamage} DMG!)`;
+        }
         if (raidResult?.bossDefeated) {
           message += ` ⚔️ Guild Victory! The raid boss was conquered!`;
         }
