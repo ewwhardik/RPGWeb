@@ -53,9 +53,9 @@ import CosmicDarshanModal from "@/components/CosmicDarshanModal";
 import QuestScrollsModal from "@/components/QuestScrollsModal";
 import GuildChallengesModal from "@/components/GuildChallengesModal";
 import SamsaraHeatmap from "@/components/SamsaraHeatmap";
-import NotionTopBar from "@/components/NotionTopBar";
-import NotionStatusSidebar from "@/components/NotionStatusSidebar";
-import NotionHabitGallery from "@/components/NotionHabitGallery";
+import ChronoTopBar from "@/components/ChronoTopBar";
+import ChronoStatusSidebar from "@/components/ChronoStatusSidebar";
+import ChronoHabitGallery from "@/components/ChronoHabitGallery";
 import ProgressAnalyticsGraphs from "@/components/ProgressAnalyticsGraphs";
 import GuideWalkthroughModal from "@/components/GuideWalkthroughModal";
 import DocsModal from "@/components/DocsModal";
@@ -153,8 +153,8 @@ export default function DashboardPage() {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
-  const [dashboardView, setDashboardView] = useState<"CLASSIC_BOARD" | "NOTION_STUDIO" | "ANALYTICS">("CLASSIC_BOARD");
-  const [notionActiveSection, setNotionActiveSection] = useState("notion-habits");
+  const [dashboardView, setDashboardView] = useState<"CLASSIC_BOARD" | "CHRONO_STUDIO" | "ANALYTICS">("CLASSIC_BOARD");
+  const [chronoActiveSection, setChronoActiveSection] = useState("chrono-habits");
 
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
@@ -740,7 +740,7 @@ export default function DashboardPage() {
                 <span className="hidden md:inline">Guide</span>
               </button>
 
-              {/* In-App Notion Documentation */}
+              {/* In-App Interactive Documentation */}
               <button
                 type="button"
                 onClick={() => {
@@ -901,8 +901,8 @@ export default function DashboardPage() {
 
         {/* Main Content Dashboard */}
         <main className="dashboard-main flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-          {/* Notion Minimalist Clock, Weather & Life Elapsed Timeline Strip */}
-          <NotionTopBar />
+          {/* Atmospheric Minimalist Clock, Weather & Life Elapsed Timeline Strip */}
+          <ChronoTopBar />
 
           {/* Faint Alert Banner */}
           {faintAlert && (
@@ -964,7 +964,7 @@ export default function DashboardPage() {
             />
           )}
 
-          {/* View Switcher: Classic Board vs Notion Studio vs Analytics */}
+          {/* View Switcher: Classic Board vs Chrono Studio vs Analytics */}
           <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-white/[0.06]">
             <div className="flex items-center gap-1.5 p-1 rounded-xl bg-stone-900/80 border border-white/10 backdrop-blur-md">
               <button
@@ -987,16 +987,16 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => {
                   soundFx.playClick();
-                  setDashboardView("NOTION_STUDIO");
+                  setDashboardView("CHRONO_STUDIO");
                 }}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  dashboardView === "NOTION_STUDIO"
+                  dashboardView === "CHRONO_STUDIO"
                     ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm"
                     : "text-stone-400 hover:text-stone-200 border border-transparent"
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Notion Dark Studio</span>
+                <span>Chrono Focus Studio</span>
               </button>
 
               <button
@@ -1042,11 +1042,11 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* VIEW 1: NOTION DARK RPG STUDIO (Sidebar + Habit Gallery) */}
-          {dashboardView === "NOTION_STUDIO" && (
+          {/* VIEW 1: CHRONO FOCUS RPG STUDIO (Sidebar + Habit Gallery) */}
+          {dashboardView === "CHRONO_STUDIO" && (
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               <div className="lg:col-span-4 xl:col-span-3">
-                <NotionStatusSidebar
+                <ChronoStatusSidebar
                   user={{
                     username: user?.username || "Traveler",
                     level: user?.level || 1,
@@ -1054,18 +1054,18 @@ export default function DashboardPage() {
                     characterClass: user?.characterClass || "WARRIOR",
                     gold: user?.gold || 0,
                   }}
-                  activeSection={notionActiveSection}
+                  activeSection={chronoActiveSection}
                   onSelectSection={(sec) => {
-                    setNotionActiveSection(sec);
-                    if (sec === "notion-analytics") setDashboardView("ANALYTICS");
-                    if (sec === "notion-docs") setIsDocsModalOpen(true);
+                    setChronoActiveSection(sec);
+                    if (sec === "analytics-graphs") setDashboardView("ANALYTICS");
+                    if (sec === "guide-docs") setIsDocsModalOpen(true);
                   }}
                   onPomodoroReward={handlePomodoroReward}
                 />
               </div>
 
               <div className="lg:col-span-8 xl:col-span-9">
-                <NotionHabitGallery
+                <ChronoHabitGallery
                   userGold={user?.gold || 0}
                   userXp={user?.xp || 0}
                   onScoreTask={handleScoreTask}
@@ -1564,7 +1564,7 @@ export default function DashboardPage() {
           }}
         />
 
-        {/* Notion-Style Comprehensive Documentation */}
+        {/* Comprehensive Documentation & Architecture Codex */}
         <DocsModal
           isOpen={isDocsModalOpen}
           onClose={() => setIsDocsModalOpen(false)}
@@ -1638,8 +1638,12 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <span className="text-stone-500 font-mono text-[11px]">v2.4 Production</span>
+              <span className="text-stone-700 font-mono">|</span>
+              <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                Apache-2.0
+              </span>
               <button
                 type="button"
                 onClick={() => setIsHelpModalOpen(true)}

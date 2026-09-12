@@ -13,6 +13,7 @@
 <p align="center">
   <a href="https://github.com/ewwhardik/RPGWeb"><img src="https://img.shields.io/badge/GitHub-ewwhardik%2FRPGWeb-181717?style=flat-square&logo=github" alt="GitHub Repo" /></a>
   <a href="https://www.linkedin.com/in/ewwhardik/"><img src="https://img.shields.io/badge/LinkedIn-ewwhardik-0A66C2?style=flat-square&logo=linkedin" alt="LinkedIn" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square" alt="Apache 2.0 License" /></a>
   <img src="https://img.shields.io/badge/Next.js-16.3.5-black?style=flat-square&logo=next.js" alt="Next.js 16" />
   <img src="https://img.shields.io/badge/React-19.2.8-blue?style=flat-square&logo=react" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -133,15 +134,15 @@ By fusing modern software architecture—**Next.js 16 Turbopack**, **React 19**,
 - **Authentic Temple Bell (Ghanta)**: Multi-oscillator physical modeling synthesizer producing inharmonic bronze bell partials ($432\text{ Hz}$, $864\text{ Hz}$, $1296\text{ Hz}$, $1728\text{ Hz}$) with slow beating exponential decay.
 - **Ambience Selector**: Cycle between Hearth $\rightarrow$ Dungeon $\rightarrow$ Tanpura $\rightarrow$ Mute.
 
-### 19. Phase 7: Notion-Style Productivity Studio & Live Atmospheric Chronos
+### 19. Phase 7: Chrono Focus Studio & Live Atmospheric Chronos
 - **Minimalist Analog & Digital Chronometer**: Pure SVG analog clock with rotating hour, minute, and second hands, paired with digital 24h readout.
 - **Geolocation Weather Engine via Open-Meteo**: Accesses user browser geolocation coordinates to fetch real-time ambient temperature, WMO weather conditions, and an interactive 7-day forecast strip with °C/°F toggle.
 - **Elapsed Life Progression Bars**: Real-time visual progress trackers for Year %, Month %, Week %, and Day % elapsed to cultivate memento mori urgency.
-- **Notion RPG Studio with Pixel Art Card Covers**: Dedicated views for Good Habits, Bad Habit penalties, and Custom Rewards featuring rich pixel art covers matching Notion dark aesthetics.
+- **Chrono RPG Studio with Pixel Art Card Covers**: Dedicated views for Good Habits, Bad Habit penalties, and Custom Rewards featuring rich pixel art covers matching custom dark aesthetics.
 - **Pomodoro Deep Focus Chamber**: Built-in 25-minute focus timer with audio chimes granting +35 XP and +15 Gold on session completion.
 - **Real Progress & Analytics Graphs**: Interactive SVG Area & Line charts plotting 14/30-day XP velocity with hover tooltips, 7-day weekly completion rates, and 6-attribute Vedic balance.
 - **Instant Demo Universe Hydration**: One-click demo universe loading Level 18 Grand Paladin data with rich habits, dailies, checklist subtasks, custom rewards, and boss raid history.
-- **Interactive Step-by-Step Guide & Notion Documentation**: 6-chapter guided walkthrough for newcomers and a Notion-style documentation modal detailing all architecture, game math, and author credits.
+- **Interactive Step-by-Step Guide & Comprehensive Documentation**: 6-chapter guided walkthrough for newcomers and an interactive documentation modal detailing all architecture, game math, and author credits.
 
 ---
 
@@ -162,7 +163,7 @@ By fusing modern software architecture—**Next.js 16 Turbopack**, **React 19**,
 |   +---------------------------+   +---------------------------+   +-------------------------------+   |
 |                                                                                                       |
 |   +---------------------------+   +---------------------------+   +-------------------------------+   |
-|   |   Notion RPG Studio       |   |   Real Analytics Graphs   |   |    Party Boss Raid Warboard   |   |
+|   |   Chrono RPG Studio       |   |   Real Analytics Graphs   |   |    Party Boss Raid Warboard   |   |
 |   | (Clock/Weather/Pomodoro)  |   | (SVG Velocity & Heatmaps) |   |  (Boss Rage & Retaliation Log)|   |
 |   +---------------------------+   +---------------------------+   +-------------------------------+   |
 +---------------------------------------------------+---------------------------------------------------+
@@ -278,4 +279,10 @@ npm run build
 ---
 
 ## 📜 License
-MIT License. Copyright © 2026 Hardik (Sai Ram Dash). All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License in the [LICENSE](./LICENSE) file or at:
+
+```
+http://www.apache.org/licenses/LICENSE-2.0
+```
+
+Copyright © 2026 **Hardik (Sai Ram Dash)**. All rights reserved.

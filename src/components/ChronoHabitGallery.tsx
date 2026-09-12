@@ -12,7 +12,7 @@ import {
 import { soundFx } from "@/lib/audio";
 import { spawnCombatText } from "./FloatingCombatText";
 
-export interface NotionHabitCardItem {
+export interface ChronoHabitCardItem {
   id: string;
   title: string;
   type: "GOOD" | "BAD";
@@ -24,7 +24,7 @@ export interface NotionHabitCardItem {
   strikeCount?: number;
 }
 
-export interface NotionRewardCardItem {
+export interface ChronoRewardCardItem {
   id: string;
   title: string;
   xpCost: number;
@@ -33,7 +33,7 @@ export interface NotionRewardCardItem {
   claimedCount?: number;
 }
 
-interface NotionHabitGalleryProps {
+interface ChronoHabitGalleryProps {
   userGold: number;
   userXp: number;
   onScoreTask: (taskId: string, direction: "up" | "down") => Promise<void>;
@@ -41,8 +41,8 @@ interface NotionHabitGalleryProps {
   onOpenNewTaskModal: (defaultType: "HABIT" | "REWARD") => void;
 }
 
-// Built-in curated Pixel Art card covers matching the user reference
-export const DEFAULT_GOOD_HABITS: NotionHabitCardItem[] = [
+// Built-in curated Pixel Art card covers
+export const DEFAULT_GOOD_HABITS: ChronoHabitCardItem[] = [
   {
     id: "gh-deep-work",
     title: "Deep Work",
@@ -105,7 +105,7 @@ export const DEFAULT_GOOD_HABITS: NotionHabitCardItem[] = [
   },
 ];
 
-export const DEFAULT_BAD_HABITS: NotionHabitCardItem[] = [
+export const DEFAULT_BAD_HABITS: ChronoHabitCardItem[] = [
   {
     id: "bh-alcohol",
     title: "Alcohol",
@@ -153,7 +153,7 @@ export const DEFAULT_BAD_HABITS: NotionHabitCardItem[] = [
   },
 ];
 
-export const DEFAULT_NOTION_REWARDS: NotionRewardCardItem[] = [
+export const DEFAULT_CHRONO_REWARDS: ChronoRewardCardItem[] = [
   {
     id: "rew-walk",
     title: "Go for a walk",
@@ -191,16 +191,16 @@ export const DEFAULT_NOTION_REWARDS: NotionRewardCardItem[] = [
   },
 ];
 
-export default function NotionHabitGallery({
+export default function ChronoHabitGallery({
   userGold,
   userXp,
   onScoreTask,
   onBuyReward,
   onOpenNewTaskModal,
-}: NotionHabitGalleryProps) {
-  const [goodHabits, setGoodHabits] = useState<NotionHabitCardItem[]>(DEFAULT_GOOD_HABITS);
-  const [badHabits, setBadHabits] = useState<NotionHabitCardItem[]>(DEFAULT_BAD_HABITS);
-  const [rewards] = useState<NotionRewardCardItem[]>(DEFAULT_NOTION_REWARDS);
+}: ChronoHabitGalleryProps) {
+  const [goodHabits, setGoodHabits] = useState<ChronoHabitCardItem[]>(DEFAULT_GOOD_HABITS);
+  const [badHabits, setBadHabits] = useState<ChronoHabitCardItem[]>(DEFAULT_BAD_HABITS);
+  const [rewards] = useState<ChronoRewardCardItem[]>(DEFAULT_CHRONO_REWARDS);
 
   // Active sub-views
   const [goodHabitTab, setGoodHabitTab] = useState<"ALL" | "DONE" | "OVERVIEW">("ALL");
@@ -208,7 +208,7 @@ export default function NotionHabitGallery({
   const [rewardTab, setRewardTab] = useState<"ALL" | "CLAIMED">("ALL");
 
   // Toggle completion of Good Habit
-  const handleToggleGoodHabit = async (habit: NotionHabitCardItem) => {
+  const handleToggleGoodHabit = async (habit: ChronoHabitCardItem) => {
     soundFx.playHabitPlus();
     const willBeCompleted = !habit.completedToday;
 
@@ -223,7 +223,7 @@ export default function NotionHabitGallery({
   };
 
   // Trigger Bad Habit slip-up
-  const handleTriggerBadHabit = async (habit: NotionHabitCardItem) => {
+  const handleTriggerBadHabit = async (habit: ChronoHabitCardItem) => {
     soundFx.playHabitMinus();
     setBadHabits((prev) =>
       prev.map((h) => (h.id === habit.id ? { ...h, strikeCount: (h.strikeCount || 0) + 1 } : h))
@@ -233,7 +233,7 @@ export default function NotionHabitGallery({
   };
 
   // Claim Reward
-  const handleClaimReward = async (reward: NotionRewardCardItem) => {
+  const handleClaimReward = async (reward: ChronoRewardCardItem) => {
     if (userGold < reward.goldCost && userXp < reward.xpCost) {
       soundFx.play("faint");
       spawnCombatText(`Need ${reward.goldCost} Gold or ${reward.xpCost} XP!`, "damage");
@@ -377,7 +377,7 @@ export default function NotionHabitGallery({
             <div className="w-10 h-10 rounded-xl bg-stone-800/80 group-hover:bg-amber-500/20 border border-stone-700 group-hover:border-amber-500/40 flex items-center justify-center text-stone-400 group-hover:text-amber-400 transition-colors">
               <Plus className="w-5 h-5" />
             </div>
-            <span className="text-xs font-bold font-mono">+ New page</span>
+            <span className="text-xs font-bold font-mono">+ Add Habit</span>
           </button>
         </div>
       </div>
@@ -491,7 +491,7 @@ export default function NotionHabitGallery({
             <div className="w-10 h-10 rounded-xl bg-stone-800/80 group-hover:bg-rose-500/20 border border-stone-700 group-hover:border-rose-500/40 flex items-center justify-center text-stone-400 group-hover:text-rose-400 transition-colors">
               <Plus className="w-5 h-5" />
             </div>
-            <span className="text-xs font-bold font-mono">+ New page</span>
+            <span className="text-xs font-bold font-mono">+ Add Bad Habit</span>
           </button>
         </div>
       </div>
@@ -601,7 +601,7 @@ export default function NotionHabitGallery({
             <div className="w-10 h-10 rounded-xl bg-stone-800/80 group-hover:bg-amber-500/20 border border-stone-700 group-hover:border-amber-500/40 flex items-center justify-center text-stone-400 group-hover:text-amber-400 transition-colors">
               <Plus className="w-5 h-5" />
             </div>
-            <span className="text-xs font-bold font-mono">+ New page</span>
+            <span className="text-xs font-bold font-mono">+ Add Reward</span>
           </button>
         </div>
       </div>

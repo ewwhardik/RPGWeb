@@ -111,9 +111,10 @@ export async function removePendingAction(id: string): Promise<void> {
   const db = await openDB();
   if (!db) {
     try {
-      const current: OfflineAction[] = JSON.parse(
+      const raw = JSON.parse(
         localStorage.getItem("karmaraj_offline_queue") || "[]"
       );
+      const current: OfflineAction[] = Array.isArray(raw) ? raw : [];
       const filtered = current.filter((a) => a.id !== id);
       localStorage.setItem("karmaraj_offline_queue", JSON.stringify(filtered));
     } catch {}

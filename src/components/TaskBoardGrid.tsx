@@ -58,22 +58,19 @@ export function parseChecklistItems(raw: unknown): SubtaskChecklistItem[] {
   if (!raw) return [];
   let parsed: unknown = raw;
 
-  if (typeof raw === "string") {
-    const trimmed = raw.trim();
-    if (!trimmed || trimmed === "" || trimmed === "null" || trimmed === "undefined") {
+  let attempts = 0;
+  while (typeof parsed === "string" && attempts < 5) {
+    attempts++;
+    const trimmed = parsed.trim();
+    if (!trimmed || trimmed === "null" || trimmed === "undefined" || trimmed === "[]") {
       return [];
     }
     try {
-      parsed = JSON.parse(trimmed);
-      if (typeof parsed === "string") {
-        try {
-          parsed = JSON.parse(parsed);
-        } catch {
-          // ignore nested parse failure
-        }
-      }
+      const next = JSON.parse(trimmed);
+      if (next === parsed) break;
+      parsed = next;
     } catch {
-      return [];
+      break;
     }
   }
 

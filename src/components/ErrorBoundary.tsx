@@ -28,7 +28,15 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReload = () => {
-    window.location.reload();
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("karmaraj_offline_queue");
+      }
+    } catch {}
+    this.setState({ hasError: false, error: null });
+    if (typeof window !== "undefined") {
+      window.location.href = window.location.pathname;
+    }
   };
 
   render() {

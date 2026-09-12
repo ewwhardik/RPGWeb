@@ -49,7 +49,7 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
               </div>
               <div>
                 <h3 className="text-sm font-bold font-title text-stone-100">Karmaraj Docs</h3>
-                <p className="text-[10px] font-mono text-stone-400">v2.0 • Notion Edition</p>
+                <p className="text-[10px] font-mono text-stone-400">v2.0 • Grandmaster Edition</p>
               </div>
             </div>
 
@@ -330,7 +330,7 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 04 • Notion Dark RPG Framework
+                  Document 04 • Chrono Focus & Productivity Architecture
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Productivity Galleries & Pomodoro Chamber
@@ -339,7 +339,7 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
 
               <div className="space-y-3 text-xs text-stone-300 leading-relaxed">
                 <p>
-                  Inspired by Notion&apos;s modular workspace, Karmaraj provides pixel art gallery views that visually elevate your daily routine into collectible art.
+                  Architected as a modular dark fantasy productivity workspace by Hardik (Sai Ram Dash), Karmaraj provides pixel art gallery views that visually elevate your daily routine into collectible art.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800">
@@ -470,7 +470,7 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                   <strong>Karmaraj: The Life RPG</strong> was conceptualized, architected, and engineered from scratch by <strong>Hardik (Sai Ram Dash)</strong>.
                 </p>
                 <p className="text-xs text-stone-400 leading-relaxed">
-                  Every component—from the Next.js 16 Turbopack pipeline, the Three.js reactive anatomical diorama, the Web Audio classical Tanpura synthesizer, the procedural mythic boss raid AI, to the Notion productivity suite—was crafted to make human self-improvement engaging and indelible.
+                  Every component—from the Next.js 16 Turbopack pipeline, the Three.js reactive anatomical diorama, the Web Audio classical Tanpura synthesizer, the procedural mythic boss raid AI, to the Chrono Focus productivity suite—was crafted to make human self-improvement engaging and indelible.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3 pt-2">

@@ -152,7 +152,11 @@ export async function POST(req: Request) {
         repeatDays: taskType === "DAILY" ? repeatDays : null,
         completedToday: false,
         streak: 0,
-        checklist: checklist ? JSON.stringify(checklist) : null,
+        checklist: checklist
+          ? typeof checklist === "string"
+            ? checklist
+            : JSON.stringify(checklist)
+          : null,
         dueDate: dueDate ? new Date(dueDate) : null,
         cost: taskType === "REWARD" ? Number(cost || 20) : null,
         status: "TODO",

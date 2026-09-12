@@ -54,7 +54,7 @@ const GUIDE_CHAPTERS: GuideChapter[] = [
     simpleExplanation: [
       "Good Habits (Deep Work, Exercise, Healthy Eating) give you continuous positive dopamine, granting XP and Gold on every completion.",
       "Bad Habits (Doomscrolling, Fast Food, Procrastination) represent hazards. Clicking them penalizes your Health (HP) and fuels Guild Boss Rage.",
-      "You can view habits in both the Classic 4-Column Board and the Notion Pixel Art Gallery!",
+      "You can view habits in both the Classic 4-Column Board and the Chrono Pixel Art Gallery!",
     ],
     proTip: "If you resist a bad craving, give yourself a mental high five—your avatar stays at full vitality!",
   },
@@ -78,7 +78,7 @@ const GUIDE_CHAPTERS: GuideChapter[] = [
     icon: Clock,
     accentColor: "text-orange-400 bg-orange-500/10 border-orange-500/30",
     simpleExplanation: [
-      "Located in the Notion Sidebar, the Pomodoro timer breaks your work into 25-minute focus intervals followed by 5-minute restorative breaks.",
+      "Located in the Chrono Focus Sidebar, the Pomodoro timer breaks your work into 25-minute focus intervals followed by 5-minute restorative breaks.",
       "When the 25-minute timer finishes, you hear an audio celebration and automatically receive +35 XP and +15 Gold!",
       "It converts intangible work sessions into tangible quest rewards.",
     ],

@@ -17,7 +17,7 @@ import {
 import { soundFx } from "@/lib/audio";
 import { spawnCombatText } from "./FloatingCombatText";
 
-interface NotionStatusSidebarProps {
+export interface ChronoStatusSidebarProps {
   user: {
     username: string;
     level: number;
@@ -30,12 +30,12 @@ interface NotionStatusSidebarProps {
   onPomodoroReward?: (xpReward: number, goldReward: number) => void;
 }
 
-export default function NotionStatusSidebar({
+export default function ChronoStatusSidebar({
   user,
   activeSection,
   onSelectSection,
   onPomodoroReward,
-}: NotionStatusSidebarProps) {
+}: ChronoStatusSidebarProps) {
   // Pomodoro State
   const [timerMode, setTimerMode] = useState<"POMODORO" | "SHORT_BREAK" | "LONG_BREAK">("POMODORO");
   const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
@@ -308,9 +308,9 @@ export default function NotionStatusSidebar({
         <nav className="flex flex-col gap-1 text-xs">
           <button
             type="button"
-            onClick={() => onSelectSection("notion-habits")}
+            onClick={() => onSelectSection("chrono-habits")}
             className={`flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all font-medium text-left ${
-              activeSection === "notion-habits"
+              activeSection === "chrono-habits"
                 ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
                 : "text-stone-300 hover:bg-stone-800/60 hover:text-white"
             }`}
@@ -321,9 +321,9 @@ export default function NotionStatusSidebar({
 
           <button
             type="button"
-            onClick={() => onSelectSection("notion-bad-habits")}
+            onClick={() => onSelectSection("chrono-bad-habits")}
             className={`flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all font-medium text-left ${
-              activeSection === "notion-bad-habits"
+              activeSection === "chrono-bad-habits"
                 ? "bg-rose-500/15 text-rose-300 border border-rose-500/30"
                 : "text-stone-300 hover:bg-stone-800/60 hover:text-white"
             }`}
@@ -334,9 +334,9 @@ export default function NotionStatusSidebar({
 
           <button
             type="button"
-            onClick={() => onSelectSection("notion-rewards")}
+            onClick={() => onSelectSection("chrono-rewards")}
             className={`flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all font-medium text-left ${
-              activeSection === "notion-rewards"
+              activeSection === "chrono-rewards"
                 ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
                 : "text-stone-300 hover:bg-stone-800/60 hover:text-white"
             }`}

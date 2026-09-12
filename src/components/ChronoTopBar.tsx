@@ -44,7 +44,7 @@ export function getWeatherCondition(code: number): {
   return { label: "fair", icon: Sun, color: "text-amber-400" };
 }
 
-export default function NotionTopBar() {
+export default function ChronoTopBar() {
   const [time, setTime] = useState<Date | null>(null);
   const [tempUnit, setTempUnit] = useState<"F" | "C">("F");
 

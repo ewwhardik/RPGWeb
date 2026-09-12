@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Karmaraj: The Life RPG universe architected and built by Hardik (Sai Ram Dash).",
   "author": "Hardik (Sai Ram Dash)",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
