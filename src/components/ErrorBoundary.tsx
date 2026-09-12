@@ -39,7 +39,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-[360px] flex items-center justify-center p-6">
-          <div className="max-w-md w-full rpg-panel border border-red-800/80 bg-[#121822] p-6 text-center shadow-2xl">
+          <div className="max-w-md w-full rpg-panel border border-red-800/80 bg-card p-6 text-center shadow-2xl">
             <div className="w-14 h-14 rounded-full bg-red-950/60 border border-red-500/50 flex items-center justify-center text-red-400 mx-auto mb-4">
               <AlertTriangle className="w-7 h-7" />
             </div>
@@ -48,11 +48,11 @@ export default class ErrorBoundary extends Component<Props, State> {
               RUNTIME HAZARD DETECTED
             </div>
 
-            <h3 className="text-base font-bold text-slate-100 mb-1">
+            <h3 className="text-base font-bold text-foreground mb-1">
               The Bureaucracy Collapsed Into a Null Void
             </h3>
 
-            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
               A rogue bug chewed through the tavern floorboards. Your character progress is
               persisted safely in the database archives.
             </p>

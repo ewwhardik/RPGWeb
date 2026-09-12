@@ -224,6 +224,18 @@ export default function DashboardPage() {
   }, []);
 
   async function handleQuestComplete(id: string) {
+    // Optimistic UI Update
+    
+    // Find the quest to estimate rewards
+    const targetQuest = quests.find(q => q.id === id);
+    const estXp = targetQuest?.xpReward || 50;
+    const estGold = targetQuest?.goldReward || 15;
+
+    setQuests((prev) => prev.filter((q) => q.id !== id));
+    if (user) {
+      setUser({ ...user, xp: user.xp + estXp, gold: user.gold + estGold });
+    }
+
     try {
       const res = await fetch(`/api/quests/${id}`, {
         method: "PATCH",
@@ -254,6 +266,7 @@ export default function DashboardPage() {
             level: data.newLevel,
             title: data.newTitle,
           });
+          soundFx.playLevelUp();
         }
 
         if (data.partyRaid) {
