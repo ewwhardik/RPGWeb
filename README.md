@@ -136,13 +136,20 @@ By fusing modern software architecture—**Next.js 16 Turbopack**, **React 19**,
 
 ### 19. Phase 7: Chrono Focus Studio & Live Atmospheric Chronos
 - **Minimalist Analog & Digital Chronometer**: Pure SVG analog clock with rotating hour, minute, and second hands, paired with digital 24h readout.
-- **Geolocation Weather Engine via Open-Meteo**: Accesses user browser geolocation coordinates to fetch real-time ambient temperature, WMO weather conditions, and an interactive 7-day forecast strip with °C/°F toggle.
+- **Atmospheric Weather Engine via Open-Meteo**: Anchored by default to **Bhubaneswar, Odisha, India** ($20.2961^\circ\text{ N}, 85.8245^\circ\text{ E}$), with automated browser geolocation override. Fetches real-time ambient temperature, WMO weather codes, and an interactive 7-day meteorological forecast strip with instantaneous °C/°F toggle.
 - **Elapsed Life Progression Bars**: Real-time visual progress trackers for Year %, Month %, Week %, and Day % elapsed to cultivate memento mori urgency.
 - **Chrono RPG Studio with Pixel Art Card Covers**: Dedicated views for Good Habits, Bad Habit penalties, and Custom Rewards featuring rich pixel art covers matching custom dark aesthetics.
 - **Pomodoro Deep Focus Chamber**: Built-in 25-minute focus timer with audio chimes granting +35 XP and +15 Gold on session completion.
-- **Real Progress & Analytics Graphs**: Interactive SVG Area & Line charts plotting 14/30-day XP velocity with hover tooltips, 7-day weekly completion rates, and 6-attribute Vedic balance.
-- **Instant Demo Universe Hydration**: One-click demo universe loading Level 18 Grand Paladin data with rich habits, dailies, checklist subtasks, custom rewards, and boss raid history.
-- **Interactive Step-by-Step Guide & Comprehensive Documentation**: 6-chapter guided walkthrough for newcomers and an interactive documentation modal detailing all architecture, game math, and author credits.
+- **Real Analytics & Telemetry Engine (7 Interactive SVG Graphs)**:
+  1. *14-Day Velocity Area Curve*: Cubic spline plotting daily XP gains against cumulative velocity with hover markers.
+  2. *7-Day Habit Completion Matrix*: Weekly consistency percentages and bar volumes across all 4 columns.
+  3. *Hexagonal Vedic Spider Radar*: 6-axis SVG polygon visualizing balance across Strength, Intellect, Vitality, Dexterity, Charisma, and Sanity.
+  4. *Purushartha 4-Pillar Wheel*: Quadratic Bezier telemetry monitoring Dharma, Artha, Kama, and Moksha.
+  5. *30-Day Growth Trajectory*: Linear regression trendline measuring sustained momentum.
+  6. *Weekly Focus Hours vs Quests*: Dual-metric comparative chart evaluating time spent versus tasks completed.
+  7. *Circadian Focus Peak Histogram*: 24-hour distribution analyzing peak productivity intervals.
+- **Instant Demo Universe Hydration**: One-click demo universe loading Level 18 Grand Paladin data with rich habits, dailies, checklist subtasks, custom rewards, 30 days of real activity logs, and boss raid history.
+- **Interactive Step-by-Step Guide & Comprehensive Documentation**: 6-chapter guided walkthrough for newcomers and a 10-chapter documentation modal detailing all architecture, game math, free deployment guides, and author credits.
 
 ---
 
@@ -264,6 +271,73 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npx vitest run
 npm run lint
 npm run build
+```
+
+---
+
+## 🚀 100% Free Hosting & Deployment Guide (Zero Cost Forever)
+
+Karmaraj is engineered to run seamlessly on **100% free cloud tiers** without requiring a credit card or incurring any recurring fees. Below are the two recommended paths:
+
+### 🌟 Option 1: Vercel + Neon Serverless PostgreSQL (Recommended & Fastest)
+* **Hosting Cost**: **$0.00 / month forever**
+* **Front-End & API**: **Vercel Hobby Tier** (Zero configuration, global edge CDN, automatic HTTPS/SSL, and automatic CI/CD git pushes).
+* **Database**: **Neon.tech Free Tier** (0.5 GB serverless PostgreSQL storage, instant branching, connection pooling). Alternatively, **Supabase** (500 MB free PostgreSQL).
+
+#### Step-by-Step Deployment:
+1. **Set Up Free Cloud Database**:
+   - Create a free account at [https://neon.tech](https://neon.tech) (or [https://supabase.com](https://supabase.com)).
+   - Create a new project named `karmaraj-db`.
+   - Copy the generated `DATABASE_URL` (format: `postgres://user:password@ep-xyz.neon.tech/neondb?sslmode=require`).
+
+2. **Push PostgreSQL Schema**:
+   In your local repository, run:
+   ```bash
+   npm run db:push:pg
+   ```
+   *(Optional)* Seed initial quest catalog and classes:
+   ```bash
+   npm run db:seed
+   ```
+
+3. **Deploy on Vercel**:
+   - Sign in to [https://vercel.com](https://vercel.com) using your GitHub account.
+   - Click **"Add New Project"** and select `ewwhardik/RPGWeb`.
+   - In the **Environment Variables** section, enter:
+     - `DATABASE_URL` = *(Your Neon/Supabase PostgreSQL connection string)*
+     - `JWT_SECRET` = *(Generate any 32+ character random string, e.g. `karmaraj_v2_ultra_secret_key_2026`)*
+     - `NEXT_PUBLIC_APP_URL` = `https://your-project-name.vercel.app`
+   - In **Build & Output Settings**:
+     - Build Command: `npm run build:pg` (or `npx prisma generate --schema=prisma/schema.postgresql.prisma && next build`)
+   - Click **Deploy**. Your live production instance will be ready in under 90 seconds!
+
+---
+
+### 🛡️ Option 2: Render.com (Web Service + Managed PostgreSQL)
+* **Hosting Cost**: **$0.00 / month free tier**
+* **Architecture**: Persistent Node.js web server with free cloud PostgreSQL.
+
+#### Step-by-Step Deployment:
+1. Sign up at [https://render.com](https://render.com).
+2. Click **New +** $\rightarrow$ **PostgreSQL** to spin up a free PostgreSQL database. Copy the **Internal Database URL**.
+3. Click **New +** $\rightarrow$ **Web Service** $\rightarrow$ connect your GitHub repo `ewwhardik/RPGWeb`.
+4. Configure Settings:
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install --legacy-peer-deps && npm run build`
+   - **Start Command**: `npm start`
+5. Under **Environment Variables**, add:
+   - `DATABASE_URL` = *(Your Render PostgreSQL Internal URL)*
+   - `JWT_SECRET` = `karmaraj_super_secret_jwt_key_2026`
+   - `NEXT_PUBLIC_APP_URL` = `https://karmaraj-app.onrender.com`
+6. Click **Create Web Service**.
+
+---
+
+### 🐳 Option 3: Self-Hosting with Docker (Local or Free VM)
+If you prefer running a single self-contained container with the built-in SQLite database:
+```bash
+docker build -t karmaraj-rpg .
+docker run -p 3000:3000 -v karmaraj-data:/app/prisma karmaraj-rpg
 ```
 
 ---

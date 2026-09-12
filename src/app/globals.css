@@ -472,3 +472,23 @@ body {
   animation: combat-float 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Floating Breathing Animation for Rounded Bubble Header Dock */
+@keyframes header-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3.5px);
+  }
+}
+
+.animate-header-float {
+  animation: header-float 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-header-float:hover {
+  animation-play-state: paused;
+}
+
+

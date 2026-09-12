@@ -15,6 +15,8 @@ import {
   Keyboard,
   Shield,
   Zap,
+  LineChart,
+  Server,
 } from "lucide-react";
 
 interface DocsModalProps {
@@ -26,9 +28,11 @@ type DocTab =
   | "manifesto"
   | "architecture"
   | "mechanics"
+  | "telemetry"
   | "productivity"
   | "weather-chronos"
   | "guild-raids"
+  | "hosting"
   | "shortcuts"
   | "author";
 
@@ -95,6 +99,19 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
 
               <button
                 type="button"
+                onClick={() => setActiveTab("telemetry")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-left whitespace-nowrap ${
+                  activeTab === "telemetry"
+                    ? "bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30"
+                    : "text-stone-400 hover:bg-stone-800/60 hover:text-stone-200"
+                }`}
+              >
+                <LineChart className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Telemetry & Real Graphs</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab("productivity")}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-left whitespace-nowrap ${
                   activeTab === "productivity"
@@ -134,6 +151,19 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
 
               <button
                 type="button"
+                onClick={() => setActiveTab("hosting")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-left whitespace-nowrap ${
+                  activeTab === "hosting"
+                    ? "bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30"
+                    : "text-stone-400 hover:bg-stone-800/60 hover:text-stone-200"
+                }`}
+              >
+                <Server className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Free Hosting & Deploy</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab("shortcuts")}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-left whitespace-nowrap ${
                   activeTab === "shortcuts"
@@ -155,7 +185,7 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                 }`}
               >
                 <Shield className="w-3.5 h-3.5 flex-shrink-0" />
-                <span>Creator & Engineering</span>
+                <span>Creator & License</span>
               </button>
             </nav>
           </div>
@@ -325,12 +355,76 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             </div>
           )}
 
-          {/* TAB 4: POMODORO & GALLERIES */}
+          {/* TAB: TELEMETRY & REAL GRAPHS */}
+          {activeTab === "telemetry" && (
+            <div className="space-y-6 max-w-3xl">
+              <div>
+                <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
+                  Document 04 • Real-Data Telemetry Engine
+                </span>
+                <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
+                  Interactive SVG Telemetry & Spider Radar
+                </h1>
+              </div>
+
+              <div className="space-y-4 text-xs text-stone-300 leading-relaxed">
+                <p>
+                  Karmaraj replaces static mock graphics with an authentic, client-rendered mathematical telemetry suite. Every graph is calculated in real time from database activity logs (`/api/logs`) and live task state.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
+                    <h4 className="font-bold text-amber-300">1. 14-Day Velocity Area Curve</h4>
+                    <p className="text-[11px] text-stone-400">
+                      Cubic spline area charts comparing daily XP velocity with cumulative trajectory, complete with interactive hover data points.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
+                    <h4 className="font-bold text-emerald-300">2. 7-Day Habit Completion Matrix</h4>
+                    <p className="text-[11px] text-stone-400">
+                      Calculates weekly success ratios and completion volumes across all four columns with dynamic SVG progress bars.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
+                    <h4 className="font-bold text-cyan-300">3. Hexagonal Vedic Spider Radar</h4>
+                    <p className="text-[11px] text-stone-400">
+                      Pure SVG 6-axis polygon visualizing equilibrium across Strength, Intellect, Vitality, Dexterity, Charisma, and Sanity.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
+                    <h4 className="font-bold text-purple-300">4. Purushartha 4-Pillar Wheel</h4>
+                    <p className="text-[11px] text-stone-400">
+                      Dharma (Duty), Artha (Productivity), Kama (Well-being), and Moksha (Mindfulness) telemetry balanced via quadratic Bezier arcs.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
+                    <h4 className="font-bold text-amber-300">5. 30-Day Growth Trajectory</h4>
+                    <p className="text-[11px] text-stone-400">
+                      Linear regression line plotting total accumulated character XP over 30 days, detecting momentum surges or stagnation.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
+                    <h4 className="font-bold text-rose-300">6. Circadian Focus Peak Hours</h4>
+                    <p className="text-[11px] text-stone-400">
+                      24-hour distribution histogram analyzing when the user completes habits to reveal optimal biological focus windows.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: POMODORO & GALLERIES */}
           {activeTab === "productivity" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 04 • Chrono Focus & Productivity Architecture
+                  Document 05 • Chrono Focus & Productivity Architecture
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Productivity Galleries & Pomodoro Chamber
@@ -359,12 +453,12 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             </div>
           )}
 
-          {/* TAB 5: WEATHER & CHRONOS */}
+          {/* TAB 6: WEATHER & CHRONOS */}
           {activeTab === "weather-chronos" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 05 • Real-World Grounding
+                  Document 06 • Real-World Grounding
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Live Weather & Life Elapsed Chronos
@@ -373,23 +467,29 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
 
               <div className="space-y-3 text-xs text-stone-300 leading-relaxed">
                 <p>
-                  Gamification fails when disconnected from physical reality. Karmaraj grounds you using live local telemetry:
+                  Gamification fails when disconnected from physical reality. Karmaraj grounds you using live local telemetry anchored to physical space and time:
                 </p>
-                <ul className="list-disc pl-5 space-y-1.5 text-[11px] text-stone-400">
-                  <li><strong>Live Geolocation:</strong> Queries Open-Meteo for real-time conditions (sunny, snow, thunderstorms, fog) and 7-day temperature trends.</li>
-                  <li><strong>Analog Clock:</strong> Real-time SVG second-hand movement calibrated to your browser clock.</li>
-                  <li><strong>Life Elapsed Meters:</strong> Real-time progress bars showing exactly how much of the Year, Month, Week, and Day has elapsed, turning abstract time into tangible urgency.</li>
+                <ul className="list-disc pl-5 space-y-2 text-[11px] text-stone-400">
+                  <li>
+                    <strong>Primary Anchor & Geolocation:</strong> Defaulted to <strong>Bhubaneswar, Odisha, India</strong> (<code className="text-amber-400 font-mono">20.2961° N, 85.8245° E</code>), the historic Temple City of India. Automatically queries Open-Meteo for real-time temperature, WMO weather codes, and 7-day meteorological forecasts with seamless °C/°F toggles.
+                  </li>
+                  <li>
+                    <strong>Precision Analog Chronometer:</strong> Real-time SVG second-hand movement calibrated to your browser clock, tracking time with authentic mechanical rhythm.
+                  </li>
+                  <li>
+                    <strong>Memento Mori Life Elapsed Meters:</strong> Real-time progress bars showing exactly how much of the Year, Month, Week, and Day has elapsed, turning abstract time into tangible urgency.
+                  </li>
                 </ul>
               </div>
             </div>
           )}
 
-          {/* TAB 6: GUILD RAIDS */}
+          {/* TAB 7: GUILD RAIDS */}
           {activeTab === "guild-raids" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 06 • Social Accountability
+                  Document 07 • Social Accountability
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Cooperative Boss Raids & Webhooks
@@ -412,12 +512,84 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             </div>
           )}
 
-          {/* TAB 7: SHORTCUTS */}
+          {/* TAB 8: FREE HOSTING & DEPLOYMENT GUIDE */}
+          {activeTab === "hosting" && (
+            <div className="space-y-6 max-w-3xl">
+              <div>
+                <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
+                  Document 08 • 100% Free Cloud Hosting
+                </span>
+                <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
+                  Zero-Cost Deployment Guide
+                </h1>
+              </div>
+
+              <div className="space-y-4 text-xs text-stone-300 leading-relaxed">
+                <p>
+                  Karmaraj is engineered to run permanently on <strong>100% FREE cloud hosting tiers</strong> without paying a single dollar.
+                </p>
+
+                {/* Option 1: Vercel + Neon */}
+                <div className="p-4 rounded-2xl bg-[#141922] border border-stone-800 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-amber-300 text-sm flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono">RECOMMENDED</span>
+                      Option 1: Vercel + Neon Serverless Postgres
+                    </h3>
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold">$0 / Month Forever</span>
+                  </div>
+
+                  <p className="text-[11px] text-stone-400">
+                    Vercel provides native Next.js 16 edge deployment, automated SSL, CI/CD, and global CDN caching on its free Hobby tier. Neon provides 0.5 GB of free serverless PostgreSQL.
+                  </p>
+
+                  <div className="bg-black/50 p-3 rounded-xl border border-stone-800 space-y-1.5 font-mono text-[11px]">
+                    <div className="text-stone-300 font-bold">Step-by-Step Vercel Setup:</div>
+                    <ol className="list-decimal pl-4 space-y-1.5 text-stone-400 font-sans text-[11px]">
+                      <li>Create a free database at <strong className="text-stone-200">neon.tech</strong> and copy your connection string (<code className="text-amber-400">postgres://...</code>).</li>
+                      <li>In your local terminal, push the PostgreSQL schema: <code className="text-amber-400">npm run db:push:pg</code>.</li>
+                      <li>Go to <strong className="text-stone-200">vercel.com</strong>, click <em>&quot;Add New Project&quot;</em> and import <code className="text-stone-200">ewwhardik/RPGWeb</code>.</li>
+                      <li>Add Environment Variables in Vercel project settings:
+                        <ul className="list-disc pl-4 mt-1 space-y-0.5 text-stone-400 font-mono text-[10px]">
+                          <li><span className="text-amber-300">DATABASE_URL</span> = your Neon PostgreSQL URL</li>
+                          <li><span className="text-amber-300">JWT_SECRET</span> = any 32+ character secret string</li>
+                          <li><span className="text-amber-300">NEXT_PUBLIC_APP_URL</span> = https://your-project.vercel.app</li>
+                        </ul>
+                      </li>
+                      <li>Click <strong>Deploy</strong>. Your application is live within 90 seconds!</li>
+                    </ol>
+                  </div>
+                </div>
+
+                {/* Option 2: Render.com */}
+                <div className="p-4 rounded-2xl bg-[#141922] border border-stone-800 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-stone-200 text-sm">
+                      Option 2: Render.com (Web Service + Managed Postgres)
+                    </h3>
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold">$0 / Month Free Tier</span>
+                  </div>
+
+                  <div className="bg-black/50 p-3 rounded-xl border border-stone-800 space-y-1.5 font-mono text-[11px]">
+                    <ol className="list-decimal pl-4 space-y-1 text-stone-400 font-sans text-[11px]">
+                      <li>Sign in at <strong className="text-stone-200">render.com</strong> and create a free PostgreSQL instance.</li>
+                      <li>Create a new <strong>Web Service</strong> connected to your GitHub repository.</li>
+                      <li>Build Command: <code className="text-amber-400">npm install --legacy-peer-deps && npm run build</code></li>
+                      <li>Start Command: <code className="text-amber-400">npm start</code></li>
+                      <li>Attach the <code className="text-amber-400">DATABASE_URL</code> and <code className="text-amber-400">JWT_SECRET</code> environment variables.</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: SHORTCUTS */}
           {activeTab === "shortcuts" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 07 • Efficiency Hotkeys
+                  Document 09 • Efficiency Hotkeys
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Keyboard Shortcuts Reference
@@ -453,12 +625,12 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             </div>
           )}
 
-          {/* TAB 8: AUTHOR & CREDITS */}
+          {/* TAB 10: AUTHOR & LICENSE */}
           {activeTab === "author" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 08 • Creator Attribution
+                  Document 10 • Creator Attribution & License
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Architected & Built by Hardik (Sai Ram Dash)
@@ -472,6 +644,16 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                 <p className="text-xs text-stone-400 leading-relaxed">
                   Every component—from the Next.js 16 Turbopack pipeline, the Three.js reactive anatomical diorama, the Web Audio classical Tanpura synthesizer, the procedural mythic boss raid AI, to the Chrono Focus productivity suite—was crafted to make human self-improvement engaging and indelible.
                 </p>
+
+                <div className="p-3.5 rounded-xl bg-black/40 border border-stone-800 space-y-1 text-xs">
+                  <div className="text-amber-300 font-bold flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Open-Source License: Apache License 2.0</span>
+                  </div>
+                  <p className="text-[11px] text-stone-400">
+                    Copyright © 2026 Hardik (Sai Ram Dash). All rights reserved. Free for personal, commercial, academic, and open-source contribution under the terms of the Apache 2.0 License.
+                  </p>
+                </div>
 
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <a

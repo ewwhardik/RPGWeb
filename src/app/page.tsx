@@ -662,11 +662,11 @@ export default function DashboardPage() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen flex flex-col bg-[#111418] text-stone-100">
-        {/* Top Tavern Navigation Bar: Apple Glass Floating Bubble Dock */}
-        <header className="site-header sticky top-0 z-40 w-full px-3 sm:px-6 lg:px-8 py-2.5 bg-[#0e1217]/50 backdrop-blur-xl border-b border-white/[0.05] transition-all duration-300">
-          <div className="w-full max-w-[1720px] mx-auto flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 rounded-2xl sm:rounded-full bg-stone-950/40 backdrop-blur-2xl border border-white/[0.12] shadow-[0_8px_32px_0_rgba(0,0,0,0.5),inset_0_1px_2px_0_rgba(255,255,255,0.15)] transition-all duration-300 hover:border-amber-500/30 hover:shadow-[0_8px_36px_0_rgba(245,158,11,0.12)]">
+        {/* Top Tavern Navigation Bar: Pure Floating Rounded Glass Pill Dock */}
+        <header className="site-header sticky top-2 sm:top-3 z-40 w-full px-2.5 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
+          <div className="site-header__inner pointer-events-auto w-full max-w-[1720px] mx-auto flex items-center justify-between gap-2 sm:gap-4 px-3.5 sm:px-6 py-2 rounded-full bg-stone-950/85 backdrop-blur-2xl border border-white/[0.14] shadow-[0_10px_35px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.2)] animate-header-float transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_12px_40px_rgba(245,158,11,0.2),inset_0_1px_2px_0_rgba(255,255,255,0.25)]">
             <div className="site-header__brand flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-600/40 flex items-center justify-center p-0.5 shadow-sm overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-600/40 flex items-center justify-center p-0.5 shadow-sm overflow-hidden flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/brand/karmaraj_emblem.png"

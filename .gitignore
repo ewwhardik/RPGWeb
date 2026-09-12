@@ -47,10 +47,13 @@ next-env.d.ts
 
 # agents & ai assistant tooling
 .agents/
+.agent/
+.gemini/
 AGENTS.md
 skills-lock.json
 .cursor/
 .claude/
 .windsurf/
 .copilot/
+
 

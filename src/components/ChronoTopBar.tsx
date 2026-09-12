@@ -46,20 +46,20 @@ export function getWeatherCondition(code: number): {
 
 export default function ChronoTopBar() {
   const [time, setTime] = useState<Date | null>(null);
-  const [tempUnit, setTempUnit] = useState<"F" | "C">("F");
+  const [tempUnit, setTempUnit] = useState<"F" | "C">("C");
 
-  // Weather state
-  const [locationName, setLocationName] = useState<string>("NEW YORK");
-  const [currentTemp, setCurrentTemp] = useState<number>(30);
-  const [currentWeatherCode, setCurrentWeatherCode] = useState<number>(71); // default snow
+  // Weather state - Defaulted to Bhubaneswar, Odisha, India (20.2961° N, 85.8245° E)
+  const [locationName, setLocationName] = useState<string>("BHUBANESWAR, ODISHA");
+  const [currentTemp, setCurrentTemp] = useState<number>(86);
+  const [currentWeatherCode, setCurrentWeatherCode] = useState<number>(0); // Clear sky
   const [forecast, setForecast] = useState<DailyForecastItem[]>([
-    { dayName: "Sat", weatherCode: 71, maxTemp: 33, minTemp: 23 },
-    { dayName: "Sun", weatherCode: 0, maxTemp: 26, minTemp: 18 },
-    { dayName: "Mon", weatherCode: 2, maxTemp: 33, minTemp: 21 },
-    { dayName: "Tue", weatherCode: 3, maxTemp: 38, minTemp: 32 },
-    { dayName: "Wed", weatherCode: 2, maxTemp: 38, minTemp: 30 },
-    { dayName: "Thu", weatherCode: 1, maxTemp: 40, minTemp: 32 },
-    { dayName: "Fri", weatherCode: 2, maxTemp: 41, minTemp: 34 },
+    { dayName: "Sat", weatherCode: 0, maxTemp: 90, minTemp: 73 },
+    { dayName: "Sun", weatherCode: 1, maxTemp: 91, minTemp: 74 },
+    { dayName: "Mon", weatherCode: 0, maxTemp: 93, minTemp: 75 },
+    { dayName: "Tue", weatherCode: 2, maxTemp: 90, minTemp: 73 },
+    { dayName: "Wed", weatherCode: 0, maxTemp: 92, minTemp: 74 },
+    { dayName: "Thu", weatherCode: 1, maxTemp: 89, minTemp: 72 },
+    { dayName: "Fri", weatherCode: 0, maxTemp: 91, minTemp: 73 },
   ]);
 
   // Sync clock every 1 second
@@ -104,8 +104,8 @@ export default function ChronoTopBar() {
             newForecast.push({
               dayName: days[d.getDay()],
               weatherCode: codes[i] ?? 0,
-              maxTemp: Math.round(maxes[i] ?? 32),
-              minTemp: Math.round(mins[i] ?? 20),
+              maxTemp: Math.round(maxes[i] ?? 90),
+              minTemp: Math.round(mins[i] ?? 73),
             });
           }
 
@@ -118,12 +118,15 @@ export default function ChronoTopBar() {
       }
     }
 
+    // Immediately fetch live weather for Bhubaneswar, Odisha, India
+    fetchWeather(20.2961, 85.8245, "BHUBANESWAR, ODISHA");
+
     if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          let detectedCity = "LOCAL REALM";
+          let detectedCity = "BHUBANESWAR, ODISHA";
           try {
             const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             if (tz && tz.includes("/")) {
@@ -133,13 +136,13 @@ export default function ChronoTopBar() {
           fetchWeather(lat, lon, detectedCity);
         },
         () => {
-          // Geolocation permission denied or failed; fallback to New York coordinates
-          fetchWeather(40.7128, -74.006, "NEW YORK");
+          // Geolocation permission denied or failed; default fallback strictly to Bhubaneswar, Odisha
+          fetchWeather(20.2961, 85.8245, "BHUBANESWAR, ODISHA");
         },
         { timeout: 8000 }
       );
     } else {
-      fetchWeather(40.7128, -74.006, "NEW YORK");
+      fetchWeather(20.2961, 85.8245, "BHUBANESWAR, ODISHA");
     }
 
     return () => {
