@@ -14,6 +14,7 @@ jobs:
     env:
       DATABASE_URL: "file:./dev.db"
       JWT_SECRET: "ci-secret-guild-seal-key-12345678"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
     steps:
       - name: Checkout Source Code
@@ -22,14 +23,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "npm"
 
       - name: Install Node Dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Generate Prisma Client
         run: npx prisma generate
+
+      - name: Initialize Database Schema
+        run: npx prisma db push
 
       - name: Run Vitest Unit Tests
         run: npm run test
