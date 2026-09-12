@@ -33,6 +33,23 @@ export function verifyToken(token: string): TokenPayload | null {
   }
 }
 
+export async function requireAuth(req?: { cookies: { get: (name: string) => { value?: string } | undefined } }): Promise<TokenPayload | null> {
+  let token: string | undefined;
+  if (req?.cookies?.get) {
+    token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
+  }
+  if (!token) {
+    try {
+      const cookieStore = await cookies();
+      token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+    } catch {
+      // In non-cookies context
+    }
+  }
+  if (!token) return null;
+  return verifyToken(token);
+}
+
 export async function getCurrentUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;

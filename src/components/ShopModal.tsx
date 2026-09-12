@@ -172,13 +172,13 @@ export default function ShopModal({
   function getRarityStyle(rarity: string) {
     switch (rarity) {
       case "LEGENDARY":
-        return "border-amber-400 text-amber-300 bg-amber-950/30";
+        return "border-amber-400 dark:border-amber-500 text-amber-900 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/30 font-bold";
       case "RARE":
-        return "border-sky-500 text-sky-300 bg-sky-950/30";
+        return "border-sky-400 dark:border-sky-500 text-sky-900 dark:text-sky-300 bg-sky-100 dark:bg-sky-950/30 font-bold";
       case "UNCOMMON":
-        return "border-emerald-500 text-emerald-300 bg-emerald-950/30";
+        return "border-emerald-400 dark:border-emerald-500 text-emerald-900 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/30 font-bold";
       default:
-        return "border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 bg-slate-900/40";
+        return "border-stone-300 dark:border-slate-700 text-stone-700 dark:text-slate-300 bg-stone-100 dark:bg-slate-900/40 font-bold";
     }
   }
 
@@ -276,22 +276,22 @@ export default function ShopModal({
                 return (
                   <div
                     key={item.id}
-                    className={`p-3.5 rounded-lg border bg-background flex flex-col justify-between transition-all ${
+                    className={`p-3.5 rounded-lg border flex flex-col justify-between transition-all ${
                       isEquipped
-                        ? "border-emerald-500/70 bg-[#0c1815]"
+                        ? "border-emerald-500/70 bg-emerald-50/80 dark:bg-[#0c1815]"
                         : isOwned
-                        ? "border-slate-300 dark:border-slate-700"
-                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:border-slate-700"
+                        ? "border-stone-300 dark:border-slate-700 bg-card"
+                        : "border-stone-200 dark:border-slate-800 bg-card hover:border-amber-400 dark:hover:border-slate-700"
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <div className="p-2 rounded bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-400">
+                          <div className="p-2 rounded bg-amber-100 dark:bg-slate-900 border border-amber-300/60 dark:border-slate-800 text-amber-800 dark:text-amber-400">
                             <IconComponent className="w-4 h-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">{item.name}</h4>
+                            <h4 className="text-xs font-bold text-stone-900 dark:text-slate-100">{item.name}</h4>
                             <span
                               className={`text-[10px] font-semibold px-1.5 py-0.2 rounded border ${getRarityStyle(
                                 item.rarity
@@ -303,27 +303,27 @@ export default function ShopModal({
                         </div>
 
                         {!isOwned && (
-                          <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/40">
-                            <Coins className="w-3.5 h-3.5 text-amber-400" />
+                          <div className="flex items-center gap-1 text-xs font-bold text-amber-950 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800/40">
+                            <Coins className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                             <span>{item.price}g</span>
                           </div>
                         )}
                       </div>
 
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mb-1">
+                      <p className="text-[11px] text-stone-600 dark:text-slate-400 leading-snug mb-1">
                         {item.description}
                       </p>
 
-                      <p className="text-[10px] italic text-amber-200/70 leading-tight mb-2">
+                      <p className="text-[10px] italic text-stone-600 dark:text-amber-200/70 leading-tight mb-2">
                         &ldquo;{item.humorQuote}&rdquo;
                       </p>
 
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-400 mb-3">
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-800 dark:text-emerald-400 mb-3">
                         <span>
                           +{item.statBoost} {item.statType}
                         </span>
                         {item.isCursed && (
-                          <span className="text-red-400 font-semibold" title={item.curseDescription || ""}>
+                          <span className="text-red-600 dark:text-red-400 font-semibold" title={item.curseDescription || ""}>
                             (Cursed!)
                           </span>
                         )}

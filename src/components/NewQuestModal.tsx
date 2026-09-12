@@ -29,6 +29,8 @@ export interface QuestFormData {
   category: string;
   difficulty: string;
   dueDate?: string | null;
+  isRecurring?: boolean;
+  recurrenceType?: string | null;
 }
 
 interface NewQuestModalProps {
@@ -168,6 +170,8 @@ export default function NewQuestModal({
         category,
         difficulty,
         dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+        isRecurring,
+        recurrenceType: isRecurring ? recurrenceType : null,
       });
       soundFx.playClick();
       onClose();
@@ -336,35 +340,35 @@ export default function NewQuestModal({
           {/* Due Date & Recurrence Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1">
                 Deadline / Target Date
               </label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+                <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-stone-500 dark:text-slate-500" />
                 <input
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-xs text-stone-900 dark:text-slate-200 focus:outline-none focus:border-amber-600 focus:bg-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
+              <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1 flex items-center justify-between">
                 <span>Recurring Quest</span>
                 <input 
                   type="checkbox" 
                   checked={isRecurring} 
                   onChange={(e) => setIsRecurring(e.target.checked)}
-                  className="accent-amber-500 w-3 h-3"
+                  className="accent-amber-600 w-3.5 h-3.5"
                 />
               </label>
               {isRecurring && (
                 <select
                   value={recurrenceType}
                   onChange={(e) => setRecurrenceType(e.target.value)}
-                  className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 px-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-700 rounded-md py-2 px-2 text-xs text-stone-900 dark:text-slate-200 focus:outline-none focus:border-amber-600 focus:bg-white"
                 >
                   <option value="DAILY">Daily</option>
                   <option value="WEEKLY">Weekly</option>

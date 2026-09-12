@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundFx } from "@/lib/audio";
-import { X, MessageSquare, Cookie } from "lucide-react";
+import { MessageSquare, Cookie, ChevronUp, ChevronDown, Sparkles } from "lucide-react";
 
 interface DeskGoblinProps {
   gold: number;
@@ -22,14 +22,17 @@ const GOBLIN_POKES = [
 ];
 
 export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [dialogue, setDialogue] = useState(
     "Greetings, meatbag. I am Bartholomew, your court appointed procrastination goblin."
   );
   const [feeding, setFeeding] = useState(false);
+  const [isWiggling, setIsWiggling] = useState(false);
 
   function handlePoke() {
     soundFx.playClick();
+    setIsWiggling(true);
+    setTimeout(() => setIsWiggling(false), 500);
     const quote = GOBLIN_POKES[Math.floor(Math.random() * GOBLIN_POKES.length)];
     setDialogue(quote);
   }
@@ -52,6 +55,8 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
       if (res.ok) {
         setDialogue(data.message);
         onFeedSuccess(data.newGold, data.sanityGain);
+        setIsWiggling(true);
+        setTimeout(() => setIsWiggling(false), 700);
       } else {
         setDialogue(data.error || "Snack transaction aborted.");
       }
@@ -62,101 +67,110 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
     }
   }
 
-  if (!isOpen) {
-    return (
-      <motion.button
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        type="button"
-        onClick={() => {
-          soundFx.playClick();
-          setIsOpen(true);
-        }}
-        className="fixed bottom-6 right-6 z-40 bg-card border-2 border-amber-500/70 p-2.5 rounded-full shadow-2xl flex items-center gap-2 text-amber-800 dark:text-amber-400 hover:border-amber-600 transition-all"
-        title="Summon Bartholomew the Desk Goblin"
-      >
-        <span className="text-xl drop-shadow-md">👺</span>
-        <span className="text-xs font-bold font-title pr-1">Bartholomew</span>
-        <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-      </motion.button>
-    );
-  }
-
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 50, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      className="fixed bottom-6 right-6 z-40 w-80 rpg-panel border-2 border-amber-400/80 dark:border-amber-800/80 p-4 shadow-2xl rounded-2xl bg-card"
-    >
-      <div className="flex items-center justify-between pb-2.5 border-b border-stone-200 dark:border-slate-800 mb-2.5">
+    <div className="rpg-panel border border-stone-300 dark:border-amber-900/60 p-4 bg-card shadow-sm transition-all">
+      {/* Desk Goblin Header */}
+      <div className="flex items-center justify-between pb-2.5 border-b border-stone-200 dark:border-slate-800 mb-3">
         <div className="flex items-center gap-2.5">
           <motion.div
             whileTap={{ scale: 0.8, rotate: -15 }}
+            animate={isWiggling ? { rotate: [0, -15, 15, -15, 0], scale: [1, 1.25, 1.25, 1] } : {}}
+            transition={{ duration: 0.4 }}
             onClick={handlePoke}
-            className="cursor-pointer select-none text-2xl drop-shadow-md hover:scale-110 transition-transform"
+            className="cursor-pointer select-none text-2xl drop-shadow-md hover:scale-115 transition-transform"
             title="Poke Bartholomew"
           >
             👺
           </motion.div>
           <div>
-            <h4 className="text-xs font-black font-title text-amber-950 dark:text-amber-300">
-              Bartholomew
-            </h4>
-            <span className="text-[10px] text-stone-500 dark:text-slate-400">
+            <div className="flex items-center gap-1.5">
+              <h4 className="text-xs font-black font-title text-stone-900 dark:text-amber-300 tracking-wide">
+                Bartholomew
+              </h4>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+            <span className="text-[10px] font-bold text-amber-900 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.2 rounded border border-amber-300 dark:border-amber-800/60">
               Desk Goblin in Residence
             </span>
           </div>
         </div>
+
         <button
           type="button"
           onClick={() => {
             soundFx.playClick();
-            setIsOpen(false);
+            setIsCollapsed((prev) => !prev);
           }}
-          className="text-stone-400 hover:text-stone-700 dark:hover:text-slate-200 p-1 rounded-md"
-          title="Minimize Bartholomew"
+          className="p-1 rounded-md text-stone-600 hover:text-stone-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-stone-100 dark:hover:bg-slate-800 transition-colors"
+          title={isCollapsed ? "Wake Bartholomew" : "Rest Bartholomew"}
         >
-          <X className="w-4 h-4" />
+          {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
         </button>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={dialogue}
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -5 }}
-          className="p-3 bg-amber-50/90 dark:bg-[#0c121c] rounded-xl border border-amber-200 dark:border-slate-800 text-xs text-stone-800 dark:text-slate-200 mb-3 leading-relaxed relative shadow-inner font-medium"
-        >
-          <p>{dialogue}</p>
-          <div className="absolute -top-1.5 left-5 w-3 h-3 bg-amber-50/90 dark:bg-[#0c121c] border-t border-l border-amber-200 dark:border-slate-800 rotate-45" />
-        </motion.div>
+      {/* Expandable Goblin Chamber */}
+      <AnimatePresence>
+        {!isCollapsed && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-3"
+          >
+            {/* Speech Bubble with High Contrast Parchment Styling */}
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={dialogue}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="p-3 bg-amber-50/95 dark:bg-[#0c121c] rounded-xl border-2 border-amber-300/80 dark:border-amber-900/50 text-xs text-stone-900 dark:text-slate-100 leading-relaxed relative shadow-inner font-semibold"
+              >
+                <p>&ldquo;{dialogue}&rdquo;</p>
+                <div className="absolute -top-1.5 left-5 w-3 h-3 bg-amber-50/95 dark:bg-[#0c121c] border-t-2 border-l-2 border-amber-300/80 dark:border-amber-900/50 rotate-45" />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Interaction Buttons */}
+            <div className="flex items-center gap-2 pt-0.5">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                type="button"
+                onClick={handlePoke}
+                className="btn-dark text-xs py-2 px-3 flex-1 flex items-center justify-center gap-1.5 font-bold shadow-sm"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
+                <span>Poke Goblin</span>
+              </motion.button>
+              <motion.button
+                whileTap={gold >= 5 && !feeding ? { scale: 0.95 } : {}}
+                type="button"
+                onClick={handleFeed}
+                disabled={feeding || gold < 5}
+                className="btn-gold text-xs py-2 px-3 flex-1 flex items-center justify-center gap-1.5 font-bold shadow-sm"
+                title="Feeds Bartholomew for 5 Gold (+2 Sanity)"
+              >
+                <Cookie className="w-3.5 h-3.5" />
+                <span>Feed (5g)</span>
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
-      <div className="flex items-center gap-2">
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          type="button"
-          onClick={handlePoke}
-          className="btn-dark text-[11px] py-1.5 px-3 flex-1 flex items-center justify-center gap-1.5"
+      {isCollapsed && (
+        <div
+          onClick={() => {
+            soundFx.playClick();
+            setIsCollapsed(false);
+          }}
+          className="text-[11px] text-stone-600 dark:text-slate-400 cursor-pointer italic hover:text-amber-800 dark:hover:text-amber-400 transition-colors flex items-center gap-1.5"
         >
-          <MessageSquare className="w-3.5 h-3.5" />
-          <span>Poke Goblin</span>
-        </motion.button>
-        <motion.button
-          whileTap={gold >= 5 && !feeding ? { scale: 0.95 } : {}}
-          type="button"
-          onClick={handleFeed}
-          disabled={feeding || gold < 5}
-          className="btn-gold text-[11px] py-1.5 px-3 flex-1 flex items-center justify-center gap-1.5"
-          title="Feeds Bartholomew for 5 Gold (+2 Sanity)"
-        >
-          <Cookie className="w-3.5 h-3.5" />
-          <span>Feed (5g)</span>
-        </motion.button>
-      </div>
-    </motion.div>
+          <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+          <span>Bartholomew is napping under your desk blotter. Click to summon.</span>
+        </div>
+      )}
+    </div>
   );
 }

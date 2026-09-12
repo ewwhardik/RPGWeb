@@ -54,6 +54,7 @@ interface UserProfile {
   title: string;
   avatar: string;
   characterClass?: string;
+  prestigeLevel?: number;
   stats?: {
     strength: number;
     intellect: number;
@@ -475,8 +476,8 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
                   <div className="text-right hidden md:block">
                     <div className="text-xs font-bold text-slate-700 dark:text-slate-200">{user.username}</div>
-                    <div className="text-[10px] text-amber-400 font-mono">
-                      Lvl {levelInfo.level} {user.prestigeLevel > 0 && `★${user.prestigeLevel}`}
+                    <div className="text-[10px] text-amber-800 dark:text-amber-400 font-mono font-bold">
+                      Lvl {levelInfo.level} {(user.prestigeLevel ?? 0) > 0 && `★${user.prestigeLevel}`}
                     </div>
                     {levelInfo.level >= 50 && (
                       <button 
@@ -744,37 +745,35 @@ export default function DashboardPage() {
 
             {/* Right: Quirks, Desk Goblin, Mimic & Chronicle */}
             <div className="lg:col-span-4 space-y-4">
+              {user && (
+                <DeskGoblin
+                  gold={user.gold}
+                  onFeedSuccess={(newGold, sanityGain) => {
+                    setUser((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            gold: newGold,
+                            stats: {
+                              strength: prev.stats?.strength || 10,
+                              intellect: prev.stats?.intellect || 10,
+                              vitality: prev.stats?.vitality || 10,
+                              dexterity: prev.stats?.dexterity || 10,
+                              charisma: prev.stats?.charisma || 10,
+                              sanity: (prev.stats?.sanity || 10) + sanityGain,
+                            },
+                          }
+                        : null
+                    );
+                    fetchLogs();
+                  }}
+                />
+              )}
               <MimicChest onBonusGold={handleBonusGold} />
               <ActivityChronicle logs={logs} />
             </div>
           </section>
         </main>
-
-        {/* Floating Desk Goblin Mascot */}
-        {user && (
-          <DeskGoblin
-            gold={user.gold}
-            onFeedSuccess={(newGold, sanityGain) => {
-              setUser((prev) =>
-                prev
-                  ? {
-                      ...prev,
-                      gold: newGold,
-                      stats: {
-                        strength: prev.stats?.strength || 10,
-                        intellect: prev.stats?.intellect || 10,
-                        vitality: prev.stats?.vitality || 10,
-                        dexterity: prev.stats?.dexterity || 10,
-                        charisma: prev.stats?.charisma || 10,
-                        sanity: (prev.stats?.sanity || 10) + sanityGain,
-                      },
-                    }
-                  : null
-              );
-              fetchLogs();
-            }}
-          />
-        )}
 
         {/* Modals */}
         <AuthModal
@@ -875,7 +874,7 @@ export default function DashboardPage() {
 
         {/* Tactical Footer */}
         <footer className="border-t border-stone-200 dark:border-slate-800 bg-card/60 backdrop-blur-md py-4 px-4 text-center text-xs text-stone-600 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2 mt-12">
-          <div>Karmaraj. Built by Sai Ram Dash. Non-linear bureaucratic habit engine.</div>
+          <div>Karmaraj. Non-linear bureaucratic habit engine.</div>
           <button
             type="button"
             onClick={() => setIsHelpModalOpen(true)}

@@ -90,7 +90,7 @@ export default function WheelOfFateModal({
       <div className="w-full max-w-md rpg-panel border border-[#b45309]/70 bg-card p-6 shadow-2xl text-center relative">
         <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-4">
           <div className="flex items-center gap-2 text-left">
-            <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400">
+            <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 border border-amber-300 dark:border-amber-600/30">
               <Dices className="w-5 h-5" />
             </div>
             <div>

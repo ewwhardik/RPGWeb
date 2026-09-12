@@ -53,6 +53,8 @@ export const createQuestSchema = z.object({
     .string()
     .optional()
     .nullable(),
+  isRecurring: z.boolean().optional(),
+  recurrenceType: z.enum(["DAILY", "WEEKLY", "MONTHLY"]).optional().nullable(),
 });
 
 export const updateQuestActionSchema = z.object({

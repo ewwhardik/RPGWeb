@@ -92,14 +92,26 @@ export default function QuestCard({
     }
   }
 
+  function getCategoryTextClass(cat: QuestCategory) {
+    switch (cat) {
+      case "STRENGTH": return "text-red-800 dark:text-red-400";
+      case "INTELLECT": return "text-sky-800 dark:text-sky-300";
+      case "VITALITY": return "text-emerald-800 dark:text-emerald-400";
+      case "DEXTERITY": return "text-amber-800 dark:text-amber-400";
+      case "CHARISMA": return "text-amber-900 dark:text-amber-300";
+      case "SANITY": return "text-teal-800 dark:text-teal-300";
+      default: return "text-stone-800 dark:text-slate-200";
+    }
+  }
+
   function getDifficultyBadge(diff: string) {
     switch (diff) {
-      case "TRIVIAL": return "bg-slate-700/50 text-slate-500 border-slate-600/50";
-      case "EASY": return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30";
-      case "MEDIUM": return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30";
-      case "HARD": return "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30";
-      case "EPIC": return "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30 font-bold animate-pulse";
-      default: return "bg-slate-700/50 text-slate-500 border-slate-600/50";
+      case "TRIVIAL": return "bg-stone-200/80 dark:bg-slate-700/50 text-stone-800 dark:text-slate-300 border-stone-300 dark:border-slate-600/50";
+      case "EASY": return "bg-emerald-100/70 dark:bg-emerald-500/10 text-emerald-900 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/30";
+      case "MEDIUM": return "bg-amber-100/70 dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-500/30";
+      case "HARD": return "bg-orange-100/70 dark:bg-orange-500/10 text-orange-900 dark:text-orange-400 border-orange-300 dark:border-orange-500/30";
+      case "EPIC": return "bg-red-100/70 dark:bg-red-500/10 text-red-900 dark:text-red-400 border-red-300 dark:border-red-500/30 font-bold animate-pulse";
+      default: return "bg-stone-200/80 dark:bg-slate-700/50 text-stone-800 dark:text-slate-300 border-stone-300 dark:border-slate-600/50";
     }
   }
 
@@ -120,8 +132,8 @@ export default function QuestCard({
       style={{ borderLeft: `4px solid ${catInfo.color}` }}
     >
       {isDusty && (
-        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-          <Bug className="w-3 h-3 text-amber-500" />
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 text-[10px] text-amber-800 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/10 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-500/30 font-bold">
+          <Bug className="w-3 h-3 text-amber-600 dark:text-amber-500" />
           <span>Cobwebs (48h+ idle)</span>
         </div>
       )}
@@ -143,11 +155,10 @@ export default function QuestCard({
 
       <div className="flex flex-wrap items-center gap-2 mb-2.5">
         <span
-          className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-md border"
+          className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-md border ${getCategoryTextClass(category)}`}
           style={{
             borderColor: `${catInfo.color}55`,
-            backgroundColor: `${catInfo.color}15`,
-            color: catInfo.color,
+            backgroundColor: `${catInfo.color}18`,
           }}
         >
           {getCategoryIcon(category)}
