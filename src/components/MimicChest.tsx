@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundFx } from "@/lib/audio";
+import { Sparkles } from "lucide-react";
 
 interface MimicChestProps {
   onBonusGold: (amount: number) => void;
@@ -39,14 +40,18 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
   }
 
   return (
-    <div className="rpg-panel border border-amber-900/60 p-4 text-center">
+    <div className="rpg-panel border border-stone-200 dark:border-amber-900/60 p-4 text-center bg-card shadow-sm">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-bold text-amber-600 dark:text-amber-400">Suspicious Antique Chest</span>
-        <span className="text-[10px] text-slate-500">Curiosity Hazard</span>
+        <span className="text-xs font-bold font-title text-amber-950 dark:text-amber-300">
+          Suspicious Antique Chest
+        </span>
+        <span className="text-[10px] font-bold text-amber-900 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800/60 px-2 py-0.5 rounded">
+          Curiosity Hazard
+        </span>
       </div>
 
       <motion.div
-        whileHover={{ scale: 1.1, rotate: [0, -5, 5, -5, 0] }}
+        whileHover={{ scale: 1.12, rotate: [0, -6, 6, -6, 0] }}
         whileTap={{ scale: 0.9 }}
         onClick={handleClick}
         className="cursor-pointer select-none py-3 text-5xl inline-block drop-shadow-xl"
@@ -55,7 +60,7 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
         🎁
       </motion.div>
 
-      <div className="mt-2 h-16 flex items-center justify-center">
+      <div className="mt-1 h-16 flex items-center justify-center">
         <AnimatePresence mode="wait">
           {quote ? (
             <motion.p
@@ -63,7 +68,7 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
-              className="text-[11px] text-amber-700 dark:text-amber-300 leading-tight italic bg-slate-100 dark:bg-[#0b0e14] p-2 rounded border border-slate-200 dark:border-slate-800"
+              className="text-xs text-stone-800 dark:text-amber-200 leading-tight italic bg-amber-50 dark:bg-[#0c121c] p-2.5 rounded-lg border border-amber-200 dark:border-slate-800 shadow-inner font-medium"
             >
               &ldquo;{quote}&rdquo;
             </motion.p>
@@ -71,7 +76,7 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[11px] text-slate-500"
+              className="text-xs text-stone-600 dark:text-slate-400 leading-relaxed"
             >
               It seems harmless, though the wood grain appears to be breathing softly.
             </motion.p>
@@ -80,12 +85,13 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
       </div>
 
       <motion.button
-        whileTap={{ scale: 0.95 }}
+        whileTap={{ scale: 0.96 }}
         type="button"
         onClick={handleClick}
-        className="btn-dark text-[10px] py-1 px-3 mt-2 w-full"
+        className="btn-dark text-xs py-2 px-3 mt-3 w-full flex items-center justify-center gap-1.5"
       >
-        Inspect Chest Closely
+        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+        <span>Inspect Chest Closely</span>
       </motion.button>
     </div>
   );

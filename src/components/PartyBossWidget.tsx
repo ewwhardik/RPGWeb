@@ -245,10 +245,10 @@ export default function PartyBossWidget({
               setActionError("");
               setActionSuccess("");
             }}
-            className={`flex-1 text-xs py-1.5 px-3 rounded-lg border font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 text-xs py-2 px-3 rounded-lg border font-bold transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "JOIN"
-                ? "bg-amber-500/20 border-amber-500/60 text-amber-300 shadow-sm"
-                : "bg-card border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+                ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/60 text-amber-950 dark:text-amber-300 shadow-sm"
+                : "bg-card border-stone-200 dark:border-slate-800 text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:hover:text-slate-200"
             }`}
           >
             <Compass className="w-3.5 h-3.5" />
@@ -262,10 +262,10 @@ export default function PartyBossWidget({
               setActionError("");
               setActionSuccess("");
             }}
-            className={`flex-1 text-xs py-1.5 px-3 rounded-lg border font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 text-xs py-2 px-3 rounded-lg border font-bold transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "CREATE"
-                ? "bg-amber-500/20 border-amber-500/60 text-amber-300 shadow-sm"
-                : "bg-card border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+                ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/60 text-amber-950 dark:text-amber-300 shadow-sm"
+                : "bg-card border-stone-200 dark:border-slate-800 text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:hover:text-slate-200"
             }`}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -357,14 +357,14 @@ export default function PartyBossWidget({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-bold font-title text-amber-300">
+            <h3 className="text-base font-bold font-title text-amber-950 dark:text-amber-300">
               {party.name}
             </h3>
-            <span className="text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-mono">
+            <span className="text-[10px] bg-stone-100 dark:bg-slate-900 px-2 py-0.5 rounded border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-slate-300 font-mono">
               {party.members.length} {party.members.length === 1 ? "Adventurer" : "Adventurers"}
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] text-stone-500 dark:text-slate-400">
             Cooperative Boss Raid: All quest completions deal damage.
           </p>
         </div>
@@ -374,17 +374,17 @@ export default function PartyBossWidget({
           <button
             type="button"
             onClick={handleCopyCode}
-            className="text-xs py-1 px-2.5 rounded-lg bg-card border border-slate-300 dark:border-slate-700 text-amber-300 hover:border-amber-500/50 flex items-center gap-1.5 transition-colors"
+            className="text-xs py-1 px-2.5 rounded-lg bg-amber-50 dark:bg-card border border-amber-300 dark:border-slate-700 text-amber-900 dark:text-amber-300 hover:border-amber-500 flex items-center gap-1.5 transition-colors font-bold"
             title="Copy invite code to clipboard"
           >
             {copiedCode ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-mono text-[11px]">Copied!</span>
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-emerald-700 dark:text-emerald-400 font-mono text-[11px]">Copied!</span>
               </>
             ) : (
               <>
-                <Copy className="w-3.5 h-3.5 text-amber-400" />
+                <Copy className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
                 <span className="font-mono text-[11px] tracking-wider">{party.code}</span>
               </>
             )}

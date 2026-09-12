@@ -94,22 +94,22 @@ export default function WheelOfFateModal({
               <Dices className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-amber-300">Wheel of Unreasonable Fate</h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Ante: 10 Gold. Outcomes: Mostly questionable.</p>
+              <h3 className="text-base font-black font-title text-amber-950 dark:text-amber-300">Wheel of Unreasonable Fate</h3>
+              <p className="text-[11px] text-stone-500 dark:text-slate-400">Ante: 10 Gold. Outcomes: Mostly questionable.</p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
+            className="p-1 rounded-md text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:text-slate-100 hover:bg-stone-100 dark:hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorNotice && (
-          <div className="mb-4 p-2.5 bg-red-950/60 border border-red-500/50 rounded text-red-300 text-xs">
+          <div className="mb-4 p-2.5 bg-red-100 dark:bg-red-950/60 border border-red-500/50 rounded text-red-700 dark:text-red-300 text-xs font-bold">
             {errorNotice}
           </div>
         )}
@@ -117,7 +117,7 @@ export default function WheelOfFateModal({
         {/* The Visual Rotating Wheel */}
         <div className="relative w-48 h-48 mx-auto my-4 flex items-center justify-center">
           {/* Top Pointer */}
-          <div className="absolute -top-3 z-20 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-amber-400 filter drop-shadow" />
+          <div className="absolute -top-3 z-20 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[16px] border-t-amber-500 filter drop-shadow" />
 
           {/* Wheel Disc */}
           <div
@@ -130,7 +130,7 @@ export default function WheelOfFateModal({
             }}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-card border-2 border-amber-400 shadow flex items-center justify-center text-amber-300 text-xs font-black">
+              <div className="w-10 h-10 rounded-full bg-card border-2 border-amber-500 shadow flex items-center justify-center text-amber-950 dark:text-amber-300 text-xs font-black">
                 FATE
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function WheelOfFateModal({
 
         {/* Result Announcement */}
         {resultMessage && (
-          <div className="my-3 p-3 bg-amber-950/40 border border-amber-500/40 rounded-lg text-xs font-bold text-amber-200 animate-in fade-in zoom-in">
+          <div className="my-3 p-3 bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-500/40 rounded-xl text-xs font-bold text-amber-950 dark:text-amber-200 animate-in fade-in zoom-in">
             {resultMessage}
           </div>
         )}
@@ -155,8 +155,8 @@ export default function WheelOfFateModal({
             <span>{spinning ? "The wheel is spinning..." : "Spin the Wheel (10 Gold)"}</span>
           </button>
 
-          <p className="text-[10px] text-slate-500 dark:text-slate-400">
-            Current Treasury: <span className="text-amber-300 font-bold">{userGold} Gold</span>
+          <p className="text-[10px] text-stone-500 dark:text-slate-400 font-medium">
+            Current Treasury: <span className="text-amber-900 dark:text-amber-300 font-bold font-mono">{userGold} Gold</span>
           </p>
         </div>
       </div>

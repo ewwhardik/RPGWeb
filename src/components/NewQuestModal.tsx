@@ -201,24 +201,24 @@ export default function NewQuestModal({
       <div className="w-full max-w-lg rpg-panel border border-[#b45309]/60 bg-card p-6 shadow-2xl relative">
         <div className="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-700 mb-4">
           <div>
-            <h2 className="text-lg font-bold text-amber-300">
+            <h2 className="text-lg font-black font-title text-amber-950 dark:text-amber-300">
               {initialData ? "Renegotiate Quest Terms" : "Draft New Quest Scroll"}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-stone-500 dark:text-slate-400">
               Transform mundane real-world friction into virtual glory and loot.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
+            className="p-1 rounded-md text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:text-slate-100 hover:bg-stone-100 dark:hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="mb-4 p-2.5 bg-red-950/60 border border-red-500/50 rounded text-red-300 text-xs">
+          <div className="mb-4 p-2.5 bg-red-100 dark:bg-red-950/60 border border-red-500/50 rounded text-red-700 dark:text-red-300 text-xs font-bold">
             {errorMsg}
           </div>
         )}
@@ -226,12 +226,12 @@ export default function NewQuestModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Quest Title</label>
+              <label className="text-xs font-bold text-stone-700 dark:text-slate-300">Quest Title</label>
               {!initialData && (
                 <button
                   type="button"
                   onClick={pickRandomPrompt}
-                  className="flex items-center gap-1 text-[11px] text-amber-400 hover:text-amber-300 font-semibold"
+                  className="flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 hover:text-amber-800 font-bold"
                 >
                   <Lightbulb className="w-3 h-3" />
                   <span>Inspire Me</span>
@@ -244,12 +244,12 @@ export default function NewQuestModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Conquer 45 minutes on the elliptical..."
-              className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-700 rounded-md py-2 px-3 text-sm text-stone-900 dark:text-slate-100 focus:outline-none focus:border-amber-600 focus:bg-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1">
               Quest Log Notes (Optional)
             </label>
             <textarea
@@ -257,13 +257,13 @@ export default function NewQuestModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Why this must be done, or what snacks to eat after completion..."
-              className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 px-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
+              className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-700 rounded-md py-2 px-3 text-xs text-stone-900 dark:text-slate-200 focus:outline-none focus:border-amber-600 focus:bg-white"
             />
           </div>
 
           {/* Category Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1.5">
               Attribute Category
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -275,10 +275,10 @@ export default function NewQuestModal({
                     key={cat}
                     type="button"
                     onClick={() => setCategory(cat)}
-                    className={`flex items-center gap-1.5 p-2 rounded-md border text-xs font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 p-2 rounded-md border text-xs font-bold transition-all ${
                       isSelected
-                        ? "bg-amber-500/20 border-amber-500 text-amber-300"
-                        : "bg-background border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-600"
+                        ? "bg-amber-100 dark:bg-amber-500/20 border-amber-500 text-amber-950 dark:text-amber-300 shadow-sm"
+                        : "bg-stone-50 dark:bg-background border-stone-200 dark:border-slate-800 text-stone-600 dark:text-slate-400 hover:border-amber-400"
                     }`}
                   >
                     {getCategoryIcon(cat)}
@@ -291,7 +291,7 @@ export default function NewQuestModal({
 
           {/* Difficulty Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1.5">
               Difficulty Tier
             </label>
             <div className="grid grid-cols-5 gap-1.5">
@@ -304,8 +304,8 @@ export default function NewQuestModal({
                     onClick={() => setDifficulty(diff)}
                     className={`py-1.5 px-2 rounded-md border text-center text-xs font-bold transition-all ${
                       isSelected
-                        ? "bg-amber-500 text-slate-950 border-amber-400 shadow"
-                        : "bg-background border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:border-slate-700"
+                        ? "bg-amber-700 text-white dark:bg-amber-500 dark:text-slate-950 border-amber-600 dark:border-amber-400 shadow-sm"
+                        : "bg-stone-50 dark:bg-background border-stone-200 dark:border-slate-800 text-stone-600 dark:text-slate-400 hover:border-stone-300 dark:border-slate-700"
                     }`}
                   >
                     {diff}
@@ -316,18 +316,18 @@ export default function NewQuestModal({
           </div>
 
           {/* Rewards Preview Box */}
-          <div className="p-3 bg-background rounded-lg border border-amber-900/40 flex items-center justify-between text-xs">
-            <span className="text-slate-500 dark:text-slate-400 font-medium">Yield upon completion:</span>
+          <div className="p-3 bg-stone-100 dark:bg-background rounded-lg border border-amber-300/80 dark:border-amber-900/40 flex items-center justify-between text-xs shadow-inner">
+            <span className="text-stone-600 dark:text-slate-400 font-medium">Yield upon completion:</span>
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1 text-amber-400 font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
+              <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 +{currentRewards.xp} XP
               </span>
-              <span className="flex items-center gap-1 text-amber-300 font-bold">
-                <Coins className="w-3.5 h-3.5" />
+              <span className="flex items-center gap-1 text-amber-900 dark:text-amber-300 font-bold">
+                <Coins className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 +{currentRewards.gold} Gold
               </span>
-              <span className="text-emerald-400 font-bold">
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold">
                 +{currentRewards.statPoints} {CATEGORY_DETAILS[category].name}
               </span>
             </div>

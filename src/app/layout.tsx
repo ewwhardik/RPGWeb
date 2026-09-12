@@ -19,19 +19,19 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: "Karmaraj Dev Sai Ram Dash | Life RPG",
+  title: "Karmaraj | Life RPG",
   description: "The Adventurer's Bureaucracy: Turn mundane chores and real-world grinds into epic RPG progression.",
   openGraph: {
-    title: "Karmaraj Dev Sai Ram Dash",
+    title: "Karmaraj",
     description: "Level up your life by treating productivity like an RPG.",
     url: "https://rpgweb.dev",
-    siteName: "Karmaraj Dev Sai Ram Dash",
+    siteName: "Karmaraj",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Karmaraj Dev Sai Ram Dash - Turn Life Into A Game",
+        alt: "Karmaraj: Turn Life Into A Game",
       },
     ],
     locale: "en_US",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Karmaraj Dev Sai Ram Dash",
+    title: "Karmaraj",
     description: "Level up your life by treating productivity like an RPG.",
     images: ["/og-image.png"],
   },

@@ -167,24 +167,24 @@ export default function QuestCard({
       </div>
 
       <div className="mb-3.5">
-        <h3 className={`font-bold text-base leading-snug ${isCompleted ? "line-through text-slate-400" : ""}`}>
+        <h3 className={`font-bold text-base leading-snug ${isCompleted ? "line-through text-stone-400 dark:text-slate-500" : "text-stone-900 dark:text-slate-100"}`}>
           {quest.title}
         </h3>
         {quest.description && (
-          <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-stone-600 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
             {quest.description}
           </p>
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-2.5 border-t border-slate-200 dark:border-slate-800/80 mt-2">
+      <div className="flex items-center justify-between pt-2.5 border-t border-stone-200 dark:border-slate-800/80 mt-2">
         <div className="flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold" title="XP Awarded">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold" title="XP Awarded">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>+{quest.xpReward} XP</span>
           </div>
-          <div className="flex items-center gap-1 text-amber-500 dark:text-amber-300 font-bold" title="Gold Awarded">
-            <Coins className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-1 text-amber-800 dark:text-amber-300 font-bold" title="Gold Awarded">
+            <Coins className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>+{quest.goldReward} Gold</span>
           </div>
         </div>

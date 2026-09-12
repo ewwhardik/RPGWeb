@@ -72,10 +72,10 @@ export default function ClassSelectModal({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold font-title text-amber-300">
+              <h2 className="text-lg font-black font-title text-amber-950 dark:text-amber-300">
                 Class Specialization Guild
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-stone-500 dark:text-slate-400">
                 Select your RPG archetype to unlock specialized quest passives and stat multipliers.
               </p>
             </div>
@@ -84,14 +84,14 @@ export default function ClassSelectModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
+            className="p-1.5 rounded-md text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:text-slate-100 hover:bg-stone-100 dark:hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="mb-4 p-2.5 bg-red-950/60 border border-red-500/50 rounded text-red-300 text-xs">
+          <div className="mb-4 p-2.5 bg-red-100 dark:bg-red-950/60 border border-red-500/50 rounded text-red-700 dark:text-red-300 text-xs font-bold">
             {errorMsg}
           </div>
         )}
@@ -109,36 +109,33 @@ export default function ClassSelectModal({
                   soundFx.playClick();
                   setSelectedClass(cls.id);
                 }}
-                className={`p-3.5 rounded-lg border cursor-pointer select-none transition-all flex flex-col justify-between ${
+                className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? "bg-amber-950/30 border-amber-500 shadow-md scale-[1.02]"
-                    : "bg-background border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:border-slate-700"
+                    ? "bg-amber-100/80 dark:bg-amber-500/20 border-amber-500 shadow-md"
+                    : "bg-card border-stone-200 dark:border-slate-800 hover:border-amber-300 dark:hover:border-slate-700"
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-400">
+                      <div className="p-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400">
                         <Icon className="w-4 h-4" />
                       </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">{cls.name}</h4>
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400">{cls.subtitle}</span>
-                      </div>
+                      <span className="font-black text-sm font-title text-stone-900 dark:text-slate-100">{cls.name}</span>
                     </div>
 
                     {isCurrent && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800/40">
                         Active
                       </span>
                     )}
                   </div>
 
-                  <div className="p-2 rounded bg-slate-950/80 border border-slate-200 dark:border-slate-800 mb-2">
-                    <span className="text-[10px] font-bold text-amber-300 block mb-0.5">
+                  <div className="p-2 rounded-lg bg-stone-100 dark:bg-slate-950/80 border border-stone-200 dark:border-slate-800 mb-2">
+                    <span className="text-[10px] font-bold text-amber-900 dark:text-amber-300 block mb-0.5">
                       {cls.perkTitle}
                     </span>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
+                    <p className="text-[11px] text-stone-700 dark:text-slate-300 leading-snug font-medium">
                       {cls.perkDescription}
                     </p>
                   </div>

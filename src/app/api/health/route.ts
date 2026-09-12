@@ -18,7 +18,7 @@ export async function GET() {
           latencyMs,
         },
         timestamp: new Date().toISOString(),
-        service: "Karmaraj Dev Sai Ram Dash API",
+        service: "Karmaraj API",
       },
       { status: 200 }
     );

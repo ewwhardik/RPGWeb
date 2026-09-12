@@ -19,7 +19,11 @@ import {
   MessageSquare,
   Smile,
   Keyboard,
+  Sun,
+  Moon,
+  Scroll,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { calculateLevelFromTotalXp } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
 import HeroDiorama3D from "@/components/HeroDiorama3D";
@@ -97,7 +101,12 @@ export default function DashboardPage() {
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
 
+  // Theme state
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     setIsMuted(soundFx.getMuted());
     fetchCurrentUser();
   }, []);
@@ -357,34 +366,51 @@ export default function DashboardPage() {
     <ErrorBoundary>
       <div className="min-h-screen flex flex-col bg-background text-slate-800 dark:text-slate-100">
         {/* Top Apple-UI Styled Glass Bubble Navigation Bar */}
-        <header className="sticky top-0 z-30 px-4 lg:px-8 py-3 bg-background backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
+        <header className="sticky top-0 z-30 px-4 lg:px-8 py-3 bg-card/95 backdrop-blur-xl border-b border-stone-200 dark:border-slate-800 shadow-sm">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 shadow-md">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-600/40 flex items-center justify-center text-amber-700 dark:text-amber-400 shadow-sm">
                 <Shield className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-black font-title tracking-wide text-amber-300">
-                    Karmaraj Dev Sai Ram Dash
+                  <h1 className="text-xl font-black font-title tracking-wide text-amber-950 dark:text-amber-300">
+                    Karmaraj
                   </h1>
-                  <span className="wax-stamp text-[9px] py-0.2 px-1.5 border-amber-500 text-amber-400">
+                  <span className="wax-stamp text-[9px] py-0.2 px-1.5 border-amber-600 text-amber-800 dark:border-amber-500 dark:text-amber-300 font-bold">
                     LIFE RPG
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">The Adventurer&apos;s Bureaucracy</p>
+                <p className="text-[11px] text-stone-500 dark:text-slate-400">The Adventurer&apos;s Bureaucracy</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Dark / Light Mode Toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setTheme(theme === "dark" ? "light" : "dark");
+                }}
+                className="p-2 rounded-lg bg-card border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-300 transition-colors shadow-sm"
+                title={mounted && theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              >
+                {mounted && theme === "dark" ? (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-stone-700 dark:text-amber-300" />
+                )}
+              </button>
+
               {/* Audio Mute Switch */}
               <button
                 type="button"
                 onClick={handleToggleSound}
-                className="p-2 rounded-lg bg-card border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-300 transition-colors shadow"
+                className="p-2 rounded-lg bg-card border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-300 transition-colors shadow-sm"
                 title={isMuted ? "Unmute Audio SFX (M)" : "Mute Audio SFX (M)"}
               >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
+                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
               </button>
 
               {/* Keyboard Shortcuts Button */}
@@ -394,10 +420,10 @@ export default function DashboardPage() {
                   soundFx.playClick();
                   setIsHelpModalOpen(true);
                 }}
-                className="p-2 rounded-lg bg-card border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-300 transition-colors shadow"
+                className="p-2 rounded-lg bg-card border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-slate-300 hover:text-amber-700 dark:hover:text-amber-300 transition-colors shadow-sm"
                 title="Arcane Keyboard Runes (?)"
               >
-                <Keyboard className="w-4 h-4 text-amber-400" />
+                <Keyboard className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </button>
 
               {/* Wheel of Fate */}
@@ -407,7 +433,7 @@ export default function DashboardPage() {
                   soundFx.playClick();
                   setIsFateModalOpen(true);
                 }}
-                className="btn-dark text-xs py-2 px-3.5 flex items-center gap-1.5 text-amber-300"
+                className="btn-dark text-xs py-2 px-3.5 flex items-center gap-1.5"
                 title="Spin the Wheel of Unreasonable Fate"
               >
                 <Dices className="w-4 h-4 text-amber-400" />
@@ -553,15 +579,15 @@ export default function DashboardPage() {
             <div className="lg:col-span-8 space-y-4">
               {/* Filter and Action Bar */}
               <div className="rpg-panel carved-panel p-4 sm:p-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-stone-200 dark:border-slate-800">
                   <div>
-                    <h2 className="text-lg font-bold font-title text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <h2 className="text-lg font-black font-title text-amber-950 dark:text-slate-100 flex items-center gap-2">
                       <span>Active Quest Dispatch</span>
-                      <span className="text-xs bg-background px-2 py-0.5 rounded text-amber-400 border border-slate-200 dark:border-slate-800 font-mono">
+                      <span className="text-xs bg-stone-100 dark:bg-background px-2.5 py-0.5 rounded-md text-amber-900 dark:text-amber-400 border border-stone-300 dark:border-slate-800 font-mono font-bold">
                         {quests.length} Total
                       </span>
                     </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-stone-600 dark:text-slate-400 mt-0.5">
                       Vanquish real-world friction to earn gold, stamina, and attribute points.
                     </p>
                   </div>
@@ -582,7 +608,7 @@ export default function DashboardPage() {
 
                 {/* Status Tabs and Search */}
                 <div className="pt-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-                  <div className="flex items-center gap-1 bg-background p-1 rounded-lg border border-slate-200 dark:border-slate-800 overflow-x-auto">
+                  <div className="flex items-center gap-1 bg-stone-100/90 dark:bg-background p-1 rounded-lg border border-stone-200 dark:border-slate-800 overflow-x-auto">
                     {[
                       { key: "ALL", label: "All Quests" },
                       { key: "TODO", label: "In Progress" },
@@ -596,10 +622,10 @@ export default function DashboardPage() {
                           soundFx.playClick();
                           setStatusFilter(tab.key);
                         }}
-                        className={`px-3 py-1.5 text-xs font-semibold rounded whitespace-nowrap transition-colors ${
+                        className={`px-3 py-1.5 text-xs rounded-md whitespace-nowrap transition-all font-bold ${
                           statusFilter === tab.key
-                            ? "bg-amber-500 text-slate-950 font-bold"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+                            ? "bg-amber-700 dark:bg-amber-500 text-white dark:text-slate-950 shadow-sm"
+                            : "text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:hover:text-slate-200 hover:bg-stone-200/60 dark:hover:bg-slate-800/60"
                         }`}
                       >
                         {tab.label}
@@ -608,20 +634,20 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="relative flex-1 max-w-xs">
-                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
+                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-stone-500 dark:text-slate-500" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search quest scrolls..."
-                      className="w-full bg-background border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
+                      className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-800 rounded-lg py-1.5 pl-9 pr-3 text-xs text-stone-900 dark:text-slate-200 focus:outline-none focus:border-amber-600 focus:bg-white transition-colors"
                     />
                   </div>
                 </div>
 
-                {/* Consistently Color-Coded Category Filter Chips */}
+                {/* Color-Coded Category Filter Chips */}
                 <div className="flex items-center gap-1.5 pt-3.5 overflow-x-auto">
-                  <Filter className="w-3.5 h-3.5 text-slate-500 shrink-0 mr-1" />
+                  <Filter className="w-3.5 h-3.5 text-stone-500 dark:text-slate-500 shrink-0 mr-1" />
                   {categories.map((cat) => {
                     const isSelected = categoryFilter === cat.key;
                     const Icon = cat.icon;
@@ -633,15 +659,22 @@ export default function DashboardPage() {
                           soundFx.playClick();
                           setCategoryFilter(cat.key);
                         }}
-                        className="inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-full border transition-all whitespace-nowrap font-medium"
-                        style={{
-                          borderColor: isSelected ? cat.color : "#273549",
-                          backgroundColor: isSelected ? `${cat.color}25` : "#0b0e14",
-                          color: isSelected ? cat.color : "#94a3b8",
-                          fontWeight: isSelected ? 700 : 500,
-                        }}
+                        className={`inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-full border transition-all whitespace-nowrap font-bold ${
+                          isSelected
+                            ? "shadow-sm"
+                            : "bg-stone-100 text-stone-700 border-stone-300 hover:bg-stone-200 dark:bg-slate-900/90 dark:text-slate-300 dark:border-slate-800 dark:hover:border-slate-700"
+                        }`}
+                        style={
+                          isSelected
+                            ? {
+                                borderColor: cat.color,
+                                backgroundColor: `${cat.color}25`,
+                                color: cat.color,
+                              }
+                            : undefined
+                        }
                       >
-                        <Icon className="w-3 h-3" />
+                        <Icon className="w-3 h-3" style={isSelected ? { color: cat.color } : undefined} />
                         <span>{cat.label}</span>
                       </button>
                     );
@@ -655,31 +688,28 @@ export default function DashboardPage() {
                   {[1, 2, 3, 4].map((n) => (
                     <div
                       key={n}
-                      className="rpg-panel border border-slate-200 dark:border-slate-800 bg-card p-4 h-36 flex flex-col justify-between"
+                      className="rpg-panel border border-stone-200 dark:border-slate-800 bg-card p-4 h-36 flex flex-col justify-between"
                     >
                       <div className="flex gap-2">
-                        <div className="w-16 h-4 bg-slate-800 rounded" />
-                        <div className="w-12 h-4 bg-slate-800 rounded" />
+                        <div className="w-16 h-4 bg-stone-200 dark:bg-slate-800 rounded" />
+                        <div className="w-12 h-4 bg-stone-200 dark:bg-slate-800 rounded" />
                       </div>
-                      <div className="w-3/4 h-5 bg-slate-800 rounded" />
-                      <div className="w-1/2 h-3 bg-slate-800 rounded" />
+                      <div className="w-3/4 h-5 bg-stone-200 dark:bg-slate-800 rounded" />
+                      <div className="w-1/2 h-3 bg-stone-200 dark:bg-slate-800 rounded" />
                     </div>
                   ))}
                 </div>
               ) : quests.length === 0 ? (
-                /* Custom Illustrated Sleeping Desk Goblin Empty State */
-                <div className="rpg-panel border border-dashed border-slate-200 dark:border-slate-800 bg-card p-10 text-center carved-panel">
-                  <div className="relative inline-block mb-3">
-                    <span className="text-5xl select-none">👺</span>
-                    <span className="absolute -top-1 -right-4 text-xs font-mono font-bold text-amber-400 animate-bounce">
-                      Zzz...
-                    </span>
+                /* Notice Board Cleared State */
+                <div className="rpg-panel border-2 border-dashed border-stone-300 dark:border-slate-800 bg-card p-10 text-center carved-panel shadow-sm">
+                  <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-100/90 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 mb-3 mx-auto shadow-inner">
+                    <Scroll className="w-8 h-8 text-amber-800 dark:text-amber-400" />
                   </div>
-                  <h3 className="text-base font-bold font-title text-amber-300 mb-1">
-                    Bartholomew is Asleep on the Notice Board
+                  <h3 className="text-base font-black font-title text-amber-950 dark:text-amber-200 mb-1.5">
+                    Guild Notice Board is Cleared
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4 leading-relaxed">
-                    There are no quests posted under these filters. Either you have conquered
+                  <p className="text-xs text-stone-600 dark:text-slate-400 max-w-sm mx-auto mb-5 leading-relaxed font-medium">
+                    There are no active quests posted under these filters. Either you have conquered
                     every duty in the realm, or you are cleverly hiding from mortal productivity.
                   </p>
                   <button
@@ -690,7 +720,7 @@ export default function DashboardPage() {
                     }}
                     className="btn-gold text-xs py-2 px-5"
                   >
-                    Post First Quest
+                    Draft New Quest Scroll
                   </button>
                 </div>
               ) : (
@@ -844,14 +874,14 @@ export default function DashboardPage() {
         )}
 
         {/* Tactical Footer */}
-        <footer className="border-t border-slate-200 dark:border-slate-800 bg-background py-4 px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2 mt-12">
-          <div>Karmaraj Dev Sai Ram Dash. Non-linear bureaucratic habit engine.</div>
+        <footer className="border-t border-stone-200 dark:border-slate-800 bg-card/60 backdrop-blur-md py-4 px-4 text-center text-xs text-stone-600 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2 mt-12">
+          <div>Karmaraj. Built by Sai Ram Dash. Non-linear bureaucratic habit engine.</div>
           <button
             type="button"
             onClick={() => setIsHelpModalOpen(true)}
-            className="hover:text-amber-400 flex items-center gap-1.5 transition-colors font-mono text-[11px]"
+            className="hover:text-amber-700 dark:hover:text-amber-400 flex items-center gap-1.5 transition-colors font-mono text-[11px]"
           >
-            <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-300 dark:border-slate-700 text-amber-300 text-[10px]">
+            <kbd className="px-1.5 py-0.5 rounded bg-stone-200 dark:bg-slate-800 border border-stone-300 dark:border-slate-700 text-stone-800 dark:text-amber-300 text-[10px] font-bold">
               ?
             </kbd>
             <span>Arcane Runes (Shortcuts)</span>

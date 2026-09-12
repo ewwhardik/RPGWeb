@@ -12,7 +12,9 @@
   --color-gold-500: #f59e0b;
   --color-gold-600: #d97706;
   --color-gold-700: #b45309;
+  --color-gold-800: #92400e;
   --color-gold-900: #78350f;
+  --color-gold-950: #451a03;
 
   --color-emerald-400: #34d399;
   --color-emerald-500: #10b981;
@@ -22,24 +24,28 @@
   --color-crimson-400: #f87171;
   --color-crimson-500: #ef4444;
   --color-crimson-600: #dc2626;
+  --color-crimson-700: #b91c1c;
 }
 
-/* Light Mode Defaults (Playful & Clean) */
+/* Light Mode: Warm, Tactile Fantasy Tavern Parchment with Dark, Crisp Inks */
 :root {
-  --bg-surface: #f8fafc;
+  --bg-surface: #f7f5ef;
   --bg-card: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --border-card: #cbd5e1;
+  --bg-card-subtle: #faf8f2;
+  --text-primary: #1c1917;
+  --text-secondary: #44403c;
+  --text-muted: #78716c;
+  --border-card: #e2d9c8;
+  --border-card-strong: #c4b59d;
   
-  --btn-gold-bg: #f59e0b;
-  --btn-gold-border: #d97706;
-  --btn-gold-shadow: #b45309;
+  --btn-gold-bg: #d97706;
+  --btn-gold-border: #b45309;
+  --btn-gold-shadow: #78350f;
   --btn-gold-text: #ffffff;
 
-  --btn-emerald-bg: #10b981;
-  --btn-emerald-border: #059669;
-  --btn-emerald-shadow: #047857;
+  --btn-emerald-bg: #059669;
+  --btn-emerald-border: #047857;
+  --btn-emerald-shadow: #064e3b;
   --btn-emerald-text: #ffffff;
 
   --btn-dark-bg: #1e293b;
@@ -47,21 +53,24 @@
   --btn-dark-shadow: #020617;
   --btn-dark-text: #ffffff;
   
-  --btn-crimson-bg: #ef4444;
-  --btn-crimson-border: #dc2626;
-  --btn-crimson-shadow: #991b1b;
+  --btn-crimson-bg: #b91c1c;
+  --btn-crimson-border: #991b1b;
+  --btn-crimson-shadow: #7f1d1d;
   --btn-crimson-text: #ffffff;
 
-  --shadow-rpg-panel: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+  --shadow-rpg-panel: 0 4px 20px -2px rgba(44, 30, 14, 0.08), 0 0 0 1px rgba(180, 140, 75, 0.18);
 }
 
-/* Dark Mode Overrides (Tactile Obsidian) */
+/* Dark Mode: Deep Obsidian Tavern with Luminous Amber & Golden Embers */
 .dark {
   --bg-surface: #0b0e14;
   --bg-card: #121822;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
+  --bg-card-subtle: #0e141d;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
   --border-card: #28374d;
+  --border-card-strong: #3b506e;
 
   --btn-gold-bg: #f59e0b;
   --btn-gold-border: #d97706;
@@ -83,12 +92,14 @@
   --btn-crimson-shadow: #991b1b;
   --btn-crimson-text: #ffffff;
 
-  --shadow-rpg-panel: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  --shadow-rpg-panel: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
 }
 
 body {
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
 }
 
 /* 3D Gold Action Button */
@@ -103,13 +114,13 @@ body {
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   border: 1px solid var(--btn-gold-border);
-  box-shadow: 0 4px 0 var(--btn-gold-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  box-shadow: 0 4px 0 var(--btn-gold-shadow), 0 6px 12px rgba(180, 83, 9, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease, filter 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
-.btn-gold:hover { filter: brightness(1.1); }
+.btn-gold:hover { filter: brightness(1.08); }
 .btn-gold:active {
   transform: translateY(4px);
   box-shadow: 0 0 0 var(--btn-gold-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -128,13 +139,13 @@ body {
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   border: 1px solid var(--btn-emerald-border);
-  box-shadow: 0 4px 0 var(--btn-emerald-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  box-shadow: 0 4px 0 var(--btn-emerald-shadow), 0 6px 12px rgba(5, 150, 105, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease, filter 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
-.btn-emerald:hover { filter: brightness(1.1); }
+.btn-emerald:hover { filter: brightness(1.08); }
 .btn-emerald:active {
   transform: translateY(4px);
   box-shadow: 0 0 0 var(--btn-emerald-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -153,13 +164,13 @@ body {
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   border: 1px solid var(--btn-dark-border);
-  box-shadow: 0 4px 0 var(--btn-dark-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  box-shadow: 0 4px 0 var(--btn-dark-shadow), 0 6px 12px rgba(15, 23, 42, 0.2);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease, filter 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
-.btn-dark:hover { filter: brightness(1.1); }
+.btn-dark:hover { filter: brightness(1.08); }
 .btn-dark:active {
   transform: translateY(4px);
   box-shadow: 0 0 0 var(--btn-dark-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -177,12 +188,12 @@ body {
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   border: 1px solid var(--btn-crimson-border);
-  box-shadow: 0 4px 0 var(--btn-crimson-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  box-shadow: 0 4px 0 var(--btn-crimson-shadow), 0 6px 12px rgba(185, 28, 28, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease, filter 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
-.btn-crimson:hover { filter: brightness(1.1); }
+.btn-crimson:hover { filter: brightness(1.08); }
 .btn-crimson:active {
   transform: translateY(4px);
   box-shadow: 0 0 0 var(--btn-crimson-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -200,9 +211,9 @@ body {
 
 .rpg-panel-gold {
   background: var(--bg-card);
-  border: 1px solid var(--color-gold-700);
+  border: 1px solid var(--border-card-strong);
   border-radius: 0.75rem;
-  box-shadow: var(--shadow-rpg-panel), 0 0 0 1px rgba(245, 158, 11, 0.1) inset;
+  box-shadow: var(--shadow-rpg-panel), 0 0 0 1px rgba(180, 83, 9, 0.12) inset;
   position: relative;
   overflow: hidden;
 }
@@ -215,22 +226,27 @@ body {
   padding: 0.25rem 0.625rem;
   border: 2px solid #b91c1c;
   border-radius: 0.375rem;
-  color: #b91c1c;
+  color: #991b1b;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  transform: rotate(-6deg);
+  transform: rotate(-5deg);
   user-select: none;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.2);
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.05));
-  text-shadow: 0 1px 1px rgba(255,255,255,0.2);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.12), 0 3px 6px rgba(185, 28, 28, 0.25);
+  background: linear-gradient(135deg, rgba(254, 226, 226, 0.6), rgba(254, 202, 202, 0.3));
+}
+.dark .wax-stamp {
+  color: #f87171;
+  border-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(153, 27, 27, 0.4));
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 3px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* Custom Scrollbar for RPG feel */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-surface); }
-::-webkit-scrollbar-thumb { background: var(--border-card); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-gold-600); }
+::-webkit-scrollbar-thumb { background: var(--border-card-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--btn-gold-bg); }
 
 /* Display Font Styling for Titles */
 .font-title {
@@ -240,8 +256,8 @@ body {
 
 /* Diorama in a Box: Expansive Vignette Canvas */
 .diorama-box {
-  background: radial-gradient(ellipse at center, rgba(30, 48, 64, 0.15) 0%, rgba(15, 23, 34, 0.35) 55%, var(--bg-surface) 100%);
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.25), 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+  background: radial-gradient(ellipse at center, rgba(245, 238, 225, 0.8) 0%, rgba(235, 225, 208, 0.6) 60%, var(--bg-surface) 100%);
+  box-shadow: inset 0 0 30px rgba(180, 140, 75, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
   position: relative;
   border-radius: 1rem;
 }
@@ -253,7 +269,7 @@ body {
 /* Carved Material Effect with Subtle Texture */
 .carved-panel {
   background-color: var(--bg-card);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 0 rgba(255, 255, 255, 0.8);
   border: 1px solid var(--border-card);
   border-radius: 0.75rem;
 }
@@ -264,6 +280,6 @@ body {
 @keyframes xp-stripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }
 .xp-shimmer-stripes {
   background-size: 28px 28px;
-  background-image: linear-gradient(45deg, rgba(255,255,255,0.18) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.18) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.22) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.22) 75%, transparent 75%, transparent);
   animation: xp-stripes 1.2s linear infinite;
 }

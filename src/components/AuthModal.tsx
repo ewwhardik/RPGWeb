@@ -128,14 +128,14 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
         {/* Top Decorative Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-700 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-600/40 flex items-center justify-center text-amber-700 dark:text-amber-400 shadow-sm">
               <Shield className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-amber-300 tracking-wide">
+              <h2 className="text-xl font-black font-title text-amber-950 dark:text-amber-300 tracking-wide">
                 {isLogin ? "Adventurer Sign-In" : "Guild Enlistment Desk"}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-stone-500 dark:text-slate-400">
                 {isLogin
                   ? "Present your guild pass to resume your heroic duties."
                   : "Sign your name in blood (or ink) to begin earning XP."}
@@ -143,15 +143,15 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
             </div>
           </div>
 
-          <div className="flex bg-background p-1 rounded-lg border border-slate-300 dark:border-slate-700">
+          <div className="flex bg-stone-100 dark:bg-background p-1 rounded-lg border border-stone-300 dark:border-slate-700">
             <button
               type="button"
               onClick={() => {
                 setIsLogin(false);
                 setErrorMsg("");
               }}
-              className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
-                !isLogin ? "bg-amber-500 text-slate-950" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+              className={`px-3 py-1 text-xs font-bold rounded transition-all ${
+                !isLogin ? "bg-amber-700 dark:bg-amber-500 text-white dark:text-slate-950 shadow-sm" : "text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:text-slate-200"
               }`}
             >
               Enlist
@@ -162,8 +162,8 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                 setIsLogin(true);
                 setErrorMsg("");
               }}
-              className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
-                isLogin ? "bg-amber-500 text-slate-950" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+              className={`px-3 py-1 text-xs font-bold rounded transition-all ${
+                isLogin ? "bg-amber-700 dark:bg-amber-500 text-white dark:text-slate-950 shadow-sm" : "text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:text-slate-200"
               }`}
             >
               Sign In
@@ -172,8 +172,8 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
         </div>
 
         {errorMsg && (
-          <div className="mb-4 p-3 bg-red-950/60 border border-red-500/50 rounded-lg text-red-300 text-xs flex items-center gap-2">
-            <span className="font-bold text-red-400">Notice:</span> {errorMsg}
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-950/60 border border-red-500/50 rounded-lg text-red-700 dark:text-red-300 text-xs flex items-center gap-2 font-bold">
+            <span className="font-bold text-red-700 dark:text-red-400">Notice:</span> {errorMsg}
           </div>
         )}
 
@@ -181,25 +181,25 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
           {!isLogin && (
             <>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                  Heroic Name
+                <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1">
+                  Heroic Call-Sign (Username)
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+                  <User className="absolute left-3 top-2.5 w-4 h-4 text-stone-500 dark:text-slate-500" />
                   <input
                     type="text"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="e.g. Sir Clutterbane"
-                    className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                    placeholder="e.g. SirGrindALot"
+                    className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-stone-900 dark:text-slate-100 focus:outline-none focus:border-amber-600 focus:bg-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
-                  Choose Class Archetype
+                <label className="block text-xs font-bold text-stone-700 dark:text-slate-300 mb-1.5">
+                  Choose Starting Class Archetype
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                   {AVATARS.map((av) => {
@@ -212,13 +212,13 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                         onClick={() => setSelectedAvatar(av.id)}
                         className={`p-2 rounded-lg border text-center flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? "bg-amber-500/20 border-amber-500 text-amber-300 scale-105"
-                            : "bg-background border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-500"
+                            ? "bg-amber-100 dark:bg-amber-500/20 border-amber-500 text-amber-950 dark:text-amber-300 font-bold scale-105 shadow-sm"
+                            : "bg-stone-50 dark:bg-background border-stone-300 dark:border-slate-700 text-stone-600 dark:text-slate-400 hover:border-amber-400"
                         }`}
                         title={av.desc}
                       >
                         <Icon className="w-5 h-5" />
-                        <span className="text-[10px] font-medium leading-tight line-clamp-1">
+                        <span className="text-[10px] font-bold leading-tight line-clamp-1">
                           {av.name.split(" ")[0]}
                         </span>
                       </button>

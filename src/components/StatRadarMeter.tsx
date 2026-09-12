@@ -49,11 +49,11 @@ export default function StatRadarMeter({
 }: StatRadarMeterProps) {
   const statList = [
     { key: "strength", label: "Strength", val: stats.strength, icon: Dumbbell, color: "#ef4444" },
-    { key: "intellect", label: "Intellect", val: stats.intellect, icon: BookOpen, color: "#38bdf8" },
-    { key: "vitality", label: "Vitality", val: stats.vitality, icon: Heart, color: "#10b981" },
-    { key: "dexterity", label: "Dexterity", val: stats.dexterity, icon: Zap, color: "#f59e0b" },
-    { key: "charisma", label: "Charisma", val: stats.charisma, icon: MessageSquare, color: "#fbbf24" },
-    { key: "sanity", label: "Sanity", val: stats.sanity, icon: Smile, color: "#34d399" },
+    { key: "intellect", label: "Intellect", val: stats.intellect, icon: BookOpen, color: "#0284c7" },
+    { key: "vitality", label: "Vitality", val: stats.vitality, icon: Heart, color: "#059669" },
+    { key: "dexterity", label: "Dexterity", val: stats.dexterity, icon: Zap, color: "#d97706" },
+    { key: "charisma", label: "Charisma", val: stats.charisma, icon: MessageSquare, color: "#b45309" },
+    { key: "sanity", label: "Sanity", val: stats.sanity, icon: Smile, color: "#10b981" },
   ];
 
   const maxStat = Math.max(30, ...statList.map((s) => s.val));
@@ -63,23 +63,23 @@ export default function StatRadarMeter({
   function getClassIcon() {
     switch (classKey) {
       case "WARRIOR":
-        return <Axe className="w-3.5 h-3.5 text-red-400" />;
+        return <Axe className="w-3.5 h-3.5 text-red-500" />;
       case "MAGE":
-        return <Wand2 className="w-3.5 h-3.5 text-sky-400" />;
+        return <Wand2 className="w-3.5 h-3.5 text-sky-500" />;
       case "ROGUE":
-        return <Sword className="w-3.5 h-3.5 text-amber-400" />;
+        return <Sword className="w-3.5 h-3.5 text-amber-600" />;
       case "PALADIN":
-        return <Shield className="w-3.5 h-3.5 text-emerald-400" />;
+        return <Shield className="w-3.5 h-3.5 text-emerald-600" />;
     }
   }
 
   return (
-    <div className="rpg-panel carved-panel p-5 sm:p-6 flex flex-col justify-between">
+    <div className="rpg-panel carved-panel p-5 sm:p-6 flex flex-col justify-between shadow-sm">
       {/* Top Banner: Big Numbers & Distinct Type Hierarchy */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-5 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-200 dark:border-slate-800 mb-5 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400/80">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-800 dark:text-amber-400">
               Adventurer Status
             </span>
             {/* Clickable Class Specialization Badge */}
@@ -90,18 +90,18 @@ export default function StatRadarMeter({
                   soundFx.playClick();
                   onOpenClassModal();
                 }}
-                className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 border border-amber-600/50 text-amber-300 hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-slate-900 border border-amber-300 dark:border-amber-600/50 text-amber-900 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-slate-800 transition-colors shadow-sm"
                 title="Click to Switch RPG Class Specialization"
               >
                 {getClassIcon()}
                 <span>{classDef.name}</span>
-                <span className="text-amber-500 text-[9px] font-mono">(Edit)</span>
+                <span className="text-amber-700 dark:text-amber-400 text-[9px] font-mono">(Edit)</span>
               </button>
             )}
           </div>
 
           <div className="flex items-baseline gap-3">
-            <h2 className="text-2xl sm:text-3xl font-bold font-title text-amber-300">
+            <h2 className="text-2xl sm:text-3xl font-black font-title text-amber-950 dark:text-amber-300 tracking-tight">
               {levelInfo.title}
             </h2>
           </div>
@@ -110,34 +110,34 @@ export default function StatRadarMeter({
         {/* Primary Metric Badges with Big Numbers */}
         <div className="flex items-center gap-2.5">
           {/* Level Badge */}
-          <div className="bg-background border border-amber-500/40 px-3.5 py-1.5 rounded-lg text-center shadow-inner">
-            <div className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400">Level</div>
-            <div className="text-xl font-black text-amber-400 leading-none">
+          <div className="bg-card border border-amber-400/60 dark:border-amber-500/40 px-3.5 py-1.5 rounded-xl text-center shadow-sm">
+            <div className="text-[9px] uppercase font-bold text-stone-500 dark:text-slate-400">Level</div>
+            <div className="text-xl font-black text-amber-900 dark:text-amber-400 leading-none">
               {levelInfo.level}
             </div>
           </div>
 
           {/* Gold Badge */}
-          <div className="bg-background border border-amber-700/50 px-3.5 py-1.5 rounded-lg text-center shadow-inner">
-            <div className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1">
-              <Coins className="w-2.5 h-2.5 text-amber-400" />
+          <div className="bg-card border border-amber-600/60 dark:border-amber-700/50 px-3.5 py-1.5 rounded-xl text-center shadow-sm">
+            <div className="text-[9px] uppercase font-bold text-stone-500 dark:text-slate-400 flex items-center justify-center gap-1">
+              <Coins className="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" />
               <span>Treasury</span>
             </div>
-            <div className="text-xl font-black text-amber-300 leading-none">
+            <div className="text-xl font-black text-amber-900 dark:text-amber-300 leading-none">
               {gold}g
             </div>
           </div>
 
           {/* Streak Badge */}
           <div
-            className="bg-background border border-orange-700/50 px-3.5 py-1.5 rounded-lg text-center shadow-inner"
+            className="bg-card border border-orange-500/60 dark:border-orange-700/50 px-3.5 py-1.5 rounded-xl text-center shadow-sm"
             title="Consecutive Days of Activity"
           >
-            <div className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1">
-              <Flame className="w-2.5 h-2.5 text-orange-400" />
+            <div className="text-[9px] uppercase font-bold text-stone-500 dark:text-slate-400 flex items-center justify-center gap-1">
+              <Flame className="w-2.5 h-2.5 text-orange-600 dark:text-orange-400" />
               <span>Streak</span>
             </div>
-            <div className="text-xl font-black text-orange-400 leading-none">
+            <div className="text-xl font-black text-orange-800 dark:text-orange-400 leading-none">
               {streakCount}d
             </div>
           </div>
@@ -145,21 +145,21 @@ export default function StatRadarMeter({
       </div>
 
       {/* Active Class Perk Notification Callout */}
-      <div className="mb-4 px-3 py-1.5 rounded-md bg-background border border-slate-200 dark:border-slate-800 text-[11px] flex items-center justify-between">
-        <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <span className="font-bold text-amber-300">{classDef.perkTitle}:</span>
+      <div className="mb-4 px-3.5 py-2 rounded-lg bg-stone-50 dark:bg-background border border-stone-200 dark:border-slate-800 text-xs flex items-center justify-between shadow-inner">
+        <span className="text-stone-700 dark:text-slate-300 flex items-center gap-2 text-[11px]">
+          <span className="font-bold text-amber-900 dark:text-amber-300">{classDef.perkTitle}:</span>
           <span className="line-clamp-1">{classDef.perkDescription}</span>
         </span>
       </div>
 
       {/* Stat Decay Warning (if any stats decayed recently) */}
       {decayAlerts.length > 0 && (
-        <div className="mb-4 p-2.5 bg-amber-950/40 border border-amber-500/50 rounded-lg text-amber-300 text-xs flex items-start gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+        <div className="mb-4 p-3 bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-500/50 rounded-xl text-amber-950 dark:text-amber-200 text-xs flex items-start gap-2.5 shadow-sm">
+          <AlertTriangle className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <span className="font-bold">Neglect Notice:</span>
+            <span className="font-bold font-title">Neglect Notice:</span>
             {decayAlerts.map((msg, i) => (
-              <p key={i} className="text-[11px] text-amber-200/90 leading-tight">
+              <p key={i} className="text-[11px] text-amber-900 dark:text-amber-200/90 leading-tight">
                 {msg}
               </p>
             ))}
@@ -167,34 +167,34 @@ export default function StatRadarMeter({
         </div>
       )}
 
-      {/* Level XP Progress Bar with Animated Diagonal Shimmer Stripes */}
+      {/* Level XP Progress Bar */}
       <div className="mb-6">
         <div className="flex items-center justify-between text-xs mb-2">
-          <span className="text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+          <span className="text-stone-700 dark:text-slate-300 font-semibold flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>Experience Progression</span>
           </span>
-          <span className="text-amber-300 font-bold">
+          <span className="text-amber-900 dark:text-amber-300 font-bold font-mono">
             {levelInfo.currentXp} / {levelInfo.xpNeededForNextLevel} XP ({levelInfo.progressPercent}%)
           </span>
         </div>
 
-        <div className="w-full h-4 bg-background rounded-full p-0.5 border border-slate-300 dark:border-slate-700 overflow-hidden shadow-inner relative">
+        <div className="w-full h-4 bg-stone-200 dark:bg-background rounded-full p-0.5 border border-stone-300 dark:border-slate-700 overflow-hidden shadow-inner relative">
           <div
-            className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-600 via-amber-500 to-amber-300 relative shadow-md xp-shimmer-stripes"
+            className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 relative shadow-md xp-shimmer-stripes"
             style={{ width: `${levelInfo.progressPercent}%` }}
           />
         </div>
       </div>
 
-      {/* Attribute Meters with Stamina Tick Marks & Colored Glow */}
+      {/* Attribute Meters */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-[11px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+          <h4 className="text-[11px] uppercase tracking-wider font-black text-stone-600 dark:text-slate-400 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-stone-500 dark:text-slate-400" />
             <span>Character Attributes (Stamina Meters)</span>
           </h4>
-          <span className="text-[10px] text-slate-500">6 Specialized Stats</span>
+          <span className="text-[10px] text-stone-500 dark:text-slate-400">6 Specialized Stats</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -205,29 +205,28 @@ export default function StatRadarMeter({
             return (
               <div
                 key={stat.key}
-                className="bg-background border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 flex flex-col gap-1.5 hover:border-slate-300 dark:border-slate-700 transition-colors"
+                className="bg-stone-50/80 dark:bg-background border border-stone-200 dark:border-slate-800 rounded-lg p-2.5 flex flex-col gap-1.5 hover:border-amber-300 dark:hover:border-slate-700 transition-colors shadow-sm"
                 style={{
                   borderLeft: `3px solid ${stat.color}`,
                 }}
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200 font-semibold">
+                  <span className="flex items-center gap-1.5 text-stone-800 dark:text-slate-200 font-bold">
                     <Icon className="w-3.5 h-3.5" style={{ color: stat.color }} />
                     {stat.label}
                   </span>
-                  <span className="font-mono font-bold text-slate-800 dark:text-slate-100">{stat.val} PTS</span>
+                  <span className="font-mono font-bold text-stone-900 dark:text-slate-100">{stat.val} PTS</span>
                 </div>
 
-                <div className="w-full h-2.5 bg-slate-950 rounded-full border border-slate-200 dark:border-slate-800 overflow-hidden shadow-inner relative">
+                <div className="w-full h-2.5 bg-stone-200 dark:bg-slate-950 rounded-full border border-stone-300 dark:border-slate-800 overflow-hidden shadow-inner relative">
                   <div
                     className="h-full rounded-full transition-all duration-300 relative"
                     style={{
                       width: `${pct}%`,
                       backgroundColor: stat.color,
-                      boxShadow: `0 0 8px ${stat.color}66`,
+                      boxShadow: `0 0 6px ${stat.color}66`,
                     }}
                   />
-                  <div className="stamina-meter-ticks" />
                 </div>
               </div>
             );

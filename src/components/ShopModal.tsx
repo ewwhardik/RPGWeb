@@ -188,27 +188,27 @@ export default function ShopModal({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-600/40 flex items-center justify-center text-amber-700 dark:text-amber-400 shadow-sm">
               <ShoppingBag className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold font-title text-amber-300">The Grumble & Glory Bazaar</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <h2 className="text-xl font-black font-title text-amber-950 dark:text-amber-300">The Grumble & Glory Bazaar</h2>
+              <p className="text-xs text-stone-500 dark:text-slate-400">
                 Spurious relics and equipment to enhance your mortal vessel.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-amber-950/50 border border-amber-700/60 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-300">
-              <Coins className="w-4 h-4 text-amber-400" />
+            <div className="flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-950 dark:text-amber-300 shadow-sm">
+              <Coins className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>{userGold} Gold Available</span>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
+              className="p-1.5 rounded-lg text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:text-slate-100 hover:bg-stone-100 dark:hover:bg-slate-800"
             >
               <X className="w-5 h-5" />
             </button>
@@ -216,7 +216,7 @@ export default function ShopModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex px-5 pt-3 border-b border-slate-200 dark:border-slate-800 gap-4 bg-[#0d1219]">
+        <div className="flex px-5 pt-3 border-b border-stone-200 dark:border-slate-800 gap-4 bg-stone-100/70 dark:bg-[#0d1219]">
           <button
             type="button"
             onClick={() => {
@@ -225,8 +225,8 @@ export default function ShopModal({
             }}
             className={`pb-2.5 text-xs font-bold transition-colors border-b-2 ${
               activeTab === "SHOP"
-                ? "border-amber-500 text-amber-300"
-                : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+                ? "border-amber-600 dark:border-amber-500 text-amber-950 dark:text-amber-300"
+                : "border-transparent text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:text-slate-200"
             }`}
           >
             Merchant Wares ({items.length})
@@ -239,8 +239,8 @@ export default function ShopModal({
             }}
             className={`pb-2.5 text-xs font-bold transition-colors border-b-2 ${
               activeTab === "BACKPACK"
-                ? "border-amber-500 text-amber-300"
-                : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
+                ? "border-amber-600 dark:border-amber-500 text-amber-950 dark:text-amber-300"
+                : "border-transparent text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:text-slate-200"
             }`}
           >
             Your Knapsack ({items.filter((i) => i.isOwned).length})
