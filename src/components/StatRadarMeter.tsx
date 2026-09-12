@@ -73,6 +73,33 @@ export default function StatRadarMeter({
     }
   }
 
+  // Real SVG Hexagonal Spider Radar Chart
+  const radarRadius = 55;
+  const rcx = 75;
+  const rcy = 75;
+  const radarVertices = statList.map((stat, i) => {
+    const angle = -Math.PI / 2 + i * ((Math.PI * 2) / 6);
+    const ratio = Math.max(0.18, Math.min(1.0, stat.val / maxStat));
+    return {
+      x: rcx + Math.cos(angle) * radarRadius * ratio,
+      y: rcy + Math.sin(angle) * radarRadius * ratio,
+      edgeX: rcx + Math.cos(angle) * radarRadius,
+      edgeY: rcy + Math.sin(angle) * radarRadius,
+      labelX: rcx + Math.cos(angle) * (radarRadius + 14),
+      labelY: rcy + Math.sin(angle) * (radarRadius + 14),
+      ...stat,
+    };
+  });
+  const polygonPoints = radarVertices.map((v) => `${v.x},${v.y}`).join(" ");
+  const concentricRings = [0.33, 0.66, 1.0].map((r) =>
+    statList
+      .map((_, i) => {
+        const angle = -Math.PI / 2 + i * ((Math.PI * 2) / 6);
+        return `${rcx + Math.cos(angle) * radarRadius * r},${rcy + Math.sin(angle) * radarRadius * r}`;
+      })
+      .join(" ")
+  );
+
   return (
     <div className="rpg-panel carved-panel p-5 sm:p-6 flex flex-col justify-between shadow-sm">
       {/* Top Banner: Big Numbers & Distinct Type Hierarchy */}
@@ -187,50 +214,115 @@ export default function StatRadarMeter({
         </div>
       </div>
 
-      {/* Attribute Meters */}
+      {/* Attribute Meters & Real Spider Radar Grid */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="text-[11px] uppercase tracking-wider font-black text-stone-600 dark:text-slate-400 flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-stone-500 dark:text-slate-400" />
-            <span>Character Attributes (Stamina Meters)</span>
+            <span>Character Attributes & Hexagonal Radar</span>
           </h4>
           <span className="text-[10px] text-stone-500 dark:text-slate-400">6 Specialized Stats</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {statList.map((stat) => {
-            const Icon = stat.icon;
-            const pct = Math.min(100, Math.round((stat.val / maxStat) * 100));
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          {/* Hexagonal Radar Spider Chart */}
+          <div className="md:col-span-4 flex flex-col items-center justify-center p-3 rounded-xl bg-stone-50/60 dark:bg-background border border-stone-200 dark:border-slate-800 shadow-inner">
+            <svg className="w-36 h-36 select-none" viewBox="0 0 150 150">
+              <defs>
+                <linearGradient id="miniRadarGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.25" />
+                </linearGradient>
+              </defs>
 
-            return (
-              <div
-                key={stat.key}
-                className="bg-stone-50/80 dark:bg-background border border-stone-200 dark:border-slate-800 rounded-lg p-2.5 flex flex-col gap-1.5 hover:border-amber-300 dark:hover:border-slate-700 transition-colors shadow-sm"
-                style={{
-                  borderLeft: `3px solid ${stat.color}`,
-                }}
-              >
-                <div className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 text-stone-800 dark:text-slate-200 font-bold">
-                    <Icon className="w-3.5 h-3.5" style={{ color: stat.color }} />
-                    {stat.label}
-                  </span>
-                  <span className="font-mono font-bold text-stone-900 dark:text-slate-100">{stat.val} PTS</span>
-                </div>
+              {/* Concentric Rings */}
+              {concentricRings.map((ring, idx) => (
+                <polygon
+                  key={idx}
+                  points={ring}
+                  fill="transparent"
+                  stroke="#334155"
+                  strokeWidth="0.75"
+                  strokeDasharray={idx === 2 ? "none" : "2 2"}
+                />
+              ))}
 
-                <div className="w-full h-2.5 bg-stone-200 dark:bg-slate-950 rounded-full border border-stone-300 dark:border-slate-800 overflow-hidden shadow-inner relative">
-                  <div
-                    className="h-full rounded-full transition-all duration-300 relative"
-                    style={{
-                      width: `${pct}%`,
-                      backgroundColor: stat.color,
-                      boxShadow: `0 0 6px ${stat.color}66`,
-                    }}
-                  />
+              {/* Radial Axes */}
+              {radarVertices.map((v, idx) => (
+                <line
+                  key={idx}
+                  x1={rcx}
+                  y1={rcy}
+                  x2={v.edgeX}
+                  y2={v.edgeY}
+                  stroke="#1e293b"
+                  strokeWidth="0.8"
+                />
+              ))}
+
+              {/* Filled Radar Polygon */}
+              <polygon
+                points={polygonPoints}
+                fill="url(#miniRadarGrad)"
+                stroke="#f59e0b"
+                strokeWidth="1.8"
+                className="transition-all duration-300"
+              />
+
+              {/* Vertices */}
+              {radarVertices.map((v) => (
+                <circle
+                  key={v.key}
+                  cx={v.x}
+                  cy={v.y}
+                  r="3"
+                  fill={v.color}
+                  stroke="#0f172a"
+                  strokeWidth="1.5"
+                />
+              ))}
+            </svg>
+            <div className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400 mt-1">
+              Active Attribute Mesh
+            </div>
+          </div>
+
+          {/* 6 Attribute Meters */}
+          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {statList.map((stat) => {
+              const Icon = stat.icon;
+              const pct = Math.min(100, Math.round((stat.val / maxStat) * 100));
+
+              return (
+                <div
+                  key={stat.key}
+                  className="bg-stone-50/80 dark:bg-background border border-stone-200 dark:border-slate-800 rounded-lg p-2.5 flex flex-col gap-1.5 hover:border-amber-300 dark:hover:border-slate-700 transition-colors shadow-sm"
+                  style={{
+                    borderLeft: `3px solid ${stat.color}`,
+                  }}
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-stone-800 dark:text-slate-200 font-bold">
+                      <Icon className="w-3.5 h-3.5" style={{ color: stat.color }} />
+                      {stat.label}
+                    </span>
+                    <span className="font-mono font-bold text-stone-900 dark:text-slate-100">{stat.val} PTS</span>
+                  </div>
+
+                  <div className="w-full h-2.5 bg-stone-200 dark:bg-slate-950 rounded-full border border-stone-300 dark:border-slate-800 overflow-hidden shadow-inner relative">
+                    <div
+                      className="h-full rounded-full transition-all duration-300 relative"
+                      style={{
+                        width: `${pct}%`,
+                        backgroundColor: stat.color,
+                        boxShadow: `0 0 6px ${stat.color}66`,
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

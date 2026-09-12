@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Plus,
   Search,
@@ -251,7 +251,7 @@ export default function DashboardPage() {
 
   const fetchLogs = useCallback(async () => {
     try {
-      const res = await fetch("/api/logs");
+      const res = await fetch("/api/logs?limit=100");
       const data = await res.json();
       if (res.ok) {
         setLogs(data.logs || []);
@@ -275,6 +275,37 @@ export default function DashboardPage() {
 
     return () => cleanupSync();
   }, [user, fetchTasks, fetchLogs]);
+
+  // Derive real activity history from logs & completed tasks for SamsaraHeatmap
+  const realActivityHistory = useMemo(() => {
+    const map = new Map<string, { count: number; karma: number }>();
+    (logs || []).forEach((log) => {
+      if (!log.createdAt) return;
+      const d = new Date(log.createdAt);
+      if (isNaN(d.getTime())) return;
+      const dateStr = d.toISOString().split("T")[0];
+      const prev = map.get(dateStr) || { count: 0, karma: 0 };
+      prev.count += 1;
+      prev.karma += log.xpChange || 25;
+      map.set(dateStr, prev);
+    });
+
+    const todayStr = new Date().toISOString().split("T")[0];
+    const todayDailies = dailies.filter((d) => d.completedToday).length;
+    const todayTodos = todos.filter((t) => t.status === "COMPLETED").length;
+    if (todayDailies > 0 || todayTodos > 0) {
+      const prev = map.get(todayStr) || { count: 0, karma: 0 };
+      prev.count = Math.max(prev.count, todayDailies + todayTodos);
+      prev.karma = Math.max(prev.karma, (todayDailies + todayTodos) * 30);
+      map.set(todayStr, prev);
+    }
+
+    return Array.from(map.entries()).map(([date, data]) => ({
+      date,
+      count: data.count,
+      karma: data.karma,
+    }));
+  }, [logs, dailies, todos]);
 
   function handleToggleSound() {
     const nextMuted = soundFx.toggleMute();
@@ -1183,10 +1214,23 @@ export default function DashboardPage() {
           {dashboardView === "ANALYTICS" && (
             <section>
               <ProgressAnalyticsGraphs
-                level={user?.level || 1}
-                totalXp={user?.xp || 0}
-                streakCount={user?.streakCount || 1}
-                stats={user?.stats}
+                user={{
+                  id: user?.id,
+                  username: user?.username || "Traveler",
+                  level: user?.level || 1,
+                  xp: user?.xp || 0,
+                  gold: user?.gold || 0,
+                  hp: user?.hp || 50,
+                  maxHp: user?.maxHp || 50,
+                  mp: user?.mp || 50,
+                  maxMp: user?.maxMp || 50,
+                  streakCount: user?.streakCount || 1,
+                  stats: user?.stats,
+                  characterClass: user?.characterClass || "WARRIOR",
+                  title: user?.title || "Adventurer",
+                }}
+                tasks={[...habits, ...dailies, ...todos, ...rewards]}
+                logs={logs}
                 customXpHistory={DEMO_XP_HISTORY}
               />
             </section>
@@ -1293,6 +1337,7 @@ export default function DashboardPage() {
                     streakCount: user.streakCount,
                     prestigeLevel: user.prestigeLevel,
                   }}
+                  activityHistory={realActivityHistory}
                 />
               </ErrorBoundary>
             </section>

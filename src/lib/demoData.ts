@@ -337,40 +337,47 @@ export const DEMO_REWARDS = [
   },
 ];
 
-export const DEMO_LOGS = [
-  {
-    id: "log-1",
-    actionType: "CRIT_STRIKE",
-    message: "SUDARSHANA CRIT! Completed '1h Focused Deep Work' for +40 XP and +25 Gold.",
-    xpChange: 40,
-    goldChange: 25,
-    createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-  },
-  {
-    id: "log-2",
-    actionType: "POMODORO",
-    message: "🍅 POMODORO MASTERY! Completed 25m Focus Chamber for +35 XP and +15 Gold.",
-    xpChange: 35,
-    goldChange: 15,
-    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-  },
-  {
-    id: "log-3",
-    actionType: "BOSS_STRIKE",
-    message: "Inflicted 140 Raid Damage against Mahishasura of Chaos!",
-    xpChange: 15,
-    goldChange: 10,
-    createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-  },
-  {
-    id: "log-4",
-    actionType: "LEVEL_UP",
-    message: "Ascended to Level 18! Unlocked 'Grand Siddha of Karmaraj' title.",
-    xpChange: 0,
-    goldChange: 100,
-    createdAt: new Date(Date.now() - 1000 * 60 * 360).toISOString(),
-  },
-];
+function buildDemoLogs() {
+  const actions = [
+    { type: "CRIT_STRIKE", msg: "SUDARSHANA CRIT! Completed '1h Focused Deep Work'", xp: 40, gold: 25 },
+    { type: "POMODORO", msg: "🍅 POMODORO MASTERY! Completed 25m Focus Chamber", xp: 35, gold: 15 },
+    { type: "TASK_UP", msg: "Maintained 'Drink 3L Water & Hydrate' habit streak", xp: 20, gold: 10 },
+    { type: "TASK_COMPLETE", msg: "Completed To-Do 'Complete System Architecture Review'", xp: 50, gold: 30 },
+    { type: "BOSS_STRIKE", msg: "Inflicted 140 Raid Damage against Mahishasura of Chaos!", xp: 25, gold: 15 },
+    { type: "HABIT_PLUS", msg: "Completed 'Surya Namaskar (12 Rounds)' morning ritual", xp: 30, gold: 15 },
+    { type: "TASK_COMPLETE", msg: "Conquered 'Publish Open-Source Release Notes'", xp: 60, gold: 35 },
+    { type: "POMODORO", msg: "🍅 POMODORO DEEP FOCUS! Completed second chamber", xp: 35, gold: 15 },
+    { type: "TASK_UP", msg: "Finished 'Read 20 pages Vedic Philosophy'", xp: 25, gold: 12 },
+    { type: "CRIT_STRIKE", msg: "BRAHMASTRA CRIT! Crushed 'Optimize Database Queries'", xp: 75, gold: 40 },
+  ];
+
+  const now = Date.now();
+  const list = [];
+  let id = 1;
+
+  for (let day = 0; day < 30; day++) {
+    const dayBase = now - day * 24 * 60 * 60 * 1000;
+    const actionsToday = 2 + ((day * 7) % 4);
+    const hours = [9, 11, 14, 16, 20];
+    for (let a = 0; a < actionsToday; a++) {
+      const template = actions[(day * 3 + a) % actions.length];
+      const hour = hours[a % hours.length];
+      const d = new Date(dayBase);
+      d.setHours(hour, (a * 17) % 60, (a * 23) % 60);
+      list.push({
+        id: `demo-log-${id++}`,
+        actionType: template.type,
+        message: `${template.msg} for +${template.xp} XP and +${template.gold} Gold.`,
+        xpChange: template.xp,
+        goldChange: template.gold,
+        createdAt: d.toISOString(),
+      });
+    }
+  }
+  return list;
+}
+
+export const DEMO_LOGS = buildDemoLogs();
 
 export const DEMO_XP_HISTORY = [
   { date: "2026-08-30", displayDate: "Aug 30", xp: 110, tasksCompleted: 5 },
