@@ -4,13 +4,15 @@
 
 <h1 align="center">Karmaraj: The Life RPG</h1>
 <p align="center">
-  <b>Architected & Built from Scratch by Sai Ram Dash</b>
+  <b>Architected & Built from Scratch by Hardik (Sai Ram Dash)</b>
 </p>
 <p align="center">
   <i>The Cyber-Fantasy Habit Engine & Productivity Universe</i>
 </p>
 
 <p align="center">
+  <a href="https://github.com/ewwhardik/RPGWeb"><img src="https://img.shields.io/badge/GitHub-ewwhardik%2FRPGWeb-181717?style=flat-square&logo=github" alt="GitHub Repo" /></a>
+  <a href="https://www.linkedin.com/in/ewwhardik/"><img src="https://img.shields.io/badge/LinkedIn-ewwhardik-0A66C2?style=flat-square&logo=linkedin" alt="LinkedIn" /></a>
   <img src="https://img.shields.io/badge/Next.js-16.3.5-black?style=flat-square&logo=next.js" alt="Next.js 16" />
   <img src="https://img.shields.io/badge/React-19.2.8-blue?style=flat-square&logo=react" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript" alt="TypeScript" />
@@ -18,7 +20,6 @@
   <img src="https://img.shields.io/badge/Tailwind-v4-cyan?style=flat-square&logo=tailwindcss" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Prisma-6.4.1-teal?style=flat-square&logo=prisma" alt="Prisma" />
   <img src="https://img.shields.io/badge/Vitest-95%20Passed%20(100%25)-emerald?style=flat-square&logo=vitest" alt="Vitest Tests" />
-  <img src="https://img.shields.io/badge/Author-Sai%20Ram%20Dash-amber?style=flat-square" alt="Author" />
 </p>
 
 ---
@@ -217,11 +218,13 @@ npm run build
 
 ## 👤 Author & Credits
 
-- **Architect & Lead Developer**: **Sai Ram Dash**
+- **Architect & Lead Developer**: **Hardik (Sai Ram Dash)**
+- **GitHub**: [https://github.com/ewwhardik/RPGWeb](https://github.com/ewwhardik/RPGWeb)
+- **LinkedIn**: [https://www.linkedin.com/in/ewwhardik/](https://www.linkedin.com/in/ewwhardik/)
 - **Project**: **Karmaraj: The Life RPG**
-- Designed and built from scratch by **Sai Ram Dash**.
+- Designed, engineered, and maintained by **Hardik (Sai Ram Dash)**.
 
 ---
 
 ## 📜 License
-MIT License. Copyright © 2026 Sai Ram Dash. All rights reserved.
+MIT License. Copyright © 2026 Hardik (Sai Ram Dash). All rights reserved.
