@@ -153,7 +153,7 @@ export default function DashboardPage() {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
-  const [dashboardView, setDashboardView] = useState<"NOTION_STUDIO" | "CLASSIC_BOARD" | "ANALYTICS">("NOTION_STUDIO");
+  const [dashboardView, setDashboardView] = useState<"CLASSIC_BOARD" | "NOTION_STUDIO" | "ANALYTICS">("CLASSIC_BOARD");
   const [notionActiveSection, setNotionActiveSection] = useState("notion-habits");
 
   // Audio mute state
@@ -964,25 +964,9 @@ export default function DashboardPage() {
             />
           )}
 
-          {/* View Switcher: Notion Studio vs Classic Board vs Analytics */}
+          {/* View Switcher: Classic Board vs Notion Studio vs Analytics */}
           <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-white/[0.06]">
             <div className="flex items-center gap-1.5 p-1 rounded-xl bg-stone-900/80 border border-white/10 backdrop-blur-md">
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playClick();
-                  setDashboardView("NOTION_STUDIO");
-                }}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  dashboardView === "NOTION_STUDIO"
-                    ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm"
-                    : "text-stone-400 hover:text-stone-200 border border-transparent"
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Notion Dark Studio</span>
-              </button>
-
               <button
                 type="button"
                 onClick={() => {
@@ -997,6 +981,22 @@ export default function DashboardPage() {
               >
                 <LayoutGrid className="w-3.5 h-3.5 text-amber-400" />
                 <span>4-Column Quest Board</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setDashboardView("NOTION_STUDIO");
+                }}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  dashboardView === "NOTION_STUDIO"
+                    ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm"
+                    : "text-stone-400 hover:text-stone-200 border border-transparent"
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Notion Dark Studio</span>
               </button>
 
               <button

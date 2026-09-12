@@ -56,10 +56,15 @@ export interface SubtaskChecklistItem {
 
 export function parseChecklistItems(raw: unknown): SubtaskChecklistItem[] {
   if (!raw) return [];
-  let parsed = raw;
+  let parsed: unknown = raw;
+
   if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!trimmed || trimmed === "" || trimmed === "null" || trimmed === "undefined") {
+      return [];
+    }
     try {
-      parsed = JSON.parse(raw);
+      parsed = JSON.parse(trimmed);
       if (typeof parsed === "string") {
         try {
           parsed = JSON.parse(parsed);
@@ -72,17 +77,40 @@ export function parseChecklistItems(raw: unknown): SubtaskChecklistItem[] {
     }
   }
 
+  // Handle case where parsed is an object instead of array (e.g. { items: [...] } or { checklist: [...] } or numeric keys)
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+    const obj = parsed as Record<string, unknown>;
+    if (Array.isArray(obj.items)) {
+      parsed = obj.items;
+    } else if (Array.isArray(obj.checklist)) {
+      parsed = obj.checklist;
+    } else if (Array.isArray(obj.subtasks)) {
+      parsed = obj.subtasks;
+    } else {
+      const values = Object.values(obj);
+      if (values.length > 0 && values.every((v) => typeof v === "object" && v !== null)) {
+        parsed = values;
+      } else {
+        return [];
+      }
+    }
+  }
+
   if (!Array.isArray(parsed)) {
     return [];
   }
 
-  return parsed
-    .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === "object"))
-    .map((item, idx) => ({
-      id: String(item.id || `subtask-${idx}`),
-      text: String(item.text || ""),
-      completed: Boolean(item.completed),
-    }));
+  try {
+    return parsed
+      .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === "object"))
+      .map((item, idx) => ({
+        id: String(item.id || `subtask-${idx}`),
+        text: String(item.text || item.title || item.name || ""),
+        completed: Boolean(item.completed || item.done),
+      }));
+  } catch {
+    return [];
+  }
 }
 
 interface TaskBoardGridProps {
@@ -151,7 +179,8 @@ export default function TaskBoardGrid({
     task: TaskItem,
     itemIndex: number
   ) => {
-    const items = parseChecklistItems(task.checklist);
+    const rawItems = parseChecklistItems(task.checklist);
+    const items = Array.isArray(rawItems) ? [...rawItems] : [];
     if (items[itemIndex]) {
       items[itemIndex].completed = !items[itemIndex].completed;
       soundFx.play("click");
@@ -615,9 +644,12 @@ export default function TaskBoardGrid({
             filteredTodos.map((todo) => {
               const isCompleted = todo.status === "COMPLETED";
 
-              const checklistItems = parseChecklistItems(todo.checklist);
-              const completedCount = checklistItems.filter((i) => i.completed).length;
-              const hasChecklist = checklistItems.length > 0;
+              const parsedItems = parseChecklistItems(todo.checklist);
+              const checklistItems: SubtaskChecklistItem[] = Array.isArray(parsedItems) ? parsedItems : [];
+              const completedCount = Array.isArray(checklistItems)
+                ? checklistItems.filter((i) => Boolean(i && i.completed)).length
+                : 0;
+              const hasChecklist = Array.isArray(checklistItems) && checklistItems.length > 0;
               const isChecklistOpen = openChecklists[todo.id] ?? false;
               const neglect = getTaskNeglectDetails(todo.value);
 
@@ -754,7 +786,7 @@ export default function TaskBoardGrid({
                   </div>
 
                   {/* Collapsible Subtask Checklist */}
-                  {hasChecklist && isChecklistOpen && (
+                  {hasChecklist && isChecklistOpen && Array.isArray(checklistItems) && (
                     <div className="mt-1 pt-2 border-t border-stone-800/80 space-y-1 pl-8">
                       {checklistItems.map((item, idx) => (
                         <label

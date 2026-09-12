@@ -181,6 +181,16 @@ describe("Karmaraj Core Task Engine", () => {
       const res2 = parseChecklistItems(doubleEncoded);
       expect(res2).toHaveLength(2);
       expect(res2[0].text).toBe("Buy milk");
+
+      // Object with items array
+      const objFormat = { items: [{ id: "x1", text: "Task A", completed: true }] };
+      expect(parseChecklistItems(objFormat)).toHaveLength(1);
+      expect(parseChecklistItems(objFormat)[0].text).toBe("Task A");
+
+      // Object with numeric keys
+      const numericObj = { "0": { id: "n1", text: "Numeric Task", completed: false } };
+      expect(parseChecklistItems(numericObj)).toHaveLength(1);
+      expect(parseChecklistItems(numericObj)[0].text).toBe("Numeric Task");
     });
   });
 });
