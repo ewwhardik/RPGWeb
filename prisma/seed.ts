@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -127,19 +128,189 @@ const shopItems = [
 ];
 
 async function main() {
-  console.log("Seeding shop inventory items...");
+  console.log("Seeding database with shop items and realistic demo guild data...");
+
+  // 1. Seed Shop Items
   for (const item of shopItems) {
     const existing = await prisma.item.findFirst({
       where: { name: item.name },
     });
     if (!existing) {
-      await prisma.item.create({
-        data: item,
-      });
+      await prisma.item.create({ data: item });
       console.log(`Created shop item: ${item.name}`);
     }
   }
-  console.log("Seed complete! All items ready for the adventurer's economy.");
+
+  // 2. Seed Primary Demo User ("adventurer")
+  const passwordHash = await bcrypt.hash("password123", 10);
+
+  const demoUser = await prisma.user.upsert({
+    where: { username: "adventurer" },
+    update: {},
+    create: {
+      username: "adventurer",
+      email: "adventurer@guild.rpg",
+      passwordHash,
+      avatar: "warrior",
+      characterClass: "WARRIOR",
+      level: 3,
+      xp: 240,
+      gold: 145,
+      streakCount: 4,
+      title: "Errand Vanquisher",
+      stats: {
+        create: {
+          strength: 18,
+          intellect: 14,
+          vitality: 16,
+          dexterity: 12,
+          charisma: 11,
+          sanity: 15,
+        },
+      },
+      logs: {
+        create: [
+          {
+            actionType: "ACCOUNT_CREATED",
+            message: "Enrolled in the Adventurer's Guild as a Warrior.",
+            goldChange: 50,
+          },
+          {
+            actionType: "LEVEL_UP",
+            message: "Leveled up to Level 2 (Caffeine Apprentice)!",
+            xpChange: 100,
+          },
+          {
+            actionType: "LEVEL_UP",
+            message: "Leveled up to Level 3 (Errand Vanquisher)!",
+            xpChange: 140,
+          },
+        ],
+      },
+    },
+    include: { stats: true },
+  });
+
+  console.log(`Demo user created/updated: ${demoUser.username}`);
+
+  // 3. Seed Realistic Quests for the Demo User
+  const starterQuests = [
+    {
+      title: "Conquer 45-minute heavy deadlift session",
+      description: "Warm up properly, pull 3 heavy working sets, and avoid looking like a cooked prawn.",
+      category: "STRENGTH",
+      difficulty: "HARD",
+      xpReward: 180,
+      goldReward: 55,
+      status: "TODO",
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+    {
+      title: "Decipher and refactor authentication middleware",
+      description: "Ensure all endpoints have Zod validations and atomic database transaction blocks.",
+      category: "INTELLECT",
+      difficulty: "HARD",
+      xpReward: 180,
+      goldReward: 55,
+      status: "TODO",
+      dueDate: new Date(Date.now() + 48 * 60 * 60 * 1000),
+    },
+    {
+      title: "Drink 2.5 liters of actual water today",
+      description: "No monster energy drinks, no quadruple espresso. Just raw elemental hydration.",
+      category: "VITALITY",
+      difficulty: "EASY",
+      xpReward: 45,
+      goldReward: 12,
+      status: "TODO",
+      dueDate: new Date(Date.now() + 12 * 60 * 60 * 1000),
+    },
+    {
+      title: "Speedrun washing the sink mountain of dishes",
+      description: "Vanquish the greasy skillet before it evolves into a conscious life form.",
+      category: "DEXTERITY",
+      difficulty: "MEDIUM",
+      xpReward: 90,
+      goldReward: 25,
+      status: "TODO",
+      dueDate: new Date(Date.now() + 6 * 60 * 60 * 1000),
+    },
+    {
+      title: "Deliver project presentation with extreme poise",
+      description: "Maintain eye contact and do not apologize for existing.",
+      category: "CHARISMA",
+      difficulty: "HARD",
+      xpReward: 180,
+      goldReward: 55,
+      status: "TODO",
+      dueDate: new Date(Date.now() + 72 * 60 * 60 * 1000),
+    },
+    {
+      title: "Stare at the park oak tree for 10 minutes",
+      description: "Step away from all glowing rectangles. Inhale oxygen, exhale existential panic.",
+      category: "SANITY",
+      difficulty: "TRIVIAL",
+      xpReward: 20,
+      goldReward: 5,
+      status: "TODO",
+      dueDate: new Date(Date.now() + 8 * 60 * 60 * 1000),
+    },
+    // Historical completed quest
+    {
+      title: "Complete 10,000 brisk steps through the town market",
+      description: "Brisk walking in real sunlight.",
+      category: "VITALITY",
+      difficulty: "MEDIUM",
+      xpReward: 90,
+      goldReward: 25,
+      status: "COMPLETED",
+      completedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    },
+  ];
+
+  for (const q of starterQuests) {
+    const existingQ = await prisma.task.findFirst({
+      where: { userId: demoUser.id, title: q.title },
+    });
+    if (!existingQ) {
+      await prisma.task.create({
+        data: {
+          ...q,
+          userId: demoUser.id,
+        },
+      });
+      console.log(`Created starter quest: ${q.title}`);
+    }
+  }
+
+  // 4. Seed Demo Party (Fellowship of Procrastination Anonymous)
+  const demoParty = await prisma.party.upsert({
+    where: { code: "PROC-777" },
+    update: {},
+    create: {
+      name: "The Fellowship of Focus",
+      code: "PROC-777",
+      bossName: "The Dread Procrastination Wyrm",
+      bossMaxHp: 2500,
+      bossCurrentHp: 1950,
+    },
+  });
+
+  // Assign demo user to party
+  const partyMembership = await prisma.partyMember.findUnique({
+    where: { userId: demoUser.id },
+  });
+  if (!partyMembership) {
+    await prisma.partyMember.create({
+      data: {
+        partyId: demoParty.id,
+        userId: demoUser.id,
+      },
+    });
+    console.log(`Enrolled demo user into party: ${demoParty.name}`);
+  }
+
+  console.log("Realistic seed completed successfully!");
 }
 
 main()

@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -19,7 +19,7 @@ model User {
   lastActiveDate DateTime        @default(now())
   title          String          @default("Novice Procrastinator")
   avatar         String          @default("warrior")
-  characterClass String          @default("WARRIOR") // WARRIOR, MAGE, ROGUE, PALADIN
+  characterClass String          @default("WARRIOR")
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
@@ -40,7 +40,6 @@ model UserStats {
   charisma           Int      @default(10)
   sanity             Int      @default(10)
 
-  // Tracking timestamps for stat decay mechanics
   lastDecayCheck     DateTime @default(now())
   lastStrengthDate   DateTime @default(now())
   lastIntellectDate  DateTime @default(now())
