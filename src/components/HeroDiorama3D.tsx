@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { soundFx } from "@/lib/audio";
 import { spawnCombatText } from "./FloatingCombatText";
@@ -10,6 +10,97 @@ interface HeroDiorama3DProps {
   xpProgress: number;
   avatarType?: string;
   gold: number;
+}
+
+/**
+ * FallbackEye
+ * High-fidelity 2.5D Celestial Eye of Karmaraj with mouse-tracking gaze
+ * Used when WebGL is unavailable, disabled, or encounters context creation issues.
+ */
+function FallbackEye() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pupilPos, setPupilPos] = useState({ x: 0, y: 0 });
+  const [isDilation, setIsDilation] = useState(false);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const deltaX = (e.clientX - centerX) / (rect.width / 2);
+    const deltaY = (e.clientY - centerY) / (rect.height / 2);
+    const maxOffset = 36;
+    setPupilPos({
+      x: Math.max(-maxOffset, Math.min(maxOffset, deltaX * maxOffset)),
+      y: Math.max(-maxOffset, Math.min(maxOffset, deltaY * maxOffset)),
+    });
+  };
+
+  const handleClick = () => {
+    soundFx.play("spell");
+    spawnCombatText("DIVINE GAZE RESONANCE!", "crit");
+    setIsDilation(true);
+    setTimeout(() => setIsDilation(false), 400);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onPointerMove={handlePointerMove}
+      onClick={handleClick}
+      className="w-full h-full min-h-[300px] flex items-center justify-center relative cursor-pointer select-none group overflow-hidden"
+      title="The All-Seeing Anatomical Eye of Karmaraj. Move your mouse to guide its gaze!"
+    >
+      {/* Outer Radial Rune Halo */}
+      <div className="absolute inset-0 bg-radial from-amber-500/15 via-transparent to-transparent opacity-75 pointer-events-none group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Rotating Celestial Rings */}
+      <div className="absolute w-56 h-56 rounded-full border border-dashed border-amber-500/30 animate-[spin_24s_linear_infinite] pointer-events-none" />
+      <div className="absolute w-64 h-64 rounded-full border border-amber-400/20 animate-[spin_36s_linear_infinite_reverse] pointer-events-none" />
+
+      {/* Sclera - Organic Anatomical Eyeball */}
+      <div className="relative w-44 h-44 rounded-full bg-gradient-to-br from-[#fffef9] via-[#fef4e2] to-[#fed7aa] shadow-[inset_0_0_24px_rgba(217,119,6,0.35),0_10px_35px_rgba(0,0,0,0.6)] border-2 border-amber-300/40 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
+        {/* Subtle Organic Vein Lines */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 100 100">
+          <path d="M 5,50 Q 25,48 40,52" stroke="#dc2626" strokeWidth="0.75" fill="none" opacity="0.6" />
+          <path d="M 95,50 Q 75,52 60,48" stroke="#dc2626" strokeWidth="0.75" fill="none" opacity="0.6" />
+          <path d="M 50,5 Q 48,25 52,40" stroke="#ea580c" strokeWidth="0.7" fill="none" opacity="0.5" />
+          <path d="M 50,95 Q 52,75 48,60" stroke="#ea580c" strokeWidth="0.7" fill="none" opacity="0.5" />
+          <path d="M 12,20 Q 30,35 45,45" stroke="#ef4444" strokeWidth="0.5" fill="none" opacity="0.4" />
+          <path d="M 88,80 Q 70,65 55,55" stroke="#ef4444" strokeWidth="0.5" fill="none" opacity="0.4" />
+        </svg>
+
+        {/* Iris & Pupil Tracking Group */}
+        <div
+          className="relative w-24 h-24 rounded-full flex items-center justify-center transition-transform ease-out duration-75 shadow-[0_0_20px_rgba(245,158,11,0.6)]"
+          style={{
+            transform: `translate3d(${pupilPos.x}px, ${pupilPos.y}px, 0) scale(${isDilation ? 1.15 : 1})`,
+          }}
+        >
+          {/* Golden Fibrous Iris */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-yellow-700 shadow-inner border border-amber-200" />
+          <div className="absolute inset-1 rounded-full bg-[radial-gradient(circle,#fef08a_0%,#d97706_60%,#78350f_100%)] opacity-90" />
+
+          {/* Deep Obsidian Pupil */}
+          <div className={`relative ${isDilation ? "w-12 h-12" : "w-9 h-9"} rounded-full bg-stone-950 shadow-[inset_0_0_8px_rgba(0,0,0,0.9)] transition-all duration-300 flex items-center justify-center`}>
+            {/* Core Specular Glint */}
+            <div className="absolute top-1.5 left-2 w-2.5 h-2.5 rounded-full bg-white/95 blur-[0.4px]" />
+            <div className="absolute bottom-2 right-2.5 w-1 h-1 rounded-full bg-amber-200/80" />
+          </div>
+
+          {/* Glowing Arc Runes around Iris */}
+          <div className="absolute -inset-2 rounded-full border border-amber-400/40 animate-pulse pointer-events-none" />
+        </div>
+
+        {/* Cornea Gloss Dome */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/30 via-transparent to-black/20 pointer-events-none" />
+      </div>
+
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-widest uppercase text-amber-300/80 pointer-events-none bg-stone-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/30 backdrop-blur-md shadow-sm">
+        Anatomical Eye • Reactive Gaze Active
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -38,23 +129,41 @@ export default function HeroDiorama3D({
 }: HeroDiorama3DProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const animFrameId = useRef<number | null>(null);
+  const [webGlFailed, setWebGlFailed] = useState(false);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
+    if (typeof window === "undefined") return;
+
     const width = mount.clientWidth || 340;
     const height = mount.clientHeight || 300;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      const testCanvas = document.createElement("canvas");
+      const hasGl = Boolean(testCanvas.getContext("webgl2") || testCanvas.getContext("webgl"));
+      if (!hasGl) {
+        setWebGlFailed(true);
+        return;
+      }
+
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+    } catch (err) {
+      console.warn("WebGL initialization failed, falling back to 2.5D eye:", err);
+      setWebGlFailed(true);
+      return;
+    }
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 1000);
     camera.position.set(0, 0, 5.5);
 
-    const renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      powerPreference: "high-performance",
-    });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -688,6 +797,10 @@ export default function HeroDiorama3D({
       }
     };
   }, [level]);
+
+  if (webGlFailed) {
+    return <FallbackEye />;
+  }
 
   return (
     <div

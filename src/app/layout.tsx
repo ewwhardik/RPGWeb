@@ -19,6 +19,7 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rpgweb.dev"),
   title: "Karmaraj | Life RPG",
   description: "The Adventurer's Bureaucracy: Turn mundane chores and real-world grinds into epic RPG progression.",
   openGraph: {

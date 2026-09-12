@@ -42,8 +42,10 @@ export default function SamsaraHeatmap({
 
     // Build map from date string to activity
     const activityMap = new Map<string, { count: number; karma: number }>();
-    activityHistory.forEach((item) => {
-      activityMap.set(item.date, { count: item.count, karma: item.karma });
+    (activityHistory || []).forEach((item) => {
+      if (item && item.date) {
+        activityMap.set(item.date, { count: item.count ?? 0, karma: item.karma ?? 0 });
+      }
     });
 
     const dayCells: Array<{
@@ -133,8 +135,9 @@ export default function SamsaraHeatmap({
     const artha = Math.min(100, Math.round(35 + lvl * 2.2));
 
     // 3. Kama (Vital Energy, Wellness & Passion)
-    const hpRatio = (userStats?.hp ?? 50) / (userStats?.maxHp ?? 50);
-    const kama = Math.min(100, Math.round(hpRatio * 75 + 20));
+    const safeMaxHp = Math.max(1, userStats?.maxHp ?? 50);
+    const hpRatio = Math.max(0, Math.min(1, (userStats?.hp ?? 50) / safeMaxHp));
+    const kama = Math.min(100, Math.max(0, Math.round(hpRatio * 75 + 20)));
 
     // 4. Moksha (Transcendence, Mastery & Liberation)
     const moksha = Math.min(100, Math.round(20 + prestige * 15 + lvl * 1.5));

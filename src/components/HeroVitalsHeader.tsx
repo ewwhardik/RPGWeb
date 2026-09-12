@@ -45,11 +45,14 @@ export default function HeroVitalsHeader({
 }: HeroVitalsHeaderProps) {
   const [isTogglingInn, setIsTogglingInn] = useState(false);
 
-  const hpPercent = Math.min(100, Math.max(0, (user.hp / (user.maxHp || 50)) * 100));
-  const nextLevelXp = user.level * 100;
-  const currentLevelProgress = user.xp % nextLevelXp;
+  const safeMaxHp = Math.max(1, user.maxHp || 50);
+  const hpPercent = Math.min(100, Math.max(0, ((user.hp ?? 0) / safeMaxHp) * 100));
+  const safeLevel = Math.max(1, user.level || 1);
+  const nextLevelXp = safeLevel * 100;
+  const currentLevelProgress = (user.xp || 0) % nextLevelXp;
   const xpPercent = Math.min(100, Math.max(0, (currentLevelProgress / nextLevelXp) * 100));
-  const mpPercent = Math.min(100, Math.max(0, (user.mp / (user.maxMp || 50)) * 100));
+  const safeMaxMp = Math.max(1, user.maxMp || 50);
+  const mpPercent = Math.min(100, Math.max(0, ((user.mp ?? 0) / safeMaxMp) * 100));
 
   const handleInnClick = async () => {
     try {

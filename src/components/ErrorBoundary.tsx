@@ -52,10 +52,21 @@ export default class ErrorBoundary extends Component<Props, State> {
               The Bureaucracy Collapsed Into a Null Void
             </h3>
 
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+            <p className="text-xs text-muted-foreground leading-relaxed mb-3">
               A rogue bug chewed through the tavern floorboards. Your character progress is
               persisted safely in the database archives.
             </p>
+
+            {this.state.error && (
+              <div className="mb-4 p-2.5 rounded bg-black/50 border border-red-900/50 text-[11px] text-red-300 font-mono text-left max-h-36 overflow-auto whitespace-pre-wrap break-all select-all">
+                <div className="font-bold text-red-400 mb-1">
+                  {this.state.error.name}: {this.state.error.message}
+                </div>
+                <div className="text-[10px] text-stone-400">
+                  {this.state.error.stack?.split("\n").slice(0, 4).join("\n")}
+                </div>
+              </div>
+            )}
 
             <button
               type="button"

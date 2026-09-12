@@ -964,11 +964,22 @@ export default function DashboardPage() {
                 <span className="text-[10px] text-stone-400">Voxel Engine Active</span>
               </div>
 
-              <HeroDiorama3D
-                level={levelInfo.level}
-                xpProgress={levelInfo.progressPercent}
-                gold={user?.gold || 0}
-              />
+              <ErrorBoundary
+                fallback={
+                  <div className="min-h-[300px] flex items-center justify-center text-center p-4 text-xs text-amber-200/80">
+                    <div>
+                      <p className="font-bold mb-1">Celestial Relic Offline</p>
+                      <p className="text-[11px] text-stone-400">Resonating with astral frequencies...</p>
+                    </div>
+                  </div>
+                }
+              >
+                <HeroDiorama3D
+                  level={levelInfo.level}
+                  xpProgress={levelInfo.progressPercent}
+                  gold={user?.gold || 0}
+                />
+              </ErrorBoundary>
 
               <div className="pt-2 border-t border-stone-800 flex items-center justify-between text-[11px] text-stone-400">
                 <span>Artifact Resonance: {levelInfo.level * 10}%</span>
@@ -1002,61 +1013,83 @@ export default function DashboardPage() {
           {/* Guild Warboard & Cooperative Boss Raid */}
           {user && (
             <section id="party-boss-section">
-              <PartyBossWidget
-                currentUsername={user.username}
-                onBossDefeated={() => {
-                  fetchCurrentUser();
-                  fetchLogs();
-                }}
-              />
+              <ErrorBoundary
+                fallback={
+                  <div className="p-4 rounded-xl border border-stone-800 bg-stone-900/60 text-xs text-stone-400 text-center">
+                    Guild Warboard momentarily recharging its battle wards.
+                  </div>
+                }
+              >
+                <PartyBossWidget
+                  currentUsername={user.username}
+                  onBossDefeated={() => {
+                    fetchCurrentUser();
+                    fetchLogs();
+                  }}
+                />
+              </ErrorBoundary>
             </section>
           )}
 
           {/* Samsara Cognitive Energy Heatmap & Purushartha Radar */}
           {user && (
             <section id="samsara-heatmap-section">
-              <SamsaraHeatmap
-                userStats={{
-                  level: user.level,
-                  hp: user.hp,
-                  maxHp: user.maxHp,
-                  mp: user.mp,
-                  maxMp: user.maxMp,
-                  streakCount: user.streakCount,
-                  prestigeLevel: user.prestigeLevel,
-                }}
-              />
+              <ErrorBoundary
+                fallback={
+                  <div className="p-4 rounded-xl border border-stone-800 bg-stone-900/60 text-xs text-stone-400 text-center">
+                    Samsara Energy Matrix recalibrating...
+                  </div>
+                }
+              >
+                <SamsaraHeatmap
+                  userStats={{
+                    level: user.level,
+                    hp: user.hp,
+                    maxHp: user.maxHp,
+                    mp: user.mp,
+                    maxMp: user.maxMp,
+                    streakCount: user.streakCount,
+                    prestigeLevel: user.prestigeLevel,
+                  }}
+                />
+              </ErrorBoundary>
             </section>
           )}
 
           {/* Quirks, Desk Goblin, Mimic & Chronicle */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            {user && (
-              <DeskGoblin
-                gold={user.gold}
-                onFeedSuccess={(newGold, sanityGain) => {
-                  setUser((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          gold: newGold,
-                          stats: {
-                            strength: prev.stats?.strength || 10,
-                            intellect: prev.stats?.intellect || 10,
-                            vitality: prev.stats?.vitality || 10,
-                            dexterity: prev.stats?.dexterity || 10,
-                            charisma: prev.stats?.charisma || 10,
-                            sanity: (prev.stats?.sanity || 10) + sanityGain,
-                          },
-                        }
-                      : null
-                  );
-                  fetchLogs();
-                }}
-              />
-            )}
-            <MimicChest onBonusGold={handleBonusGold} />
-            <ActivityChronicle logs={logs} />
+            <ErrorBoundary>
+              {user && (
+                <DeskGoblin
+                  gold={user.gold}
+                  onFeedSuccess={(newGold, sanityGain) => {
+                    setUser((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            gold: newGold,
+                            stats: {
+                              strength: prev.stats?.strength || 10,
+                              intellect: prev.stats?.intellect || 10,
+                              vitality: prev.stats?.vitality || 10,
+                              dexterity: prev.stats?.dexterity || 10,
+                              charisma: prev.stats?.charisma || 10,
+                              sanity: (prev.stats?.sanity || 10) + sanityGain,
+                            },
+                          }
+                        : null
+                    );
+                    fetchLogs();
+                  }}
+                />
+              )}
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <MimicChest onBonusGold={handleBonusGold} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <ActivityChronicle logs={logs} />
+            </ErrorBoundary>
           </section>
         </main>
 

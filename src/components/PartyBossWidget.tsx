@@ -20,18 +20,20 @@ import {
   Bell,
 } from "lucide-react";
 import { soundFx } from "@/lib/audio";
+import { BOSS_TIERS } from "@/lib/partyBoss";
 
 interface PartyMemberData {
   id: string;
-  joinedAt: string;
-  user: {
-    id: string;
-    username: string;
-    level: number;
-    title: string;
-    avatar: string;
-    characterClass: string;
-    streakCount: number;
+  joinedAt?: string;
+  userId?: string;
+  user?: {
+    id?: string;
+    username?: string;
+    level?: number;
+    title?: string;
+    avatar?: string;
+    characterClass?: string;
+    streakCount?: number;
     prestigeLevel?: number;
   };
 }
@@ -484,9 +486,13 @@ export default function PartyBossWidget({
   }
 
   // In Party: Active Boss Raid Warboard
-  const hpPercent = Math.max(0, Math.min(100, Math.round((party.bossCurrentHp / party.bossMaxHp) * 100)));
+  const safeMaxHp = Math.max(1, party.bossMaxHp || 100);
+  const safeCurrentHp = Math.max(0, party.bossCurrentHp ?? 0);
+  const hpPercent = Math.max(0, Math.min(100, Math.round((safeCurrentHp / safeMaxHp) * 100)));
   const hpColor =
     hpPercent > 50 ? "bg-emerald-500" : hpPercent > 20 ? "bg-amber-500" : "bg-red-500";
+  const memberList = party.members || [];
+  const memberCount = memberList.length;
 
   return (
     <div className="rpg-panel carved-panel p-5 relative overflow-hidden space-y-4">
@@ -498,7 +504,7 @@ export default function PartyBossWidget({
               {party.name}
             </h3>
             <span className="text-[10px] bg-stone-100 dark:bg-slate-900 px-2 py-0.5 rounded border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-slate-300 font-mono">
-              {party.members.length} {party.members.length === 1 ? "Adventurer" : "Adventurers"}
+              {memberCount} {memberCount === 1 ? "Adventurer" : "Adventurers"}
             </span>
           </div>
           <p className="text-[11px] text-stone-500 dark:text-slate-400">
@@ -565,7 +571,7 @@ export default function PartyBossWidget({
 
       {/* Boss Raid Arena Card with 3-Phase Procedural AI State */}
       {(() => {
-        const phaseRatio = party.bossMaxHp > 0 ? party.bossCurrentHp / party.bossMaxHp : 1;
+        const phaseRatio = safeMaxHp > 0 ? safeCurrentHp / safeMaxHp : 1;
         const phaseData =
           phaseRatio > 0.6
             ? {
@@ -594,6 +600,9 @@ export default function PartyBossWidget({
                 badgeColor: "bg-rose-950 text-rose-200 border-rose-500 animate-bounce",
               };
 
+        const fallbackBoss = BOSS_TIERS.find((b) => b.name === party.bossName) || BOSS_TIERS[0];
+        const bossInfo = party.bossInfo || fallbackBoss;
+
         return (
           <div className={`p-4 rounded-xl bg-stone-900 text-stone-100 dark:bg-[#0e141d] dark:text-slate-100 border ${phaseData.cardBorder} shadow-inner relative overflow-hidden transition-all duration-500`}>
             {/* Ambient Phasic Glow */}
@@ -612,13 +621,13 @@ export default function PartyBossWidget({
                   {phaseData.badge}
                 </span>
                 <div className="text-[11px] font-mono font-bold text-stone-300 dark:text-slate-300">
-                  {party.bossCurrentHp.toLocaleString()} / {party.bossMaxHp.toLocaleString()} HP ({hpPercent}%)
+                  {(party.bossCurrentHp ?? 0).toLocaleString()} / {(party.bossMaxHp ?? 100).toLocaleString()} HP ({hpPercent}%)
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-stone-300 dark:text-slate-300 italic mb-1.5">
-              &ldquo;{party.bossInfo?.humorQuote}&rdquo;
+              &ldquo;{bossInfo.humorQuote}&rdquo;
             </p>
 
             <div className="text-[11px] text-amber-200/90 bg-black/40 px-2.5 py-1.5 rounded-lg border border-white/5 mb-2.5 flex items-center gap-2">
@@ -746,9 +755,11 @@ export default function PartyBossWidget({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {party.members.map((member) => {
-            const isMe = member.user.username === currentUsername;
-            const isMvp = party.mvpUserId === member.user.id;
+          {memberList.map((member) => {
+            const memberUsername = member.user?.username || "Adventurer";
+            const memberId = member.user?.id || member.userId || member.id;
+            const isMe = memberUsername === currentUsername;
+            const isMvp = party.mvpUserId === memberId;
             return (
               <div
                 key={member.id}
@@ -760,11 +771,11 @@ export default function PartyBossWidget({
               >
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-stone-200 dark:bg-[#16202c] border border-stone-300 dark:border-slate-700 flex items-center justify-center text-xs font-bold font-mono text-amber-800 dark:text-amber-400 uppercase">
-                    {member.user.username.slice(0, 2)}
+                    {memberUsername.slice(0, 2)}
                   </div>
                   <div>
                     <div className="text-xs font-bold flex items-center gap-1.5">
-                      <span>{member.user.username}</span>
+                      <span>{memberUsername}</span>
                       {isMvp && (
                         <span className="text-[9px] bg-gradient-to-r from-amber-400 to-yellow-500 text-black px-1.5 py-0.2 rounded font-black tracking-wide shadow-sm flex items-center gap-0.5">
                           👑 MVP
@@ -777,14 +788,14 @@ export default function PartyBossWidget({
                       )}
                     </div>
                     <div className="text-[10px] text-stone-600 dark:text-slate-400">
-                      Lvl {member.user.level} {(member.user.prestigeLevel ?? 0) > 0 && `★${member.user.prestigeLevel}`} {member.user.characterClass || "Warrior"}
+                      Lvl {member.user?.level ?? 1} {(member.user?.prestigeLevel ?? 0) > 0 && `★${member.user?.prestigeLevel}`} {member.user?.characterClass || "Warrior"}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-amber-800 dark:text-amber-400 font-mono text-xs font-bold">
                   <Flame className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500" />
-                  <span>{member.user.streakCount || 1}d</span>
+                  <span>{member.user?.streakCount || 1}d</span>
                 </div>
               </div>
             );
