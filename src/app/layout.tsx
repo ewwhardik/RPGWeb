@@ -19,9 +19,11 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: "QuestSmith: The Life RPG",
+  title: "Karmaraj Dev Sai Ram Dash",
   description: "The Adventurer's Bureaucracy: Turn mundane chores and real-world grinds into epic RPG progression.",
 };
+
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -31,9 +33,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0b0e14] text-slate-100">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

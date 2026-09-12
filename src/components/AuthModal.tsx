@@ -124,9 +124,9 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-lg rpg-panel border border-[#b45309]/50 bg-[#121822] p-6 shadow-2xl relative overflow-hidden">
+      <div className="w-full max-w-lg rpg-panel border border-[#b45309]/50 bg-card p-6 shadow-2xl relative overflow-hidden">
         {/* Top Decorative Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-700/60 mb-5">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-700 mb-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
               <Shield className="w-6 h-6" />
@@ -135,7 +135,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
               <h2 className="text-xl font-bold text-amber-300 tracking-wide">
                 {isLogin ? "Adventurer Sign-In" : "Guild Enlistment Desk"}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {isLogin
                   ? "Present your guild pass to resume your heroic duties."
                   : "Sign your name in blood (or ink) to begin earning XP."}
@@ -143,7 +143,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
             </div>
           </div>
 
-          <div className="flex bg-[#0b0e14] p-1 rounded-lg border border-slate-700/60">
+          <div className="flex bg-background p-1 rounded-lg border border-slate-300 dark:border-slate-700">
             <button
               type="button"
               onClick={() => {
@@ -151,7 +151,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                 setErrorMsg("");
               }}
               className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
-                !isLogin ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-slate-200"
+                !isLogin ? "bg-amber-500 text-slate-950" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
               }`}
             >
               Enlist
@@ -163,7 +163,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                 setErrorMsg("");
               }}
               className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
-                isLogin ? "bg-amber-500 text-slate-950" : "text-slate-400 hover:text-slate-200"
+                isLogin ? "bg-amber-500 text-slate-950" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
               }`}
             >
               Sign In
@@ -181,7 +181,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
           {!isLogin && (
             <>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
                   Heroic Name
                 </label>
                 <div className="relative">
@@ -192,13 +192,13 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. Sir Clutterbane"
-                    className="w-full bg-[#0b0e14] border border-slate-700/70 rounded-md py-2 pl-9 pr-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
                   Choose Class Archetype
                 </label>
                 <div className="grid grid-cols-5 gap-2">
@@ -213,7 +213,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                         className={`p-2 rounded-lg border text-center flex flex-col items-center gap-1 transition-all ${
                           isSelected
                             ? "bg-amber-500/20 border-amber-500 text-amber-300 scale-105"
-                            : "bg-[#0b0e14] border-slate-700/70 text-slate-400 hover:border-slate-500"
+                            : "bg-background border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-500"
                         }`}
                         title={av.desc}
                       >
@@ -230,7 +230,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
               {isLogin ? "Heroic Name or Royal Email Scroll" : "Royal Email Scroll"}
             </label>
             <div className="relative">
@@ -248,13 +248,13 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                   }
                 }}
                 placeholder={isLogin ? "Email or adventurer username" : "adventurer@realm.com"}
-                className="w-full bg-[#0b0e14] border border-slate-700/70 rounded-md py-2 pl-9 pr-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
               Secret Pass-Phrase
             </label>
             <div className="relative">
@@ -265,7 +265,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 6 secure runes..."
-                className="w-full bg-[#0b0e14] border border-slate-700/70 rounded-md py-2 pl-9 pr-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
               />
             </div>
           </div>
@@ -302,8 +302,8 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
           </div>
         </form>
 
-        <div className="mt-4 pt-3 border-t border-slate-800 text-center">
-          <p className="text-[11px] text-slate-400">
+        <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 text-center">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">
             {isLogin ? "First time questing?" : "Already hold a guild insignia?"}{" "}
             <button
               type="button"

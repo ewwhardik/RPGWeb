@@ -18,7 +18,7 @@ export async function GET() {
           latencyMs,
         },
         timestamp: new Date().toISOString(),
-        service: "QuestSmith Life RPG API",
+        service: "Karmaraj Dev Sai Ram Dash API",
       },
       { status: 200 }
     );

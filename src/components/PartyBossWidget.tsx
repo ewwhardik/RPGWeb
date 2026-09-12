@@ -207,7 +207,7 @@ export default function PartyBossWidget({
   if (loading) {
     return (
       <div className="rpg-panel carved-panel p-5 animate-pulse flex items-center justify-center min-h-[220px]">
-        <span className="text-xs text-slate-400 font-mono">Summoning Guild Warboard...</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Summoning Guild Warboard...</span>
       </div>
     );
   }
@@ -216,21 +216,21 @@ export default function PartyBossWidget({
   if (!inParty || !party) {
     return (
       <div className="rpg-panel carved-panel p-5 relative overflow-hidden">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
               <Users className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold font-title text-slate-100">
+              <h3 className="text-sm font-bold font-title text-slate-800 dark:text-slate-100">
                 Guild Recruitment Hall
               </h3>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 Team up with allies to defeat shared Boss Raids.
               </p>
             </div>
           </div>
-          <span className="text-[10px] text-amber-400 font-mono bg-[#0b0e14] px-2 py-0.5 rounded border border-slate-800">
+          <span className="text-[10px] text-amber-400 font-mono bg-background px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800">
             Co-op Raid Active
           </span>
         </div>
@@ -248,7 +248,7 @@ export default function PartyBossWidget({
             className={`flex-1 text-xs py-1.5 px-3 rounded-lg border font-semibold transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "JOIN"
                 ? "bg-amber-500/20 border-amber-500/60 text-amber-300 shadow-sm"
-                : "bg-[#141b24] border-slate-800 text-slate-400 hover:text-slate-200"
+                : "bg-card border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
             }`}
           >
             <Compass className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ export default function PartyBossWidget({
             className={`flex-1 text-xs py-1.5 px-3 rounded-lg border font-semibold transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "CREATE"
                 ? "bg-amber-500/20 border-amber-500/60 text-amber-300 shadow-sm"
-                : "bg-[#141b24] border-slate-800 text-slate-400 hover:text-slate-200"
+                : "bg-card border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
             }`}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -277,7 +277,7 @@ export default function PartyBossWidget({
         {activeTab === "JOIN" ? (
           <form onSubmit={handleJoinGuild} className="space-y-3">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+              <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">
                 Guild Enlistment Code
               </label>
               <input
@@ -285,7 +285,7 @@ export default function PartyBossWidget({
                 value={guildCodeInput}
                 onChange={(e) => setGuildCodeInput(e.target.value.toUpperCase())}
                 placeholder="e.g. FOCUS-4921"
-                className="w-full bg-[#0b0e14] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 font-mono focus:border-amber-500/70 focus:outline-none tracking-wider uppercase"
+                className="w-full bg-background border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-100 font-mono focus:border-amber-500/70 focus:outline-none tracking-wider uppercase"
                 maxLength={20}
               />
             </div>
@@ -301,7 +301,7 @@ export default function PartyBossWidget({
         ) : (
           <form onSubmit={handleCreateGuild} className="space-y-3">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-300 mb-1">
+              <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1">
                 Guild Fellowship Name
               </label>
               <input
@@ -309,7 +309,7 @@ export default function PartyBossWidget({
                 value={guildNameInput}
                 onChange={(e) => setGuildNameInput(e.target.value)}
                 placeholder="e.g. The Midnight Synthesizers"
-                className="w-full bg-[#0b0e14] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:border-amber-500/70 focus:outline-none"
+                className="w-full bg-background border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:border-amber-500/70 focus:outline-none"
                 maxLength={40}
               />
             </div>
@@ -338,7 +338,7 @@ export default function PartyBossWidget({
           </div>
         )}
 
-        <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+        <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
           <span>Guild members share Boss damage on every quest</span>
           <span className="text-amber-400 font-semibold">100 Gold Boss Bounties</span>
         </div>
@@ -354,17 +354,17 @@ export default function PartyBossWidget({
   return (
     <div className="rpg-panel carved-panel p-5 relative overflow-hidden space-y-4">
       {/* Header with Guild Name, Code & Leave */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold font-title text-amber-300">
               {party.name}
             </h3>
-            <span className="text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-slate-300 font-mono">
+            <span className="text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-mono">
               {party.members.length} {party.members.length === 1 ? "Adventurer" : "Adventurers"}
             </span>
           </div>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">
             Cooperative Boss Raid: All quest completions deal damage.
           </p>
         </div>
@@ -374,7 +374,7 @@ export default function PartyBossWidget({
           <button
             type="button"
             onClick={handleCopyCode}
-            className="text-xs py-1 px-2.5 rounded-lg bg-[#141b24] border border-slate-700 text-amber-300 hover:border-amber-500/50 flex items-center gap-1.5 transition-colors"
+            className="text-xs py-1 px-2.5 rounded-lg bg-card border border-slate-300 dark:border-slate-700 text-amber-300 hover:border-amber-500/50 flex items-center gap-1.5 transition-colors"
             title="Copy invite code to clipboard"
           >
             {copiedCode ? (
@@ -394,7 +394,7 @@ export default function PartyBossWidget({
           <button
             type="button"
             onClick={handleLeaveGuild}
-            className="p-1.5 rounded-lg bg-[#141b24] border border-slate-800 text-slate-400 hover:text-red-400 hover:border-red-800/60 transition-colors"
+            className="p-1.5 rounded-lg bg-card border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-red-400 hover:border-red-800/60 transition-colors"
             title="Leave Guild"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -415,17 +415,17 @@ export default function PartyBossWidget({
               {party.bossName}
             </h4>
           </div>
-          <div className="text-[11px] font-mono font-bold text-slate-300">
+          <div className="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-300">
             {party.bossCurrentHp.toLocaleString()} / {party.bossMaxHp.toLocaleString()} HP ({hpPercent}%)
           </div>
         </div>
 
-        <p className="text-xs text-slate-300 italic mb-2">
+        <p className="text-xs text-slate-600 dark:text-slate-300 italic mb-2">
           &ldquo;{party.bossInfo?.humorQuote}&rdquo;
         </p>
 
         {/* Boss HP Bar */}
-        <div className="w-full bg-[#070a0f] h-4 rounded-full overflow-hidden p-0.5 border border-slate-800/80 mb-3 shadow-inner">
+        <div className="w-full bg-background h-4 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800 mb-3 shadow-inner">
           <div
             className={`h-full rounded-full transition-all duration-500 ${hpColor}`}
             style={{ width: `${hpPercent}%` }}
@@ -433,8 +433,8 @@ export default function PartyBossWidget({
         </div>
 
         {/* Action Controls: Rally Cheer & Weakness info */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-800/60">
-          <span className="text-[10px] text-slate-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+          <span className="text-[10px] text-slate-500 dark:text-slate-400">
             ⚔️ Weakness: Finish your daily quests to inflict direct raid strikes.
           </span>
 
@@ -460,12 +460,12 @@ export default function PartyBossWidget({
 
       {/* Guild Roster */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold text-slate-300">
+        <div className="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-300">
           <span className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-amber-400" />
             Active Guild Roster
           </span>
-          <span className="text-[11px] text-slate-400 font-mono">
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
             Shared Bounties: +100 Gold each upon boss defeat
           </span>
         </div>
@@ -478,12 +478,12 @@ export default function PartyBossWidget({
                 key={member.id}
                 className={`p-2.5 rounded-lg border flex items-center justify-between transition-colors ${
                   isMe
-                    ? "bg-amber-500/10 border-amber-500/40 text-slate-100"
-                    : "bg-[#101721] border-slate-800/80 text-slate-300"
+                    ? "bg-amber-500/10 border-amber-500/40 text-slate-800 dark:text-slate-100"
+                    : "bg-[#101721] border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300"
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#16202c] border border-slate-700 flex items-center justify-center text-xs font-bold font-mono text-amber-400 uppercase">
+                  <div className="w-8 h-8 rounded-full bg-[#16202c] border border-slate-300 dark:border-slate-700 flex items-center justify-center text-xs font-bold font-mono text-amber-400 uppercase">
                     {member.user.username.slice(0, 2)}
                   </div>
                   <div>
@@ -495,7 +495,7 @@ export default function PartyBossWidget({
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] text-slate-400">
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">
                       Lvl {member.user.level} {member.user.characterClass || "Warrior"}
                     </div>
                   </div>

@@ -46,7 +46,7 @@ export default function LevelUpModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="w-full max-w-md rpg-panel-gold border-2 border-amber-500 bg-[#141b24] p-6 shadow-2xl text-center relative overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="w-full max-w-md rpg-panel-gold border-2 border-amber-500 bg-card p-6 shadow-2xl text-center relative overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="mx-auto w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-300 mb-4 animate-bounce">
           <Award className="w-10 h-10" />
         </div>
@@ -59,14 +59,14 @@ export default function LevelUpModal({
           LEVEL {newLevel} REACHED!
         </h2>
 
-        <div className="inline-block bg-[#0b0e14] px-4 py-1.5 rounded-full border border-amber-700/60 my-2">
-          <span className="text-xs text-slate-400 uppercase tracking-widest font-semibold mr-2">
+        <div className="inline-block bg-background px-4 py-1.5 rounded-full border border-amber-700/60 my-2">
+          <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest font-semibold mr-2">
             New Title:
           </span>
           <span className="text-sm font-bold text-emerald-400">{newTitle}</span>
         </div>
 
-        <p className="text-xs text-slate-300 my-4 leading-relaxed max-w-sm mx-auto">
+        <p className="text-xs text-slate-600 dark:text-slate-300 my-4 leading-relaxed max-w-sm mx-auto">
           The high bureaucrats of productivity have stamped your elevation. Your stamina increases,
           and even the tavern goblins are starting to show reluctant respect.
         </p>

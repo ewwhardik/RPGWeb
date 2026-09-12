@@ -65,8 +65,8 @@ export default function ClassSelectModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full max-w-xl rpg-panel border border-[#b45309]/60 bg-[#121822] p-6 shadow-2xl">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+      <div className="w-full max-w-xl rpg-panel border border-[#b45309]/60 bg-card p-6 shadow-2xl">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-4">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400">
               <Sparkles className="w-5 h-5" />
@@ -75,7 +75,7 @@ export default function ClassSelectModal({
               <h2 className="text-lg font-bold font-title text-amber-300">
                 Class Specialization Guild
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Select your RPG archetype to unlock specialized quest passives and stat multipliers.
               </p>
             </div>
@@ -84,7 +84,7 @@ export default function ClassSelectModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+            className="p-1 rounded text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
@@ -112,18 +112,18 @@ export default function ClassSelectModal({
                 className={`p-3.5 rounded-lg border cursor-pointer select-none transition-all flex flex-col justify-between ${
                   isSelected
                     ? "bg-amber-950/30 border-amber-500 shadow-md scale-[1.02]"
-                    : "bg-[#0b0e14] border-slate-800 hover:border-slate-700"
+                    : "bg-background border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:border-slate-700"
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded bg-slate-900 border border-slate-800 text-amber-400">
+                      <div className="p-1.5 rounded bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-400">
                         <Icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-slate-100">{cls.name}</h4>
-                        <span className="text-[10px] text-slate-400">{cls.subtitle}</span>
+                        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">{cls.name}</h4>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">{cls.subtitle}</span>
                       </div>
                     </div>
 
@@ -134,17 +134,17 @@ export default function ClassSelectModal({
                     )}
                   </div>
 
-                  <div className="p-2 rounded bg-slate-950/80 border border-slate-800/60 mb-2">
+                  <div className="p-2 rounded bg-slate-950/80 border border-slate-200 dark:border-slate-800 mb-2">
                     <span className="text-[10px] font-bold text-amber-300 block mb-0.5">
                       {cls.perkTitle}
                     </span>
-                    <p className="text-[11px] text-slate-300 leading-snug">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
                       {cls.perkDescription}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-[10px] text-slate-400">
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Specialties: {cls.primaryAttributes.join(", ")}</span>
                   {isSelected && <Check className="w-3.5 h-3.5 text-amber-400" />}
                 </div>
@@ -153,7 +153,7 @@ export default function ClassSelectModal({
           })}
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800">
+        <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-800">
           <button
             type="button"
             onClick={onClose}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Cookie, MessageCircle, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { soundFx } from "@/lib/audio";
 
 interface DeskGoblinProps {
@@ -26,12 +26,9 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
     "Greetings, meatbag. I am Bartholomew, your court-appointed procrastination goblin."
   );
   const [feeding, setFeeding] = useState(false);
-  const [isWiggling, setIsWiggling] = useState(false);
 
   function handlePoke() {
     soundFx.playClick();
-    setIsWiggling(true);
-    setTimeout(() => setIsWiggling(false), 400);
     const quote = GOBLIN_POKES[Math.floor(Math.random() * GOBLIN_POKES.length)];
     setDialogue(quote);
   }
@@ -54,8 +51,6 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
       if (res.ok) {
         setDialogue(data.message);
         onFeedSuccess(data.newGold, data.sanityGain);
-        setIsWiggling(true);
-        setTimeout(() => setIsWiggling(false), 600);
       } else {
         setDialogue(data.error || "Snack transaction aborted.");
       }
@@ -68,81 +63,90 @@ export default function DeskGoblin({ gold, onFeedSuccess }: DeskGoblinProps) {
 
   if (!isOpen) {
     return (
-      <button
+      <motion.button
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         type="button"
         onClick={() => {
           soundFx.playClick();
           setIsOpen(true);
         }}
-        className="fixed bottom-4 right-4 z-40 bg-[#141b24] border border-amber-600/70 p-2.5 rounded-full shadow-2xl flex items-center gap-2 text-amber-400 hover:scale-105 transition-transform"
+        className="fixed bottom-4 right-4 z-40 bg-card border border-amber-600/70 p-2.5 rounded-full shadow-2xl flex items-center gap-2 text-amber-500"
         title="Summon Bartholomew the Desk Goblin"
       >
-        <span className="text-xl">👺</span>
-        <span className="text-xs font-bold text-slate-200 pr-1">Bartholomew</span>
-      </button>
+        <span className="text-xl drop-shadow-md">👺</span>
+        <span className="text-xs font-bold pr-1">Bartholomew</span>
+      </motion.button>
     );
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 w-72 rpg-panel border border-amber-600/50 bg-[#121822] p-3.5 shadow-2xl">
-      <div className="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
+    <motion.div 
+      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      className="fixed bottom-4 right-4 z-40 w-72 rpg-panel border border-amber-600/50 p-3.5 shadow-2xl"
+    >
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 mb-2">
         <div className="flex items-center gap-2">
-          <div
+          <motion.div
+            whileTap={{ scale: 0.8, rotate: -15 }}
             onClick={handlePoke}
-            className={`cursor-pointer select-none text-2xl transition-transform ${
-              isWiggling ? "scale-125 rotate-12" : "hover:scale-110"
-            }`}
+            className="cursor-pointer select-none text-2xl drop-shadow-md"
             title="Poke Bartholomew"
           >
             👺
-          </div>
+          </motion.div>
           <div>
-            <h4 className="text-xs font-bold text-amber-300">Bartholomew</h4>
-            <span className="text-[10px] text-slate-400">Desk Goblin in Residence</span>
+            <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400">Bartholomew</h4>
+            <span className="text-[10px] text-slate-500">Desk Goblin in Residence</span>
           </div>
         </div>
-
         <button
           type="button"
           onClick={() => {
             soundFx.playClick();
             setIsOpen(false);
           }}
-          className="text-slate-400 hover:text-slate-200 p-1"
-          title="Minimize Goblin"
+          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
         >
-          <X className="w-3.5 h-3.5" />
+          ✕
         </button>
       </div>
 
-      {/* Speech Bubble */}
-      <div className="p-2.5 bg-[#0b0e14] rounded-lg border border-slate-800 text-xs text-slate-200 mb-3 leading-relaxed relative">
-        <p>{dialogue}</p>
-        <div className="absolute -top-1.5 left-4 w-3 h-3 bg-[#0b0e14] border-t border-l border-slate-800 rotate-45" />
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={dialogue}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 10 }}
+          className="p-2.5 bg-slate-100 dark:bg-[#0b0e14] rounded-lg border border-slate-200 dark:border-slate-800 text-xs mb-3 leading-relaxed relative"
+        >
+          <p>{dialogue}</p>
+          <div className="absolute -top-1.5 left-4 w-3 h-3 bg-slate-100 dark:bg-[#0b0e14] border-t border-l border-slate-200 dark:border-slate-800 rotate-45" />
+        </motion.div>
+      </AnimatePresence>
 
-      {/* Action Buttons */}
       <div className="flex items-center gap-2">
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           type="button"
           onClick={handlePoke}
           className="btn-dark text-[11px] py-1.5 px-3 flex-1 flex items-center justify-center gap-1"
         >
-          <MessageCircle className="w-3 h-3 text-slate-400" />
           <span>Poke Goblin</span>
-        </button>
-
-        <button
+        </motion.button>
+        <motion.button
+          whileTap={gold >= 5 && !feeding ? { scale: 0.95 } : {}}
           type="button"
           onClick={handleFeed}
           disabled={feeding || gold < 5}
           className="btn-gold text-[11px] py-1.5 px-3 flex-1 flex items-center justify-center gap-1"
-          title="Feeds Bartholomew for 5 Gold (+2 Sanity)"
         >
-          <Cookie className="w-3 h-3" />
           <span>Feed (5g)</span>
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }

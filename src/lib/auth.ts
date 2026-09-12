@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 
-const JWT_SECRET = process.env.JWT_SECRET || "questsmith_super_secret_session_token_key_2026";
-export const AUTH_COOKIE_NAME = "questsmith_auth_token";
+const JWT_SECRET = process.env.JWT_SECRET || "karmaraj_super_secret_session_token_key_2026";
+export const AUTH_COOKIE_NAME = "karmaraj_auth_token";
 
 export interface TokenPayload {
   userId: string;

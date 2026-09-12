@@ -1,42 +1,95 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: var(--bg-surface);
+  --color-foreground: var(--text-primary);
+  --color-card: var(--bg-card);
+  --color-card-border: var(--border-card);
+  
+  --color-gold-50: #fffbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-gold-900: #78350f;
+
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+
+  --color-crimson-400: #f87171;
+  --color-crimson-500: #ef4444;
+  --color-crimson-600: #dc2626;
+}
+
+/* Light Mode Defaults (Playful & Clean) */
 :root {
-  --bg-obsidian: #0b0e14;
-  --bg-surface: #121820;
-  --bg-elevated: #1a2330;
-  --border-subtle: #243042;
-  --border-highlight: #3b4d66;
+  --bg-surface: #f8fafc;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-card: #cbd5e1;
+  
+  --btn-gold-bg: #f59e0b;
+  --btn-gold-border: #d97706;
+  --btn-gold-shadow: #b45309;
+  --btn-gold-text: #ffffff;
 
-  --gold-50: #fffbeb;
-  --gold-100: #fef3c7;
-  --gold-400: #fbbf24;
-  --gold-500: #f59e0b;
-  --gold-600: #d97706;
-  --gold-700: #b45309;
-  --gold-900: #78350f;
+  --btn-emerald-bg: #10b981;
+  --btn-emerald-border: #059669;
+  --btn-emerald-shadow: #047857;
+  --btn-emerald-text: #ffffff;
 
-  --emerald-400: #34d399;
-  --emerald-500: #10b981;
-  --emerald-600: #059669;
-  --emerald-700: #047857;
+  --btn-dark-bg: #1e293b;
+  --btn-dark-border: #0f172a;
+  --btn-dark-shadow: #020617;
+  --btn-dark-text: #ffffff;
+  
+  --btn-crimson-bg: #ef4444;
+  --btn-crimson-border: #dc2626;
+  --btn-crimson-shadow: #991b1b;
+  --btn-crimson-text: #ffffff;
 
-  --crimson-400: #f87171;
-  --crimson-500: #ef4444;
-  --crimson-600: #dc2626;
+  --shadow-rpg-panel: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+}
 
-  --parchment-paper: #f7f3e8;
-  --parchment-border: #d4c5a9;
+/* Dark Mode Overrides (Tactile Obsidian) */
+.dark {
+  --bg-surface: #0b0e14;
+  --bg-card: #121822;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-card: #28374d;
+
+  --btn-gold-bg: #f59e0b;
+  --btn-gold-border: #d97706;
+  --btn-gold-shadow: #92400e;
+  --btn-gold-text: #1c1404;
+
+  --btn-emerald-bg: #10b981;
+  --btn-emerald-border: #059669;
+  --btn-emerald-shadow: #065f46;
+  --btn-emerald-text: #022013;
+
+  --btn-dark-bg: #1e293b;
+  --btn-dark-border: #334155;
+  --btn-dark-shadow: #0f172a;
+  --btn-dark-text: #e2e8f0;
+  
+  --btn-crimson-bg: #ef4444;
+  --btn-crimson-border: #dc2626;
+  --btn-crimson-shadow: #991b1b;
+  --btn-crimson-text: #ffffff;
+
+  --shadow-rpg-panel: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
 }
 
 body {
-  background-color: var(--bg-obsidian);
-  color: #f1f5f9;
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
-  min-height: 100vh;
 }
-
-/* Custom Tactical & Uiverse Inspired Utilities */
 
 /* 3D Gold Action Button */
 .btn-gold {
@@ -44,33 +97,24 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #f59e0b;
-  color: #1c1404;
+  background-color: var(--btn-gold-bg);
+  color: var(--btn-gold-text);
   font-weight: 700;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
-  border: 1px solid #d97706;
-  box-shadow: 0 4px 0 #92400e, 0 6px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--btn-gold-border);
+  box-shadow: 0 4px 0 var(--btn-gold-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
-.btn-gold:hover {
-  background-color: #fbbf24;
-}
-
+.btn-gold:hover { filter: brightness(1.1); }
 .btn-gold:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 #92400e, 0 2px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 var(--btn-gold-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-.btn-gold:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 0 4px 0 #92400e;
-}
+.btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 var(--btn-gold-shadow); }
 
 /* 3D Emerald Action Button */
 .btn-emerald {
@@ -78,109 +122,89 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #10b981;
-  color: #022013;
+  background-color: var(--btn-emerald-bg);
+  color: var(--btn-emerald-text);
   font-weight: 700;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
-  border: 1px solid #059669;
-  box-shadow: 0 4px 0 #065f46, 0 6px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--btn-emerald-border);
+  box-shadow: 0 4px 0 var(--btn-emerald-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
-.btn-emerald:hover {
-  background-color: #34d399;
-}
-
+.btn-emerald:hover { filter: brightness(1.1); }
 .btn-emerald:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 #065f46, 0 2px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 var(--btn-emerald-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.btn-emerald:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 var(--btn-emerald-shadow); }
 
-/* 3D Dark/Secondary Action Button */
+/* 3D Dark Action Button */
 .btn-dark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #1e293b;
-  color: #e2e8f0;
+  background-color: var(--btn-dark-bg);
+  color: var(--btn-dark-text);
   font-weight: 600;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
-  border: 1px solid #334155;
-  box-shadow: 0 4px 0 #0f172a, 0 6px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--btn-dark-border);
+  box-shadow: 0 4px 0 var(--btn-dark-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
 
-.btn-dark:hover {
-  background-color: #334155;
-  color: #ffffff;
-}
-
+.btn-dark:hover { filter: brightness(1.1); }
 .btn-dark:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 #0f172a, 0 2px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 var(--btn-dark-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* 3D Crimson / Danger Button */
+/* 3D Crimson Button */
 .btn-crimson {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #ef4444;
-  color: #ffffff;
+  background-color: var(--btn-crimson-bg);
+  color: var(--btn-crimson-text);
   font-weight: 700;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
-  border: 1px solid #dc2626;
-  box-shadow: 0 4px 0 #991b1b, 0 6px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--btn-crimson-border);
+  box-shadow: 0 4px 0 var(--btn-crimson-shadow), 0 6px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
   user-select: none;
   cursor: pointer;
 }
-
-.btn-crimson:hover {
-  background-color: #f87171;
-}
-
+.btn-crimson:hover { filter: brightness(1.1); }
 .btn-crimson:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 #991b1b, 0 2px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 var(--btn-crimson-shadow), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Tactile RPG Card with metallic brass rivets and subtle depth */
+/* Tactile RPG Card */
 .rpg-panel {
-  background: #131922;
-  border: 1px solid #28374d;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
   border-radius: 0.75rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  box-shadow: var(--shadow-rpg-panel);
   position: relative;
   overflow: hidden;
 }
 
 .rpg-panel-gold {
-  background: #141b24;
-  border: 1px solid #78350f;
+  background: var(--bg-card);
+  border: 1px solid var(--color-gold-700);
   border-radius: 0.75rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(245, 158, 11, 0.1) inset;
+  box-shadow: var(--shadow-rpg-panel), 0 0 0 1px rgba(245, 158, 11, 0.1) inset;
   position: relative;
   overflow: hidden;
-}
-
-/* Parchment Quest Paper */
-.parchment-card {
-  background-color: #f6f1e3;
-  color: #1e1b18;
-  border: 2px solid #bba378;
-  border-radius: 0.5rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-  position: relative;
 }
 
 /* Tactile Wax Stamp Simulation */
@@ -197,26 +221,16 @@ body {
   letter-spacing: 0.08em;
   transform: rotate(-6deg);
   user-select: none;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.05));
+  text-shadow: 0 1px 1px rgba(255,255,255,0.2);
 }
 
 /* Custom Scrollbar for RPG feel */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0b0e14;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #243042;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #d97706;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--border-card); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold-600); }
 
 /* Display Font Styling for Titles */
 .font-title {
@@ -226,66 +240,30 @@ body {
 
 /* Diorama in a Box: Expansive Vignette Canvas */
 .diorama-box {
-  background: radial-gradient(ellipse at center, rgba(30, 48, 64, 0.45) 0%, rgba(15, 23, 34, 0.85) 55%, #0b0e14 100%);
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85), 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+  background: radial-gradient(ellipse at center, rgba(30, 48, 64, 0.15) 0%, rgba(15, 23, 34, 0.35) 55%, var(--bg-surface) 100%);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.25), 0 20px 40px -15px rgba(0, 0, 0, 0.3);
   position: relative;
   border-radius: 1rem;
 }
-
-/* Apple UI Glass Bubble */
-.glass-bubble {
-  background: rgba(26, 36, 50, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12), 0 12px 28px rgba(0, 0, 0, 0.45);
-  border-radius: 1rem;
-}
-
-/* Animated Shimmer Stripes on XP Progress Bar */
-@keyframes xp-stripes {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 28px 0;
-  }
-}
-
-.xp-shimmer-stripes {
-  background-size: 28px 28px;
-  background-image: linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.18) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.18) 75%,
-    transparent 75%,
-    transparent
-  );
-  animation: xp-stripes 1.2s linear infinite;
-}
-
-/* Segmented Stamina Meter Tick Marks Overlay */
-.stamina-meter-ticks {
-  background-image: repeating-linear-gradient(
-    to right,
-    transparent 0px,
-    transparent 18px,
-    rgba(11, 14, 20, 0.8) 18px,
-    rgba(11, 14, 20, 0.8) 20px
-  );
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.dark .diorama-box {
+  background: radial-gradient(ellipse at center, rgba(30, 48, 64, 0.45) 0%, rgba(15, 23, 34, 0.85) 55%, var(--bg-surface) 100%);
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85), 0 20px 40px -15px rgba(0, 0, 0, 0.8);
 }
 
 /* Carved Material Effect with Subtle Texture */
 .carved-panel {
-  background-color: #121822;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.05);
-  border: 1px solid #1f2937;
+  background-color: var(--bg-card);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-card);
   border-radius: 0.75rem;
 }
+.dark .carved-panel {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
 
+@keyframes xp-stripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }
+.xp-shimmer-stripes {
+  background-size: 28px 28px;
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.18) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.18) 75%, transparent 75%, transparent);
+  animation: xp-stripes 1.2s linear infinite;
+}

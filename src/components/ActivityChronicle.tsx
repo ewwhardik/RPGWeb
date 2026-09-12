@@ -28,15 +28,15 @@ export default function ActivityChronicle({ logs }: ActivityChronicleProps) {
       case "WHEEL_OF_FATE":
         return <Flame className="w-3.5 h-3.5 text-orange-400" />;
       default:
-        return <Scroll className="w-3.5 h-3.5 text-slate-400" />;
+        return <Scroll className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />;
     }
   }
 
   return (
-    <div className="rpg-panel border border-slate-800 bg-[#121822] p-4">
-      <div className="flex items-center gap-2 pb-2.5 border-b border-slate-800 mb-3">
+    <div className="rpg-panel border border-slate-200 dark:border-slate-800 bg-card p-4">
+      <div className="flex items-center gap-2 pb-2.5 border-b border-slate-200 dark:border-slate-800 mb-3">
         <Scroll className="w-4 h-4 text-amber-400" />
-        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+        <h3 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
           Guild Chronicle
         </h3>
       </div>
@@ -50,13 +50,13 @@ export default function ActivityChronicle({ logs }: ActivityChronicleProps) {
           {logs.map((log) => (
             <div
               key={log.id}
-              className="p-2 rounded bg-[#0b0e14] border border-slate-800/80 flex items-start gap-2 text-xs"
+              className="p-2 rounded bg-background border border-slate-200 dark:border-slate-800 flex items-start gap-2 text-xs"
             >
-              <div className="mt-0.5 p-1 rounded bg-slate-900 border border-slate-800 shrink-0">
+              <div className="mt-0.5 p-1 rounded bg-slate-900 border border-slate-200 dark:border-slate-800 shrink-0">
                 {getIcon(log.actionType)}
               </div>
               <div className="flex-1">
-                <p className="text-slate-200 leading-snug text-[11px]">{log.message}</p>
+                <p className="text-slate-700 dark:text-slate-200 leading-snug text-[11px]">{log.message}</p>
                 <span className="text-[9px] text-slate-500">
                   {new Date(log.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",

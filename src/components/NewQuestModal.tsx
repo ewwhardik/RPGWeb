@@ -194,20 +194,20 @@ export default function NewQuestModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-lg rpg-panel border border-[#b45309]/60 bg-[#121822] p-6 shadow-2xl relative">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-700/60 mb-4">
+      <div className="w-full max-w-lg rpg-panel border border-[#b45309]/60 bg-card p-6 shadow-2xl relative">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-700 mb-4">
           <div>
             <h2 className="text-lg font-bold text-amber-300">
               {initialData ? "Renegotiate Quest Terms" : "Draft New Quest Scroll"}
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Transform mundane real-world friction into virtual glory and loot.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+            className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
@@ -222,7 +222,7 @@ export default function NewQuestModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-slate-300">Quest Title</label>
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Quest Title</label>
               {!initialData && (
                 <button
                   type="button"
@@ -240,12 +240,12 @@ export default function NewQuestModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Conquer 45 minutes on the elliptical..."
-              className="w-full bg-[#0b0e14] border border-slate-700/80 rounded-md py-2 px-3 text-sm text-slate-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
               Quest Log Notes (Optional)
             </label>
             <textarea
@@ -253,13 +253,13 @@ export default function NewQuestModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Why this must be done, or what snacks to eat after completion..."
-              className="w-full bg-[#0b0e14] border border-slate-700/80 rounded-md py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+              className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 px-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
             />
           </div>
 
           {/* Category Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
               Attribute Category
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -274,7 +274,7 @@ export default function NewQuestModal({
                     className={`flex items-center gap-1.5 p-2 rounded-md border text-xs font-semibold transition-all ${
                       isSelected
                         ? "bg-amber-500/20 border-amber-500 text-amber-300"
-                        : "bg-[#0b0e14] border-slate-800 text-slate-400 hover:border-slate-600"
+                        : "bg-background border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-600"
                     }`}
                   >
                     {getCategoryIcon(cat)}
@@ -287,7 +287,7 @@ export default function NewQuestModal({
 
           {/* Difficulty Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
               Difficulty Tier
             </label>
             <div className="grid grid-cols-5 gap-1.5">
@@ -301,7 +301,7 @@ export default function NewQuestModal({
                     className={`py-1.5 px-2 rounded-md border text-center text-xs font-bold transition-all ${
                       isSelected
                         ? "bg-amber-500 text-slate-950 border-amber-400 shadow"
-                        : "bg-[#0b0e14] border-slate-800 text-slate-400 hover:border-slate-700"
+                        : "bg-background border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:border-slate-700"
                     }`}
                   >
                     {diff}
@@ -312,8 +312,8 @@ export default function NewQuestModal({
           </div>
 
           {/* Rewards Preview Box */}
-          <div className="p-3 bg-[#0b0e14] rounded-lg border border-amber-900/40 flex items-center justify-between text-xs">
-            <span className="text-slate-400 font-medium">Yield upon completion:</span>
+          <div className="p-3 bg-background rounded-lg border border-amber-900/40 flex items-center justify-between text-xs">
+            <span className="text-slate-500 dark:text-slate-400 font-medium">Yield upon completion:</span>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 text-amber-400 font-bold">
                 <Sparkles className="w-3.5 h-3.5" />
@@ -331,7 +331,7 @@ export default function NewQuestModal({
 
           {/* Due Date */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
               Deadline / Target Date
             </label>
             <div className="relative">
@@ -340,7 +340,7 @@ export default function NewQuestModal({
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full bg-[#0b0e14] border border-slate-700/80 rounded-md py-2 pl-9 pr-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
               />
             </div>
           </div>

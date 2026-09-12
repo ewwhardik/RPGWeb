@@ -178,22 +178,22 @@ export default function ShopModal({
       case "UNCOMMON":
         return "border-emerald-500 text-emerald-300 bg-emerald-950/30";
       default:
-        return "border-slate-700 text-slate-300 bg-slate-900/40";
+        return "border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 bg-slate-900/40";
     }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rpg-panel border border-[#b45309]/60 bg-[#121822] shadow-2xl">
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rpg-panel border border-[#b45309]/60 bg-card shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800">
+        <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
               <ShoppingBag className="w-6 h-6" />
             </div>
             <div>
               <h2 className="text-xl font-bold font-title text-amber-300">The Grumble & Glory Bazaar</h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Spurious relics and equipment to enhance your mortal vessel.
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function ShopModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+              className="p-1 rounded text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100 hover:bg-slate-800"
             >
               <X className="w-5 h-5" />
             </button>
@@ -216,7 +216,7 @@ export default function ShopModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex px-5 pt-3 border-b border-slate-800 gap-4 bg-[#0d1219]">
+        <div className="flex px-5 pt-3 border-b border-slate-200 dark:border-slate-800 gap-4 bg-[#0d1219]">
           <button
             type="button"
             onClick={() => {
@@ -226,7 +226,7 @@ export default function ShopModal({
             className={`pb-2.5 text-xs font-bold transition-colors border-b-2 ${
               activeTab === "SHOP"
                 ? "border-amber-500 text-amber-300"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
             }`}
           >
             Merchant Wares ({items.length})
@@ -240,7 +240,7 @@ export default function ShopModal({
             className={`pb-2.5 text-xs font-bold transition-colors border-b-2 ${
               activeTab === "BACKPACK"
                 ? "border-amber-500 text-amber-300"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
             }`}
           >
             Your Knapsack ({items.filter((i) => i.isOwned).length})
@@ -257,11 +257,11 @@ export default function ShopModal({
         {/* Items Grid */}
         <div className="p-5 overflow-y-auto space-y-3 flex-1">
           {loading ? (
-            <div className="text-center py-12 text-slate-400 text-xs">
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400 text-xs">
               Browsing merchant shelves...
             </div>
           ) : displayedItems.length === 0 ? (
-            <div className="text-center py-12 text-slate-400 text-xs">
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400 text-xs">
               {activeTab === "BACKPACK"
                 ? "Your knapsack is empty. Go purchase some questionable relics from the merchant!"
                 : "No wares available right now."}
@@ -276,22 +276,22 @@ export default function ShopModal({
                 return (
                   <div
                     key={item.id}
-                    className={`p-3.5 rounded-lg border bg-[#0b0e14] flex flex-col justify-between transition-all ${
+                    className={`p-3.5 rounded-lg border bg-background flex flex-col justify-between transition-all ${
                       isEquipped
                         ? "border-emerald-500/70 bg-[#0c1815]"
                         : isOwned
-                        ? "border-slate-700/80"
-                        : "border-slate-800 hover:border-slate-700"
+                        ? "border-slate-300 dark:border-slate-700"
+                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:border-slate-700"
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <div className="p-2 rounded bg-slate-900 border border-slate-800 text-amber-400">
+                          <div className="p-2 rounded bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-400">
                             <IconComponent className="w-4 h-4" />
                           </div>
                           <div>
-                            <h4 className="text-xs font-bold text-slate-100">{item.name}</h4>
+                            <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">{item.name}</h4>
                             <span
                               className={`text-[10px] font-semibold px-1.5 py-0.2 rounded border ${getRarityStyle(
                                 item.rarity
@@ -310,7 +310,7 @@ export default function ShopModal({
                         )}
                       </div>
 
-                      <p className="text-[11px] text-slate-400 leading-snug mb-1">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mb-1">
                         {item.description}
                       </p>
 
@@ -330,7 +330,7 @@ export default function ShopModal({
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-800/80">
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
                       {!isOwned ? (
                         <button
                           type="button"

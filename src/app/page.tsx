@@ -342,9 +342,9 @@ export default function DashboardPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-[#0b0e14] text-slate-100">
+      <div className="min-h-screen flex flex-col bg-background text-slate-800 dark:text-slate-100">
         {/* Top Apple-UI Styled Glass Bubble Navigation Bar */}
-        <header className="sticky top-0 z-30 px-4 lg:px-8 py-3 bg-[#0b0e14]/85 backdrop-blur-xl border-b border-slate-800/80">
+        <header className="sticky top-0 z-30 px-4 lg:px-8 py-3 bg-background backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 shadow-md">
@@ -353,13 +353,13 @@ export default function DashboardPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg font-black font-title tracking-wide text-amber-300">
-                    QuestSmith
+                    Karmaraj Dev Sai Ram Dash
                   </h1>
                   <span className="wax-stamp text-[9px] py-0.2 px-1.5 border-amber-500 text-amber-400">
                     LIFE RPG
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400">The Adventurer&apos;s Bureaucracy</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">The Adventurer&apos;s Bureaucracy</p>
               </div>
             </div>
 
@@ -368,7 +368,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={handleToggleSound}
-                className="p-2 rounded-lg bg-[#141b24] border border-slate-800 text-slate-300 hover:text-amber-300 transition-colors shadow"
+                className="p-2 rounded-lg bg-card border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-300 transition-colors shadow"
                 title={isMuted ? "Unmute Audio SFX (M)" : "Mute Audio SFX (M)"}
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                   soundFx.playClick();
                   setIsHelpModalOpen(true);
                 }}
-                className="p-2 rounded-lg bg-[#141b24] border border-slate-800 text-slate-300 hover:text-amber-300 transition-colors shadow"
+                className="p-2 rounded-lg bg-card border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-300 transition-colors shadow"
                 title="Arcane Keyboard Runes (?)"
               >
                 <Keyboard className="w-4 h-4 text-amber-400" />
@@ -433,9 +433,9 @@ export default function DashboardPage() {
 
               {/* User Profile & Logout */}
               {user ? (
-                <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
                   <div className="text-right hidden md:block">
-                    <div className="text-xs font-bold text-slate-200">{user.username}</div>
+                    <div className="text-xs font-bold text-slate-700 dark:text-slate-200">{user.username}</div>
                     <div className="text-[10px] text-amber-400 font-mono">Lvl {levelInfo.level}</div>
                   </div>
                   <button
@@ -465,15 +465,15 @@ export default function DashboardPage() {
           {/* Hero Section: Diorama in a Box & Attribute Radar */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* 3D Diorama in a Box */}
-            <div className="lg:col-span-5 diorama-box p-4 flex flex-col justify-between overflow-hidden border border-slate-800/60 shadow-2xl">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800/60 mb-2">
+            <div className="lg:col-span-5 diorama-box p-4 flex flex-col justify-between overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 mb-2">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                   <span className="text-xs font-bold font-title text-amber-300">
                     Live 3D Hero Relic
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-400">Voxel Engine Active</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Voxel Engine Active</span>
               </div>
 
               <HeroDiorama3D
@@ -482,7 +482,7 @@ export default function DashboardPage() {
                 gold={user?.gold || 0}
               />
 
-              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                 <span>Artifact Resonance: {levelInfo.level * 10}%</span>
                 <span className="text-amber-400 font-bold">{user?.title || "Novice"}</span>
               </div>
@@ -530,15 +530,15 @@ export default function DashboardPage() {
             <div className="lg:col-span-8 space-y-4">
               {/* Filter and Action Bar */}
               <div className="rpg-panel carved-panel p-4 sm:p-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200 dark:border-slate-800">
                   <div>
-                    <h2 className="text-lg font-bold font-title text-slate-100 flex items-center gap-2">
+                    <h2 className="text-lg font-bold font-title text-slate-800 dark:text-slate-100 flex items-center gap-2">
                       <span>Active Quest Dispatch</span>
-                      <span className="text-xs bg-[#0b0e14] px-2 py-0.5 rounded text-amber-400 border border-slate-800 font-mono">
+                      <span className="text-xs bg-background px-2 py-0.5 rounded text-amber-400 border border-slate-200 dark:border-slate-800 font-mono">
                         {quests.length} Total
                       </span>
                     </h2>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Vanquish real-world friction to earn gold, stamina, and attribute points.
                     </p>
                   </div>
@@ -559,7 +559,7 @@ export default function DashboardPage() {
 
                 {/* Status Tabs and Search */}
                 <div className="pt-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-                  <div className="flex items-center gap-1 bg-[#0b0e14] p-1 rounded-lg border border-slate-800 overflow-x-auto">
+                  <div className="flex items-center gap-1 bg-background p-1 rounded-lg border border-slate-200 dark:border-slate-800 overflow-x-auto">
                     {[
                       { key: "ALL", label: "All Quests" },
                       { key: "TODO", label: "In Progress" },
@@ -576,7 +576,7 @@ export default function DashboardPage() {
                         className={`px-3 py-1.5 text-xs font-semibold rounded whitespace-nowrap transition-colors ${
                           statusFilter === tab.key
                             ? "bg-amber-500 text-slate-950 font-bold"
-                            : "text-slate-400 hover:text-slate-200"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
                         }`}
                       >
                         {tab.label}
@@ -591,7 +591,7 @@ export default function DashboardPage() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search quest scrolls..."
-                      className="w-full bg-[#0b0e14] border border-slate-800 rounded-lg py-1.5 pl-9 pr-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                      className="w-full bg-background border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
                     />
                   </div>
                 </div>
@@ -632,7 +632,7 @@ export default function DashboardPage() {
                   {[1, 2, 3, 4].map((n) => (
                     <div
                       key={n}
-                      className="rpg-panel border border-slate-800 bg-[#121822] p-4 h-36 flex flex-col justify-between"
+                      className="rpg-panel border border-slate-200 dark:border-slate-800 bg-card p-4 h-36 flex flex-col justify-between"
                     >
                       <div className="flex gap-2">
                         <div className="w-16 h-4 bg-slate-800 rounded" />
@@ -645,7 +645,7 @@ export default function DashboardPage() {
                 </div>
               ) : quests.length === 0 ? (
                 /* Custom Illustrated Sleeping Desk Goblin Empty State */
-                <div className="rpg-panel border border-dashed border-slate-800 bg-[#121822] p-10 text-center carved-panel">
+                <div className="rpg-panel border border-dashed border-slate-200 dark:border-slate-800 bg-card p-10 text-center carved-panel">
                   <div className="relative inline-block mb-3">
                     <span className="text-5xl select-none">👺</span>
                     <span className="absolute -top-1 -right-4 text-xs font-mono font-bold text-amber-400 animate-bounce">
@@ -655,7 +655,7 @@ export default function DashboardPage() {
                   <h3 className="text-base font-bold font-title text-amber-300 mb-1">
                     Bartholomew is Asleep on the Notice Board
                   </h3>
-                  <p className="text-xs text-slate-400 max-w-sm mx-auto mb-4 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4 leading-relaxed">
                     There are no quests posted under these filters. Either you have conquered
                     every duty in the realm, or you are cleverly hiding from mortal productivity.
                   </p>
@@ -821,14 +821,14 @@ export default function DashboardPage() {
         )}
 
         {/* Tactical Footer */}
-        <footer className="border-t border-slate-800/80 bg-[#070a0f] py-4 px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2 mt-12">
-          <div>QuestSmith Life RPG. Non-linear bureaucratic habit engine.</div>
+        <footer className="border-t border-slate-200 dark:border-slate-800 bg-background py-4 px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2 mt-12">
+          <div>Karmaraj Dev Sai Ram Dash. Non-linear bureaucratic habit engine.</div>
           <button
             type="button"
             onClick={() => setIsHelpModalOpen(true)}
             className="hover:text-amber-400 flex items-center gap-1.5 transition-colors font-mono text-[11px]"
           >
-            <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300 text-[10px]">
+            <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-300 dark:border-slate-700 text-amber-300 text-[10px]">
               ?
             </kbd>
             <span>Arcane Runes (Shortcuts)</span>
