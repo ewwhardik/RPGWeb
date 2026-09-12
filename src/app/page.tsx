@@ -19,6 +19,9 @@ import {
   Smile,
   Keyboard,
   PawPrint,
+  Compass,
+  LayoutGrid,
+  BarChart3,
 } from "lucide-react";
 import { calculateLevelFromTotalXp } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
@@ -50,6 +53,21 @@ import CosmicDarshanModal from "@/components/CosmicDarshanModal";
 import QuestScrollsModal from "@/components/QuestScrollsModal";
 import GuildChallengesModal from "@/components/GuildChallengesModal";
 import SamsaraHeatmap from "@/components/SamsaraHeatmap";
+import NotionTopBar from "@/components/NotionTopBar";
+import NotionStatusSidebar from "@/components/NotionStatusSidebar";
+import NotionHabitGallery from "@/components/NotionHabitGallery";
+import ProgressAnalyticsGraphs from "@/components/ProgressAnalyticsGraphs";
+import GuideWalkthroughModal from "@/components/GuideWalkthroughModal";
+import DocsModal from "@/components/DocsModal";
+import {
+  DEMO_USER_PROFILE,
+  DEMO_HABITS,
+  DEMO_DAILIES,
+  DEMO_TODOS,
+  DEMO_REWARDS,
+  DEMO_LOGS,
+  DEMO_XP_HISTORY,
+} from "@/lib/demoData";
 import { setupAutoSync } from "@/lib/offlineSync";
 import { getTodayKingdomWeather, KingdomWeather } from "@/lib/weatherEngine";
 import { MysteryDropItem } from "@/lib/taskEngine";
@@ -133,9 +151,48 @@ export default function DashboardPage() {
   const [faintAlert, setFaintAlert] = useState<string | null>(null);
   const [currentLootDrop, setCurrentLootDrop] = useState<MysteryDropItem | null>(null);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
+  const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
+  const [dashboardView, setDashboardView] = useState<"NOTION_STUDIO" | "CLASSIC_BOARD" | "ANALYTICS">("NOTION_STUDIO");
+  const [notionActiveSection, setNotionActiveSection] = useState("notion-habits");
 
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
+
+  // Instant Demo Universe Hydration
+  const handleLoadDemoUniverse = () => {
+    soundFx.playLevelUp();
+    spawnCombatText("✨ DEMO UNIVERSE HYDRATED! LEVEL 18 GRAND PALADIN", "crit");
+    setUser(DEMO_USER_PROFILE);
+    setHabits(DEMO_HABITS);
+    setDailies(DEMO_DAILIES);
+    setTodos(DEMO_TODOS);
+    setRewards(DEMO_REWARDS);
+    setLogs(DEMO_LOGS);
+  };
+
+  // Pomodoro Focus Chamber Session Reward
+  const handlePomodoroReward = (xpReward: number, goldReward: number) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        xp: prev.xp + xpReward,
+        gold: prev.gold + goldReward,
+      };
+    });
+    setLogs((prev) => [
+      {
+        id: `log-pomo-${Date.now()}`,
+        actionType: "POMODORO",
+        message: `🍅 POMODORO MASTERY! Completed 25m Focus Chamber for +${xpReward} XP and +${goldReward} Gold.`,
+        xpChange: xpReward,
+        goldChange: goldReward,
+        createdAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+  };
 
   useEffect(() => {
     setIsMuted(soundFx.getMuted());
@@ -658,6 +715,45 @@ export default function DashboardPage() {
                 <Keyboard className="w-4 h-4 text-amber-400" />
               </button>
 
+              {/* Load Full Demo Universe Showcase */}
+              <button
+                type="button"
+                onClick={handleLoadDemoUniverse}
+                className="text-xs py-1.5 px-3 rounded-full flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-500/50 text-amber-300 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm font-bold"
+                title="Hydrate Demo Universe (Level 18 Grand Paladin Showcase)"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden md:inline">Demo Universe</span>
+              </button>
+
+              {/* Step-by-Step Guide Walkthrough */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsGuideModalOpen(true);
+                }}
+                className="text-xs py-1.5 px-3 rounded-full flex items-center gap-1.5 bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-amber-400/40 text-stone-200 hover:text-amber-300 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm font-bold"
+                title="Open Step-by-Step Simple Guide"
+              >
+                <Compass className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden md:inline">Guide</span>
+              </button>
+
+              {/* In-App Notion Documentation */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsDocsModalOpen(true);
+                }}
+                className="text-xs py-1.5 px-3 rounded-full flex items-center gap-1.5 bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-purple-400/40 text-stone-200 hover:text-purple-300 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm font-bold"
+                title="Product Architecture & Documentation"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                <span className="hidden md:inline">Docs</span>
+              </button>
+
               {/* 50-Day Cosmic Darshan Check-in Shrine */}
               <button
                 type="button"
@@ -805,6 +901,9 @@ export default function DashboardPage() {
 
         {/* Main Content Dashboard */}
         <main className="dashboard-main flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* Notion Minimalist Clock, Weather & Life Elapsed Timeline Strip */}
+          <NotionTopBar />
+
           {/* Faint Alert Banner */}
           {faintAlert && (
             <div className="p-4 rounded-xl bg-red-950/90 border-2 border-red-600 text-red-200 shadow-2xl flex items-center justify-between gap-4 animate-bounce">
@@ -865,99 +964,233 @@ export default function DashboardPage() {
             />
           )}
 
-          {/* Search, Tag Filters & + Add Task Bar */}
-          <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-4 shadow-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            {/* Tag Attribute Filter Chips */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-              <Filter className="w-3.5 h-3.5 text-stone-400 shrink-0 mr-1" />
-              {categories.map((cat) => {
-                const isSelected = categoryFilter === cat.key;
-                return (
-                  <button
-                    key={cat.key}
-                    type="button"
-                    onClick={() => {
-                      soundFx.playClick();
-                      setCategoryFilter(cat.key);
-                    }}
-                    className={`inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-full border transition-all whitespace-nowrap font-bold ${
-                      isSelected
-                        ? "shadow-sm"
-                        : "bg-stone-900/90 text-stone-300 border-stone-800 hover:border-stone-700"
-                    }`}
-                    style={
-                      isSelected
-                        ? {
-                            borderColor: cat.color,
-                            backgroundColor: `${cat.color}25`,
-                            color: cat.color,
-                          }
-                        : undefined
-                    }
-                  >
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Search and + Add Task button */}
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 md:w-56">
-                <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-stone-500" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search tasks..."
-                  className="w-full bg-[#13161c] border border-stone-700 rounded-lg py-1.5 pl-9 pr-3 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500"
-                />
-              </div>
+          {/* View Switcher: Notion Studio vs Classic Board vs Analytics */}
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-white/[0.06]">
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-stone-900/80 border border-white/10 backdrop-blur-md">
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setDashboardView("NOTION_STUDIO");
+                }}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  dashboardView === "NOTION_STUDIO"
+                    ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm"
+                    : "text-stone-400 hover:text-stone-200 border border-transparent"
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Notion Dark Studio</span>
+              </button>
 
               <button
                 type="button"
                 onClick={() => {
                   soundFx.playClick();
-                  setEditingTask(null);
-                  setNewTaskDefaultType("HABIT");
-                  setIsNewTaskModalOpen(true);
+                  setDashboardView("CLASSIC_BOARD");
                 }}
-                className="btn-gold text-xs py-2 px-4 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  dashboardView === "CLASSIC_BOARD"
+                    ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm"
+                    : "text-stone-400 hover:text-stone-200 border border-transparent"
+                }`}
               >
-                <Plus className="w-4 h-4" />
-                <span>+ Add Task</span>
+                <LayoutGrid className="w-3.5 h-3.5 text-amber-400" />
+                <span>4-Column Quest Board</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setDashboardView("ANALYTICS");
+                }}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  dashboardView === "ANALYTICS"
+                    ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 shadow-sm"
+                    : "text-stone-400 hover:text-stone-200 border border-transparent"
+                }`}
+              >
+                <BarChart3 className="w-3.5 h-3.5 text-sky-400" />
+                <span>Real Progress Analytics</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsGuideModalOpen(true);
+                }}
+                className="text-xs px-3 py-1.5 rounded-lg bg-stone-900/60 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-amber-300 font-medium flex items-center gap-1.5 transition-all"
+              >
+                <Compass className="w-3.5 h-3.5 text-amber-400" />
+                <span>Step-by-Step Guide</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsDocsModalOpen(true);
+                }}
+                className="text-xs px-3 py-1.5 rounded-lg bg-stone-900/60 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-purple-300 font-medium flex items-center gap-1.5 transition-all"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                <span>Documentation</span>
               </button>
             </div>
           </div>
 
-          {/* 4-COLUMN TASK BOARD GRID */}
-          <section>
-            <ErrorBoundary
-              fallback={
-                <div className="p-8 rounded-xl border border-stone-800 bg-stone-900/60 text-center space-y-2">
-                  <p className="text-sm font-bold text-amber-300">Quest Board Synchronizing...</p>
-                  <p className="text-xs text-stone-400">The task archives are momentarily refreshing. Please reload the page if this persists.</p>
+          {/* VIEW 1: NOTION DARK RPG STUDIO (Sidebar + Habit Gallery) */}
+          {dashboardView === "NOTION_STUDIO" && (
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              <div className="lg:col-span-4 xl:col-span-3">
+                <NotionStatusSidebar
+                  user={{
+                    username: user?.username || "Traveler",
+                    level: user?.level || 1,
+                    xp: user?.xp || 0,
+                    characterClass: user?.characterClass || "WARRIOR",
+                    gold: user?.gold || 0,
+                  }}
+                  activeSection={notionActiveSection}
+                  onSelectSection={(sec) => {
+                    setNotionActiveSection(sec);
+                    if (sec === "notion-analytics") setDashboardView("ANALYTICS");
+                    if (sec === "notion-docs") setIsDocsModalOpen(true);
+                  }}
+                  onPomodoroReward={handlePomodoroReward}
+                />
+              </div>
+
+              <div className="lg:col-span-8 xl:col-span-9">
+                <NotionHabitGallery
+                  userGold={user?.gold || 0}
+                  userXp={user?.xp || 0}
+                  onScoreTask={handleScoreTask}
+                  onBuyReward={handleBuyStandardReward}
+                  onOpenNewTaskModal={(defaultType) => {
+                    setEditingTask(null);
+                    setNewTaskDefaultType(defaultType);
+                    setIsNewTaskModalOpen(true);
+                  }}
+                />
+              </div>
+            </section>
+          )}
+
+          {/* VIEW 2: CLASSIC 4-COLUMN QUEST BOARD */}
+          {dashboardView === "CLASSIC_BOARD" && (
+            <div className="space-y-6">
+              {/* Search, Tag Filters & + Add Task Bar */}
+              <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-4 shadow-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                {/* Tag Attribute Filter Chips */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                  <Filter className="w-3.5 h-3.5 text-stone-400 shrink-0 mr-1" />
+                  {categories.map((cat) => {
+                    const isSelected = categoryFilter === cat.key;
+                    return (
+                      <button
+                        key={cat.key}
+                        type="button"
+                        onClick={() => {
+                          soundFx.playClick();
+                          setCategoryFilter(cat.key);
+                        }}
+                        className={`inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-full border transition-all whitespace-nowrap font-bold ${
+                          isSelected
+                            ? "shadow-sm"
+                            : "bg-stone-900/90 text-stone-300 border-stone-800 hover:border-stone-700"
+                        }`}
+                        style={
+                          isSelected
+                            ? {
+                                borderColor: cat.color,
+                                backgroundColor: `${cat.color}25`,
+                                color: cat.color,
+                              }
+                            : undefined
+                        }
+                      >
+                        <span>{cat.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
-              }
-            >
-              <TaskBoardGrid
-                habits={habits}
-                dailies={dailies}
-                todos={todos}
-                rewards={rewards}
-                userGold={user?.gold || 0}
-                onScoreTask={handleScoreTask}
-                onBuyStandardReward={handleBuyStandardReward}
-                onQuickAddTask={handleQuickAddTask}
-                onEditTask={(task) => {
-                  setEditingTask(task);
-                  setIsNewTaskModalOpen(true);
-                }}
-                onDeleteTask={handleDeleteTask}
-                onUpdateChecklist={handleUpdateChecklist}
+
+                {/* Search and + Add Task button */}
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1 md:w-56">
+                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-stone-500" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search tasks..."
+                      className="w-full bg-[#13161c] border border-stone-700 rounded-lg py-1.5 pl-9 pr-3 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playClick();
+                      setEditingTask(null);
+                      setNewTaskDefaultType("HABIT");
+                      setIsNewTaskModalOpen(true);
+                    }}
+                    className="btn-gold text-xs py-2 px-4 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>+ Add Task</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4-COLUMN TASK BOARD GRID */}
+              <section>
+                <ErrorBoundary
+                  fallback={
+                    <div className="p-8 rounded-xl border border-stone-800 bg-stone-900/60 text-center space-y-2">
+                      <p className="text-sm font-bold text-amber-300">Quest Board Synchronizing...</p>
+                      <p className="text-xs text-stone-400">The task archives are momentarily refreshing. Please reload the page if this persists.</p>
+                    </div>
+                  }
+                >
+                  <TaskBoardGrid
+                    habits={habits}
+                    dailies={dailies}
+                    todos={todos}
+                    rewards={rewards}
+                    userGold={user?.gold || 0}
+                    onScoreTask={handleScoreTask}
+                    onBuyStandardReward={handleBuyStandardReward}
+                    onQuickAddTask={handleQuickAddTask}
+                    onEditTask={(task) => {
+                      setEditingTask(task);
+                      setIsNewTaskModalOpen(true);
+                    }}
+                    onDeleteTask={handleDeleteTask}
+                    onUpdateChecklist={handleUpdateChecklist}
+                  />
+                </ErrorBoundary>
+              </section>
+            </div>
+          )}
+
+          {/* VIEW 3: REAL PROGRESS ANALYTICS GRAPHS */}
+          {dashboardView === "ANALYTICS" && (
+            <section>
+              <ProgressAnalyticsGraphs
+                level={user?.level || 1}
+                totalXp={user?.xp || 0}
+                streakCount={user?.streakCount || 1}
+                stats={user?.stats}
+                customXpHistory={DEMO_XP_HISTORY}
               />
-            </ErrorBoundary>
-          </section>
+            </section>
+          )}
 
           {/* Hero Relics & 3D Diorama & Radar */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch pt-4">
@@ -1319,6 +1552,22 @@ export default function DashboardPage() {
             fetchTasks();
             fetchLogs();
           }}
+        />
+
+        {/* Step-by-Step Interactive Guide */}
+        <GuideWalkthroughModal
+          isOpen={isGuideModalOpen}
+          onClose={() => setIsGuideModalOpen(false)}
+          onOpenDocs={() => {
+            setIsGuideModalOpen(false);
+            setIsDocsModalOpen(true);
+          }}
+        />
+
+        {/* Notion-Style Comprehensive Documentation */}
+        <DocsModal
+          isOpen={isDocsModalOpen}
+          onClose={() => setIsDocsModalOpen(false)}
         />
 
         {/* Hardware-Accelerated Cyber-Fantasy Cursor */}
