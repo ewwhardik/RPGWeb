@@ -16,7 +16,6 @@ import {
   Shield,
   Zap,
   LineChart,
-  Server,
 } from "lucide-react";
 
 interface DocsModalProps {
@@ -32,7 +31,6 @@ type DocTab =
   | "productivity"
   | "weather-chronos"
   | "guild-raids"
-  | "hosting"
   | "shortcuts"
   | "author";
 
@@ -147,19 +145,6 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
               >
                 <Swords className="w-3.5 h-3.5 flex-shrink-0" />
                 <span>Guild Raids & Webhooks</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab("hosting")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-left whitespace-nowrap ${
-                  activeTab === "hosting"
-                    ? "bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30"
-                    : "text-stone-400 hover:bg-stone-800/60 hover:text-stone-200"
-                }`}
-              >
-                <Server className="w-3.5 h-3.5 flex-shrink-0" />
-                <span>Free Hosting & Deploy</span>
               </button>
 
               <button
@@ -512,84 +497,12 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             </div>
           )}
 
-          {/* TAB 8: FREE HOSTING & DEPLOYMENT GUIDE */}
-          {activeTab === "hosting" && (
-            <div className="space-y-6 max-w-3xl">
-              <div>
-                <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 08 • 100% Free Cloud Hosting
-                </span>
-                <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
-                  Zero-Cost Deployment Guide
-                </h1>
-              </div>
-
-              <div className="space-y-4 text-xs text-stone-300 leading-relaxed">
-                <p>
-                  Karmaraj is engineered to run permanently on <strong>100% FREE cloud hosting tiers</strong> without paying a single dollar.
-                </p>
-
-                {/* Option 1: Vercel + Neon */}
-                <div className="p-4 rounded-2xl bg-[#141922] border border-stone-800 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-amber-300 text-sm flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono">RECOMMENDED</span>
-                      Option 1: Vercel + Neon Serverless Postgres
-                    </h3>
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold">$0 / Month Forever</span>
-                  </div>
-
-                  <p className="text-[11px] text-stone-400">
-                    Vercel provides native Next.js 16 edge deployment, automated SSL, CI/CD, and global CDN caching on its free Hobby tier. Neon provides 0.5 GB of free serverless PostgreSQL.
-                  </p>
-
-                  <div className="bg-black/50 p-3 rounded-xl border border-stone-800 space-y-1.5 font-mono text-[11px]">
-                    <div className="text-stone-300 font-bold">Step-by-Step Vercel Setup:</div>
-                    <ol className="list-decimal pl-4 space-y-1.5 text-stone-400 font-sans text-[11px]">
-                      <li>Create a free database at <strong className="text-stone-200">neon.tech</strong> and copy your connection string (<code className="text-amber-400">postgres://...</code>).</li>
-                      <li>In your local terminal, push the PostgreSQL schema: <code className="text-amber-400">npm run db:push:pg</code>.</li>
-                      <li>Go to <strong className="text-stone-200">vercel.com</strong>, click <em>&quot;Add New Project&quot;</em> and import <code className="text-stone-200">ewwhardik/RPGWeb</code>.</li>
-                      <li>Add Environment Variables in Vercel project settings:
-                        <ul className="list-disc pl-4 mt-1 space-y-0.5 text-stone-400 font-mono text-[10px]">
-                          <li><span className="text-amber-300">DATABASE_URL</span> = your Neon PostgreSQL URL</li>
-                          <li><span className="text-amber-300">JWT_SECRET</span> = any 32+ character secret string</li>
-                          <li><span className="text-amber-300">NEXT_PUBLIC_APP_URL</span> = https://your-project.vercel.app</li>
-                        </ul>
-                      </li>
-                      <li>Click <strong>Deploy</strong>. Your application is live within 90 seconds!</li>
-                    </ol>
-                  </div>
-                </div>
-
-                {/* Option 2: Render.com */}
-                <div className="p-4 rounded-2xl bg-[#141922] border border-stone-800 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-stone-200 text-sm">
-                      Option 2: Render.com (Web Service + Managed Postgres)
-                    </h3>
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold">$0 / Month Free Tier</span>
-                  </div>
-
-                  <div className="bg-black/50 p-3 rounded-xl border border-stone-800 space-y-1.5 font-mono text-[11px]">
-                    <ol className="list-decimal pl-4 space-y-1 text-stone-400 font-sans text-[11px]">
-                      <li>Sign in at <strong className="text-stone-200">render.com</strong> and create a free PostgreSQL instance.</li>
-                      <li>Create a new <strong>Web Service</strong> connected to your GitHub repository.</li>
-                      <li>Build Command: <code className="text-amber-400">npm install --legacy-peer-deps && npm run build</code></li>
-                      <li>Start Command: <code className="text-amber-400">npm start</code></li>
-                      <li>Attach the <code className="text-amber-400">DATABASE_URL</code> and <code className="text-amber-400">JWT_SECRET</code> environment variables.</li>
-                    </ol>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 9: SHORTCUTS */}
+          {/* TAB 8: SHORTCUTS */}
           {activeTab === "shortcuts" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 09 • Efficiency Hotkeys
+                  Document 08 • Efficiency Hotkeys
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Keyboard Shortcuts Reference
@@ -625,12 +538,12 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             </div>
           )}
 
-          {/* TAB 10: AUTHOR & LICENSE */}
+          {/* TAB 9: AUTHOR & LICENSE */}
           {activeTab === "author" && (
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 10 • Creator Attribution & License
+                  Document 09 • Creator Attribution & License
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
                   Architected & Built by Hardik (Sai Ram Dash)

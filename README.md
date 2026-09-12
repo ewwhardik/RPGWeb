@@ -275,70 +275,16 @@ npm run build
 
 ---
 
-## 🚀 100% Free Hosting & Deployment Guide (Zero Cost Forever)
+## 🏆 Presentation & Evaluation Walkthrough
 
-Karmaraj is engineered to run seamlessly on **100% free cloud tiers** without requiring a credit card or incurring any recurring fees. Below are the two recommended paths:
+When reviewing or demonstrating **Karmaraj**, explore these flagship engineering highlights:
 
-### 🌟 Option 1: Vercel + Neon Serverless PostgreSQL (Recommended & Fastest)
-* **Hosting Cost**: **$0.00 / month forever**
-* **Front-End & API**: **Vercel Hobby Tier** (Zero configuration, global edge CDN, automatic HTTPS/SSL, and automatic CI/CD git pushes).
-* **Database**: **Neon.tech Free Tier** (0.5 GB serverless PostgreSQL storage, instant branching, connection pooling). Alternatively, **Supabase** (500 MB free PostgreSQL).
-
-#### Step-by-Step Deployment:
-1. **Set Up Free Cloud Database**:
-   - Create a free account at [https://neon.tech](https://neon.tech) (or [https://supabase.com](https://supabase.com)).
-   - Create a new project named `karmaraj-db`.
-   - Copy the generated `DATABASE_URL` (format: `postgres://user:password@ep-xyz.neon.tech/neondb?sslmode=require`).
-
-2. **Push PostgreSQL Schema**:
-   In your local repository, run:
-   ```bash
-   npm run db:push:pg
-   ```
-   *(Optional)* Seed initial quest catalog and classes:
-   ```bash
-   npm run db:seed
-   ```
-
-3. **Deploy on Vercel**:
-   - Sign in to [https://vercel.com](https://vercel.com) using your GitHub account.
-   - Click **"Add New Project"** and select `ewwhardik/RPGWeb`.
-   - In the **Environment Variables** section, enter:
-     - `DATABASE_URL` = *(Your Neon/Supabase PostgreSQL connection string)*
-     - `JWT_SECRET` = *(Generate any 32+ character random string, e.g. `karmaraj_v2_ultra_secret_key_2026`)*
-     - `NEXT_PUBLIC_APP_URL` = `https://your-project-name.vercel.app`
-   - In **Build & Output Settings**:
-     - Build Command: `npm run build:pg` (or `npx prisma generate --schema=prisma/schema.postgresql.prisma && next build`)
-   - Click **Deploy**. Your live production instance will be ready in under 90 seconds!
-
----
-
-### 🛡️ Option 2: Render.com (Web Service + Managed PostgreSQL)
-* **Hosting Cost**: **$0.00 / month free tier**
-* **Architecture**: Persistent Node.js web server with free cloud PostgreSQL.
-
-#### Step-by-Step Deployment:
-1. Sign up at [https://render.com](https://render.com).
-2. Click **New +** $\rightarrow$ **PostgreSQL** to spin up a free PostgreSQL database. Copy the **Internal Database URL**.
-3. Click **New +** $\rightarrow$ **Web Service** $\rightarrow$ connect your GitHub repo `ewwhardik/RPGWeb`.
-4. Configure Settings:
-   - **Runtime**: `Node`
-   - **Build Command**: `npm install --legacy-peer-deps && npm run build`
-   - **Start Command**: `npm start`
-5. Under **Environment Variables**, add:
-   - `DATABASE_URL` = *(Your Render PostgreSQL Internal URL)*
-   - `JWT_SECRET` = `karmaraj_super_secret_jwt_key_2026`
-   - `NEXT_PUBLIC_APP_URL` = `https://karmaraj-app.onrender.com`
-6. Click **Create Web Service**.
-
----
-
-### 🐳 Option 3: Self-Hosting with Docker (Local or Free VM)
-If you prefer running a single self-contained container with the built-in SQLite database:
-```bash
-docker build -t karmaraj-rpg .
-docker run -p 3000:3000 -v karmaraj-data:/app/prisma karmaraj-rpg
-```
+1. **Instant Demo Universe Hydration**: Click the golden **"Demo Universe"** button in the floating header dock to immediately hydrate a Level 18 Grand Paladin character profile populated with rich task trees, checklist subtasks, custom shop rewards, and 30 days of real telemetry logs.
+2. **Interactive Mathematical Telemetry**: Explore the 7 real-time SVG charts and the 6-axis **Vedic Hexagonal Spider Radar**, dynamically plotted from database activity logs without static image assets.
+3. **Hyper-Realistic 3D Relic & Living Saccades**: Move your cursor across the viewport to observe the Three.js refractive eye relic featuring physical clearcoat glass shaders, real 3D arterial geometry, and living biological microsaccades.
+4. **Procedural Web Audio Classical Synthesizer**: Cycle the soundscape button to experience procedural audio synthesis: *Tavern Hearth* (crackling pink noise embers), *Dungeon Echo* (subterranean $43.65\text{ Hz}$ filter resonance), and the *136.1 Hz Meditative Cosmic Tanpura* drone with authentic temple bell (Ghanta) harmonics.
+5. **3-Phase Mythic Boss AI & Live SSE Sync**: Inspect the Guild Warboard to test cooperative boss encounters with procedural phase shifts (*Phase 1: Sthira*, *Phase 2: Maya Shield*, *Phase 3: Krodha Enrage*) and live Server-Sent Events (SSE) combat synchronization.
+6. **Bhubaneswar Atmospheric Observatory**: Observe live local weather and meteorological telemetry anchored to **Bhubaneswar, Odisha, India** via Open-Meteo REST integration, accompanied by memento mori life progression chronometers.
 
 ---
 

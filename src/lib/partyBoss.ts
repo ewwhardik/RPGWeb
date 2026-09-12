@@ -180,7 +180,7 @@ export async function dispatchGuildWebhook(partyId: string, event: GuildWebhookE
 
       const discordBody = {
         username: "Karmaraj Warboard",
-        avatar_url: "https://rpgweb.vercel.app/logo.png",
+        avatar_url: "https://raw.githubusercontent.com/ewwhardik/RPGWeb/main/public/brand/karmaraj_emblem.png",
         embeds: [
           {
             title:
