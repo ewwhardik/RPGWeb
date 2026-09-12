@@ -1,6 +1,8 @@
 {
   "name": "rpgweb",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Karmaraj: The Life RPG universe architected and built by Sai Ram Dash.",
+  "author": "Sai Ram Dash",
   "private": true,
   "scripts": {
     "dev": "next dev",
