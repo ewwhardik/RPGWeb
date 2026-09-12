@@ -18,6 +18,7 @@ import {
   Heart,
   MessageSquare,
   Smile,
+  Keyboard,
 } from "lucide-react";
 import { calculateLevelFromTotalXp } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
@@ -35,6 +36,7 @@ import AuthModal from "@/components/AuthModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ClassSelectModal from "@/components/ClassSelectModal";
 import PartyBossWidget from "@/components/PartyBossWidget";
+import KeyboardShortcutsModal from "@/components/KeyboardShortcutsModal";
 import { CharacterClassType } from "@/lib/classes";
 
 interface UserProfile {
@@ -90,6 +92,7 @@ export default function DashboardPage() {
   const [decayAlerts, setDecayAlerts] = useState<string[]>([]);
   const [levelUpData, setLevelUpData] = useState<{ level: number; title: string } | null>(null);
   const [raidToast, setRaidToast] = useState<{ message: string; isVictory: boolean } | null>(null);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
@@ -170,6 +173,55 @@ export default function DashboardPage() {
     setUser(null);
     setIsAuthModalOpen(true);
   }
+
+  // Keyboard navigation runes
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+        e.preventDefault();
+        setIsHelpModalOpen((prev) => !prev);
+      } else if (e.key === "n" || e.key === "N") {
+        e.preventDefault();
+        soundFx.playClick();
+        setEditingQuest(null);
+        setIsNewQuestModalOpen(true);
+      } else if (e.key === "m" || e.key === "M") {
+        e.preventDefault();
+        handleToggleSound();
+      } else if (e.key === "s" || e.key === "S") {
+        e.preventDefault();
+        soundFx.playClick();
+        setIsShopModalOpen(true);
+      } else if (e.key === "f" || e.key === "F") {
+        e.preventDefault();
+        soundFx.playClick();
+        setIsFateModalOpen(true);
+      } else if (e.key === "c" || e.key === "C") {
+        e.preventDefault();
+        soundFx.playClick();
+        setIsClassModalOpen(true);
+      } else if (e.key === "Escape") {
+        setIsHelpModalOpen(false);
+        setIsNewQuestModalOpen(false);
+        setIsShopModalOpen(false);
+        setIsFateModalOpen(false);
+        setIsClassModalOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   async function handleQuestComplete(id: string) {
     try {
@@ -317,9 +369,22 @@ export default function DashboardPage() {
                 type="button"
                 onClick={handleToggleSound}
                 className="p-2 rounded-lg bg-[#141b24] border border-slate-800 text-slate-300 hover:text-amber-300 transition-colors shadow"
-                title={isMuted ? "Unmute Audio SFX" : "Mute Audio SFX"}
+                title={isMuted ? "Unmute Audio SFX (M)" : "Mute Audio SFX (M)"}
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
+              </button>
+
+              {/* Keyboard Shortcuts Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsHelpModalOpen(true);
+                }}
+                className="p-2 rounded-lg bg-[#141b24] border border-slate-800 text-slate-300 hover:text-amber-300 transition-colors shadow"
+                title="Arcane Keyboard Runes (?)"
+              >
+                <Keyboard className="w-4 h-4 text-amber-400" />
               </button>
 
               {/* Wheel of Fate */}
@@ -736,6 +801,11 @@ export default function DashboardPage() {
           }}
         />
 
+        <KeyboardShortcutsModal
+          isOpen={isHelpModalOpen}
+          onClose={() => setIsHelpModalOpen(false)}
+        />
+
         {/* Floating Boss Raid Alert Toast */}
         {raidToast && (
           <div
@@ -749,6 +819,21 @@ export default function DashboardPage() {
             <div className="text-xs font-bold font-title">{raidToast.message}</div>
           </div>
         )}
+
+        {/* Tactical Footer */}
+        <footer className="border-t border-slate-800/80 bg-[#070a0f] py-4 px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full gap-2 mt-12">
+          <div>QuestSmith Life RPG. Non-linear bureaucratic habit engine.</div>
+          <button
+            type="button"
+            onClick={() => setIsHelpModalOpen(true)}
+            className="hover:text-amber-400 flex items-center gap-1.5 transition-colors font-mono text-[11px]"
+          >
+            <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300 text-[10px]">
+              ?
+            </kbd>
+            <span>Arcane Runes (Shortcuts)</span>
+          </button>
+        </footer>
       </div>
     </ErrorBoundary>
   );
