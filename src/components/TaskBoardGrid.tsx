@@ -48,6 +48,43 @@ export interface TaskItem {
   createdAt: string;
 }
 
+export interface SubtaskChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export function parseChecklistItems(raw: unknown): SubtaskChecklistItem[] {
+  if (!raw) return [];
+  let parsed = raw;
+  if (typeof raw === "string") {
+    try {
+      parsed = JSON.parse(raw);
+      if (typeof parsed === "string") {
+        try {
+          parsed = JSON.parse(parsed);
+        } catch {
+          // ignore nested parse failure
+        }
+      }
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+
+  return parsed
+    .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === "object"))
+    .map((item, idx) => ({
+      id: String(item.id || `subtask-${idx}`),
+      text: String(item.text || ""),
+      completed: Boolean(item.completed),
+    }));
+}
+
 interface TaskBoardGridProps {
   habits: TaskItem[];
   dailies: TaskItem[];
@@ -114,16 +151,11 @@ export default function TaskBoardGrid({
     task: TaskItem,
     itemIndex: number
   ) => {
-    if (!task.checklist) return;
-    try {
-      const items = JSON.parse(task.checklist);
-      if (Array.isArray(items) && items[itemIndex]) {
-        items[itemIndex].completed = !items[itemIndex].completed;
-        soundFx.play("click");
-        await onUpdateChecklist(task.id, JSON.stringify(items));
-      }
-    } catch {
-      // Ignored malformed checklist
+    const items = parseChecklistItems(task.checklist);
+    if (items[itemIndex]) {
+      items[itemIndex].completed = !items[itemIndex].completed;
+      soundFx.play("click");
+      await onUpdateChecklist(task.id, JSON.stringify(items));
     }
   };
 
@@ -583,15 +615,7 @@ export default function TaskBoardGrid({
             filteredTodos.map((todo) => {
               const isCompleted = todo.status === "COMPLETED";
 
-              let checklistItems: Array<{ id: string; text: string; completed: boolean }> = [];
-              if (todo.checklist) {
-                try {
-                  checklistItems = JSON.parse(todo.checklist);
-                } catch {
-                  checklistItems = [];
-                }
-              }
-
+              const checklistItems = parseChecklistItems(todo.checklist);
               const completedCount = checklistItems.filter((i) => i.completed).length;
               const hasChecklist = checklistItems.length > 0;
               const isChecklistOpen = openChecklists[todo.id] ?? false;

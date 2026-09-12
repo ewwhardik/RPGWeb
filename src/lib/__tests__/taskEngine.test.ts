@@ -9,6 +9,7 @@ import {
   DEFAULT_STARTER_TASKS,
   STANDARD_SHOP_REWARDS,
 } from "../taskEngine";
+import { parseChecklistItems } from "@/components/TaskBoardGrid";
 
 describe("Karmaraj Core Task Engine", () => {
   describe("Habit Color Tier Classification", () => {
@@ -149,6 +150,37 @@ describe("Karmaraj Core Task Engine", () => {
       const amrit = STANDARD_SHOP_REWARDS.find((r) => r.id === "amrit_rasayana");
       expect(amrit).toBeDefined();
       expect(amrit?.healAmount).toBe(30);
+    });
+  });
+
+  describe("Subtask Checklist Resilience", () => {
+    it("safely handles malformed, null, or non-array inputs without throwing", () => {
+      expect(parseChecklistItems(null)).toEqual([]);
+      expect(parseChecklistItems(undefined)).toEqual([]);
+      expect(parseChecklistItems("")).toEqual([]);
+      expect(parseChecklistItems("{}")).toEqual([]);
+      expect(parseChecklistItems("123")).toEqual([]);
+      expect(parseChecklistItems("invalid json")).toEqual([]);
+      expect(parseChecklistItems({ not: "an array" })).toEqual([]);
+      expect(parseChecklistItems("true")).toEqual([]);
+    });
+
+    it("correctly parses valid JSON checklist arrays and double-encoded JSON", () => {
+      const valid = JSON.stringify([
+        { id: "c1", text: "Buy milk", completed: false },
+        { id: "c2", text: "Walk dog", completed: true },
+      ]);
+      const res = parseChecklistItems(valid);
+      expect(res).toHaveLength(2);
+      expect(res[0].text).toBe("Buy milk");
+      expect(res[0].completed).toBe(false);
+      expect(res[1].completed).toBe(true);
+
+      // Double encoded JSON
+      const doubleEncoded = JSON.stringify(valid);
+      const res2 = parseChecklistItems(doubleEncoded);
+      expect(res2).toHaveLength(2);
+      expect(res2[0].text).toBe("Buy milk");
     });
   });
 });

@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/Three.js-3D%20Engine-black?style=flat-square&logo=three.js" alt="Three.js" />
   <img src="https://img.shields.io/badge/Tailwind-v4-cyan?style=flat-square&logo=tailwindcss" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Prisma-6.4.1-teal?style=flat-square&logo=prisma" alt="Prisma" />
-  <img src="https://img.shields.io/badge/Vitest-98%20Passed%20(100%25)-emerald?style=flat-square&logo=vitest" alt="Vitest Tests" />
+  <img src="https://img.shields.io/badge/Vitest-100%20Passed%20(100%25)-emerald?style=flat-square&logo=vitest" alt="Vitest Tests" />
 </p>
 
 ---

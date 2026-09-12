@@ -14,7 +14,7 @@ import {
   MessageSquare,
   Smile,
 } from "lucide-react";
-import { TaskItem } from "./TaskBoardGrid";
+import { TaskItem, parseChecklistItems } from "./TaskBoardGrid";
 
 interface TaskEditorModalProps {
   isOpen: boolean;
@@ -89,11 +89,7 @@ export default function TaskEditorModal({
       setDueDate(editingTask.dueDate ? editingTask.dueDate.slice(0, 10) : "");
       setCost(editingTask.cost || 20);
       if (editingTask.checklist) {
-        try {
-          setChecklist(JSON.parse(editingTask.checklist));
-        } catch {
-          setChecklist([]);
-        }
+        setChecklist(parseChecklistItems(editingTask.checklist));
       } else {
         setChecklist([]);
       }

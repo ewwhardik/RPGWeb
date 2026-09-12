@@ -932,22 +932,31 @@ export default function DashboardPage() {
 
           {/* 4-COLUMN TASK BOARD GRID */}
           <section>
-            <TaskBoardGrid
-              habits={habits}
-              dailies={dailies}
-              todos={todos}
-              rewards={rewards}
-              userGold={user?.gold || 0}
-              onScoreTask={handleScoreTask}
-              onBuyStandardReward={handleBuyStandardReward}
-              onQuickAddTask={handleQuickAddTask}
-              onEditTask={(task) => {
-                setEditingTask(task);
-                setIsNewTaskModalOpen(true);
-              }}
-              onDeleteTask={handleDeleteTask}
-              onUpdateChecklist={handleUpdateChecklist}
-            />
+            <ErrorBoundary
+              fallback={
+                <div className="p-8 rounded-xl border border-stone-800 bg-stone-900/60 text-center space-y-2">
+                  <p className="text-sm font-bold text-amber-300">Quest Board Synchronizing...</p>
+                  <p className="text-xs text-stone-400">The task archives are momentarily refreshing. Please reload the page if this persists.</p>
+                </div>
+              }
+            >
+              <TaskBoardGrid
+                habits={habits}
+                dailies={dailies}
+                todos={todos}
+                rewards={rewards}
+                userGold={user?.gold || 0}
+                onScoreTask={handleScoreTask}
+                onBuyStandardReward={handleBuyStandardReward}
+                onQuickAddTask={handleQuickAddTask}
+                onEditTask={(task) => {
+                  setEditingTask(task);
+                  setIsNewTaskModalOpen(true);
+                }}
+                onDeleteTask={handleDeleteTask}
+                onUpdateChecklist={handleUpdateChecklist}
+              />
+            </ErrorBoundary>
           </section>
 
           {/* Hero Relics & 3D Diorama & Radar */}
