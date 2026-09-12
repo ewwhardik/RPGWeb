@@ -2,20 +2,33 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { verifyPassword, signToken, AUTH_COOKIE_NAME } from "@/lib/auth";
+import { loginSchema } from "@/lib/validations";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { login, password } = body;
-
-    if (!login || !password) {
+    const ip = getClientIp(req);
+    const rateLimit = checkRateLimit(`login_${ip}`, 10, 60 * 1000);
+    if (!rateLimit.success) {
       return NextResponse.json(
-        { error: "Provide both your adventurer name/email and secret pass-phrase." },
-        { status: 400 }
+        {
+          error: "Too many failed gate attempts! The tavern guards have barred the entrance for 60 seconds.",
+        },
+        { status: 429 }
       );
     }
 
+    const body = await req.json();
+    const parseResult = loginSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || "Invalid credentials format.";
+      return NextResponse.json({ error: firstError }, { status: 400 });
+    }
+
+    const { login, password } = parseResult.data;
     const cleanLogin = login.trim();
+
     const user = await prisma.user.findFirst({
       where: {
         OR: [
@@ -52,14 +65,13 @@ export async function POST(req: Request) {
     const now = new Date();
     const lastActive = new Date(user.lastActiveDate);
 
-    // Compare calendar days
     const isSameDay =
       now.getFullYear() === lastActive.getFullYear() &&
       now.getMonth() === lastActive.getMonth() &&
       now.getDate() === lastActive.getDate();
 
     let newStreak = user.streakCount;
-    let streakBonusMessage = null;
+    let streakBonusMessage: string | null = null;
 
     if (!isSameDay) {
       const msPerDay = 1000 * 60 * 60 * 24;

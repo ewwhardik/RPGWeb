@@ -22,11 +22,20 @@ import {
 } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
 
+export interface QuestFormData {
+  id?: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  difficulty: string;
+  dueDate?: string | null;
+}
+
 interface NewQuestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (questData: any) => Promise<void>;
-  initialData?: any | null;
+  onSave: (questData: QuestFormData) => Promise<void>;
+  initialData?: QuestFormData | null;
 }
 
 const WITTY_QUEST_PROMPTS = [
@@ -103,8 +112,8 @@ export default function NewQuestModal({
     if (initialData) {
       setTitle(initialData.title || "");
       setDescription(initialData.description || "");
-      setCategory(initialData.category || "INTELLECT");
-      setDifficulty(initialData.difficulty || "MEDIUM");
+      setCategory((initialData.category as QuestCategory) || "INTELLECT");
+      setDifficulty((initialData.difficulty as QuestDifficulty) || "MEDIUM");
       setDueDate(initialData.dueDate ? initialData.dueDate.substring(0, 10) : "");
     } else {
       setTitle("");
@@ -158,8 +167,9 @@ export default function NewQuestModal({
       });
       soundFx.playClick();
       onClose();
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to commit quest to the archives.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to commit quest to the archives.";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }

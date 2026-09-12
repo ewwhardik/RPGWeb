@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { DIFFICULTY_MULTIPLIERS, QuestCategory, QuestDifficulty } from "@/lib/rpgEngine";
+import { createQuestSchema } from "@/lib/validations";
 
 export async function GET(req: Request) {
   try {
@@ -15,7 +16,12 @@ export async function GET(req: Request) {
     const category = searchParams.get("category") || undefined;
     const search = searchParams.get("search") || undefined;
 
-    const whereClause: any = {
+    const whereClause: {
+      userId: string;
+      status?: string;
+      category?: string;
+      OR?: Array<{ title?: { contains: string }; description?: { contains: string } }>;
+    } = {
       userId: user.id,
     };
 
@@ -60,33 +66,24 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, description, category, difficulty, dueDate } = body;
+    const parseResult = createQuestSchema.safeParse(body);
 
-    if (!title || typeof title !== "string" || title.trim().length === 0) {
-      return NextResponse.json(
-        { error: "You cannot embark on a quest to do literally nothing. Name your endeavor!" },
-        { status: 400 }
-      );
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || "Invalid quest parameters.";
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
 
-    const cleanTitle = title.trim();
-    if (cleanTitle.length > 150) {
-      return NextResponse.json(
-        { error: "The quest title is longer than an epic poem. Keep it under 150 characters." },
-        { status: 400 }
-      );
-    }
+    const { title, description, category, difficulty, dueDate } = parseResult.data;
 
-    const safeCategory = (category || "INTELLECT") as QuestCategory;
-    const safeDifficulty = (difficulty || "MEDIUM") as QuestDifficulty;
-
+    const safeCategory = category as QuestCategory;
+    const safeDifficulty = difficulty as QuestDifficulty;
     const rewards = DIFFICULTY_MULTIPLIERS[safeDifficulty] || DIFFICULTY_MULTIPLIERS.MEDIUM;
 
     const task = await prisma.task.create({
       data: {
         userId: user.id,
-        title: cleanTitle,
-        description: description ? String(description).trim() : null,
+        title,
+        description: description || null,
         category: safeCategory,
         difficulty: safeDifficulty,
         xpReward: rewards.xp,
@@ -100,7 +97,7 @@ export async function POST(req: Request) {
       data: {
         userId: user.id,
         actionType: "QUEST_POSTED",
-        message: `Posted new quest: "${cleanTitle}" (${safeDifficulty} / ${safeCategory}).`,
+        message: `Posted new quest: "${title}" (${safeDifficulty} / ${safeCategory}).`,
       },
     });
 

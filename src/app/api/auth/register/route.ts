@@ -2,39 +2,36 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { hashPassword, signToken, AUTH_COOKIE_NAME } from "@/lib/auth";
+import { registerSchema } from "@/lib/validations";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    const rateLimit = checkRateLimit(`register_${ip}`, 8, 60 * 1000);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          error: "Too many enlistment scrolls submitted. The guild scribe demands a 60-second tea break.",
+        },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
-    const { username, email, password, avatar } = body;
+    const parseResult = registerSchema.safeParse(body);
 
-    if (!username || typeof username !== "string" || username.trim().length < 2) {
-      return NextResponse.json(
-        { error: "Every adventurer needs a name at least 2 characters long. The bards need something to sing." },
-        { status: 400 }
-      );
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || "Invalid registration data.";
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
 
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      return NextResponse.json(
-        { error: "Provide a valid email scroll so we know where to deliver your royal writs." },
-        { status: 400 }
-      );
-    }
-
-    if (!password || typeof password !== "string" || password.length < 6) {
-      return NextResponse.json(
-        { error: "Your secret pass-phrase must be at least 6 characters long to deter petty goblins." },
-        { status: 400 }
-      );
-    }
-
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanUsername = username.trim();
+    const { username, email, password, avatar } = parseResult.data;
+    const cleanEmail = email.toLowerCase();
 
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [{ email: cleanEmail }, { username: cleanUsername }],
+        OR: [{ email: cleanEmail }, { username }],
       },
     });
 
@@ -55,7 +52,7 @@ export async function POST(req: Request) {
 
     const newUser = await prisma.user.create({
       data: {
-        username: cleanUsername,
+        username,
         email: cleanEmail,
         passwordHash,
         avatar: avatar || "warrior",

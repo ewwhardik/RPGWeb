@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import confetti from "canvas-confetti";
-import { Award, Sparkles, CheckCircle2, ChevronRight } from "lucide-react";
+import { Award, ChevronRight } from "lucide-react";
 import { soundFx } from "@/lib/audio";
 
 interface LevelUpModalProps {

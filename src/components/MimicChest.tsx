@@ -60,7 +60,7 @@ export default function MimicChest({ onBonusGold }: MimicChestProps) {
 
       {quote ? (
         <p className="text-[11px] text-amber-200/90 leading-tight italic bg-[#0b0e14] p-2 rounded border border-slate-800">
-          "{quote}"
+          &ldquo;{quote}&rdquo;
         </p>
       ) : (
         <p className="text-[11px] text-slate-400">

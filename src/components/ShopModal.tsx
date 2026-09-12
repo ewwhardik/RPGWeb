@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   X,
   Coins,
   Shield,
   Sparkles,
   ShoppingBag,
-  Check,
   Footprints,
   Coffee,
   Dumbbell,
@@ -20,6 +19,23 @@ import {
 } from "lucide-react";
 import { soundFx } from "@/lib/audio";
 
+export interface ShopItem {
+  id: string;
+  name: string;
+  description: string;
+  humorQuote: string;
+  category: string;
+  price: number;
+  statType: string;
+  statBoost: number;
+  icon: string;
+  rarity: string;
+  isCursed: boolean;
+  curseDescription?: string | null;
+  isOwned?: boolean;
+  isEquipped?: boolean;
+}
+
 interface ShopModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -28,7 +44,7 @@ interface ShopModalProps {
   onInventoryChange: () => void;
 }
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, React.ElementType> = {
   Footprints,
   Coffee,
   Dumbbell,
@@ -49,25 +65,12 @@ export default function ShopModal({
   onInventoryChange,
 }: ShopModalProps) {
   const [activeTab, setActiveTab] = useState<"SHOP" | "BACKPACK">("SHOP");
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<ShopItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [errorNotice, setErrorNotice] = useState("");
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchItems();
-    }
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  async function fetchItems() {
+  const fetchItems = useCallback(async () => {
     setLoading(true);
     setErrorNotice("");
     try {
@@ -83,9 +86,22 @@ export default function ShopModal({
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function handleBuy(item: any) {
+  useEffect(() => {
+    if (isOpen) {
+      fetchItems();
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose, fetchItems]);
+
+  async function handleBuy(item: ShopItem) {
     if (userGold < item.price) {
       soundFx.playError();
       setErrorNotice(`You need ${item.price} Gold for ${item.name}. Slay more quests!`);
@@ -119,7 +135,7 @@ export default function ShopModal({
     }
   }
 
-  async function handleEquipToggle(item: any) {
+  async function handleEquipToggle(item: ShopItem) {
     setActionLoadingId(item.id);
     setErrorNotice("");
     soundFx.playClick();
@@ -176,7 +192,7 @@ export default function ShopModal({
               <ShoppingBag className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-amber-300">The Grumble & Glory Bazaar</h2>
+              <h2 className="text-xl font-bold font-title text-amber-300">The Grumble & Glory Bazaar</h2>
               <p className="text-xs text-slate-400">
                 Spurious relics and equipment to enhance your mortal vessel.
               </p>
@@ -299,7 +315,7 @@ export default function ShopModal({
                       </p>
 
                       <p className="text-[10px] italic text-amber-200/70 leading-tight mb-2">
-                        "{item.humorQuote}"
+                        &ldquo;{item.humorQuote}&rdquo;
                       </p>
 
                       <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-400 mb-3">
@@ -307,7 +323,7 @@ export default function ShopModal({
                           +{item.statBoost} {item.statType}
                         </span>
                         {item.isCursed && (
-                          <span className="text-red-400 font-semibold" title={item.curseDescription}>
+                          <span className="text-red-400 font-semibold" title={item.curseDescription || ""}>
                             (Cursed!)
                           </span>
                         )}

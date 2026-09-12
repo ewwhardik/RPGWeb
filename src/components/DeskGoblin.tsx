@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Cookie, MessageCircle, X, ChevronUp, Sparkles, Heart } from "lucide-react";
+import { Cookie, MessageCircle, X } from "lucide-react";
 import { soundFx } from "@/lib/audio";
 
 interface DeskGoblinProps {

@@ -8,7 +8,6 @@ import {
   Calendar,
   Sparkles,
   Coins,
-  Flame,
   Bug,
   Dumbbell,
   BookOpen,
@@ -16,27 +15,28 @@ import {
   Zap,
   MessageSquare,
   Smile,
-  AlertTriangle,
 } from "lucide-react";
-import { CATEGORY_DETAILS, QuestCategory, QuestDifficulty } from "@/lib/rpgEngine";
+import { CATEGORY_DETAILS, QuestCategory } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
 
+export interface QuestItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  difficulty: string;
+  xpReward: number;
+  goldReward: number;
+  status: string;
+  dueDate?: string | null;
+  createdAt: string;
+  completedAt?: string | null;
+}
+
 interface QuestCardProps {
-  quest: {
-    id: string;
-    title: string;
-    description?: string | null;
-    category: string;
-    difficulty: string;
-    xpReward: number;
-    goldReward: number;
-    status: string;
-    dueDate?: string | null;
-    createdAt: string;
-    completedAt?: string | null;
-  };
+  quest: QuestItem;
   onComplete: (id: string) => Promise<void>;
-  onEdit: (quest: any) => void;
+  onEdit: (quest: QuestItem) => void;
   onDelete: (id: string) => Promise<void>;
 }
 
@@ -122,35 +122,38 @@ export default function QuestCard({
 
   return (
     <div
-      className={`rpg-panel relative transition-all duration-200 p-4 border ${
+      className={`rpg-panel relative transition-all duration-200 p-4.5 border carved-panel ${
         isCompleted
           ? "bg-[#0d1219]/70 border-emerald-900/40 opacity-75"
           : isDusty
-          ? "bg-[#141820] border-amber-900/50 hover:border-amber-700/80"
-          : "bg-[#131922] border-slate-800 hover:border-slate-700"
+          ? "bg-[#141820] border-amber-900/60 hover:border-amber-700/80"
+          : "bg-[#121822] border-slate-800 hover:border-slate-700"
       }`}
+      style={{
+        borderLeft: `4px solid ${catInfo.color}`,
+      }}
     >
       {/* Dusty Cobwebs Warning */}
       {isDusty && (
-        <div className="absolute top-2 right-2 flex items-center gap-1 text-[10px] text-amber-400/80 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/30">
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 text-[10px] text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/50">
           <Bug className="w-3 h-3 text-amber-400" />
-          <span>Cobwebs forming (48h+ idle)</span>
+          <span>Cobwebs (48h+ idle)</span>
         </div>
       )}
 
       {/* Floating XP / Gold indicator on completion */}
       {floatingBonus && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none animate-bounce">
-          <div className="bg-amber-500 text-slate-950 font-black text-sm px-3 py-1 rounded shadow-lg border border-amber-300">
+          <div className="bg-amber-500 text-slate-950 font-black text-sm px-3.5 py-1.5 rounded-lg shadow-xl border border-amber-300">
             +{floatingBonus.xp} XP / +{floatingBonus.gold} Gold!
           </div>
         </div>
       )}
 
-      {/* Header Tags */}
-      <div className="flex flex-wrap items-center gap-2 mb-2">
+      {/* Header Tags with color coding */}
+      <div className="flex flex-wrap items-center gap-2 mb-2.5">
         <span
-          className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded border"
+          className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-md border"
           style={{
             borderColor: `${catInfo.color}55`,
             backgroundColor: `${catInfo.color}15`,
@@ -158,7 +161,7 @@ export default function QuestCard({
           }}
         >
           {getCategoryIcon(category)}
-          {catInfo.name}
+          <span>{catInfo.name}</span>
         </span>
 
         <span
@@ -181,10 +184,10 @@ export default function QuestCard({
       </div>
 
       {/* Quest Title & Description */}
-      <div className="mb-3">
+      <div className="mb-3.5">
         <h3
           className={`font-bold text-base leading-snug ${
-            isCompleted ? "line-through text-slate-400" : "text-slate-100"
+            isCompleted ? "line-through text-slate-500" : "text-slate-100"
           }`}
         >
           {quest.title}
@@ -197,7 +200,7 @@ export default function QuestCard({
       </div>
 
       {/* Footer: Rewards & Actions */}
-      <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 mt-2">
+      <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/80 mt-2">
         <div className="flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1 text-amber-400 font-bold" title="XP Awarded">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />

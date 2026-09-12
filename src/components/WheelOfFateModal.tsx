@@ -1,24 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, Dices, Coins, AlertCircle, Award } from "lucide-react";
+import { X, Dices } from "lucide-react";
 import { soundFx } from "@/lib/audio";
+
+export interface WheelOfFateResult {
+  success: boolean;
+  message: string;
+  outcomeType: string;
+  newGold: number;
+  newTitle: string;
+  sanityBoost: number;
+}
 
 interface WheelOfFateModalProps {
   isOpen: boolean;
   onClose: () => void;
   userGold: number;
-  onSpinSuccess: (data: any) => void;
+  onSpinSuccess: (data: WheelOfFateResult) => void;
 }
-
-const WHEEL_SLICES = [
-  { label: "Jackpot (35g)", color: "#f59e0b" },
-  { label: "Silly Title", color: "#38bdf8" },
-  { label: "Angry Goose (-5g)", color: "#ef4444" },
-  { label: "Smooth Pebble (+3 Sanity)", color: "#10b981" },
-  { label: "Small Win (15g)", color: "#fbbf24" },
-  { label: "Total Nothing", color: "#64748b" },
-];
 
 export default function WheelOfFateModal({
   isOpen,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { buyItemSchema } from "@/lib/validations";
 
 export async function POST(req: Request) {
   try {
@@ -10,11 +11,14 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { itemId } = body;
+    const parseResult = buyItemSchema.safeParse(body);
 
-    if (!itemId) {
-      return NextResponse.json({ error: "Item ID required." }, { status: 400 });
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || "Invalid purchase request.";
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
+
+    const { itemId } = parseResult.data;
 
     const item = await prisma.item.findUnique({
       where: { id: itemId },
@@ -24,68 +28,82 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Item does not exist in the merchant catalogs." }, { status: 404 });
     }
 
-    // Check if user already owns it
-    const existingOwnership = await prisma.userInventory.findUnique({
-      where: {
-        userId_itemId: {
-          userId: user.id,
-          itemId: item.id,
+    // Atomic transaction for purchase to prevent double-spending
+    const result = await prisma.$transaction(async (tx) => {
+      const existingOwnership = await tx.userInventory.findUnique({
+        where: {
+          userId_itemId: {
+            userId: user.id,
+            itemId: item.id,
+          },
         },
-      },
-    });
+      });
 
-    if (existingOwnership) {
-      return NextResponse.json(
-        { error: "You already own this relic! Even adventuring greed has practical limits." },
-        { status: 400 }
-      );
-    }
+      if (existingOwnership) {
+        throw new Error("ALREADY_OWNED");
+      }
 
-    // Check balance
-    if (user.gold < item.price) {
-      return NextResponse.json(
-        {
-          error: `Insufficient Gold! The merchant demands ${item.price} Gold, but your coin purse only holds ${user.gold}. Go slay some quests!`,
-        },
-        { status: 400 }
-      );
-    }
-
-    // Deduct gold & grant item in inventory
-    const newGold = user.gold - item.price;
-
-    const [updatedUser, inventoryEntry] = await prisma.$transaction([
-      prisma.user.update({
+      const freshUser = await tx.user.findUnique({
         where: { id: user.id },
+      });
+
+      if (!freshUser || freshUser.gold < item.price) {
+        throw new Error("INSUFFICIENT_GOLD");
+      }
+
+      const newGold = freshUser.gold - item.price;
+
+      const updatedUser = await tx.user.update({
+        where: { id: freshUser.id },
         data: { gold: newGold },
-      }),
-      prisma.userInventory.create({
+      });
+
+      const inventoryEntry = await tx.userInventory.create({
         data: {
-          userId: user.id,
+          userId: freshUser.id,
           itemId: item.id,
           isEquipped: false,
         },
         include: {
           item: true,
         },
-      }),
-      prisma.activityLog.create({
+      });
+
+      await tx.activityLog.create({
         data: {
-          userId: user.id,
+          userId: freshUser.id,
           actionType: "ITEM_PURCHASED",
           message: `Purchased "${item.name}" for ${item.price} Gold. "${item.humorQuote}"`,
           goldChange: -item.price,
         },
-      }),
-    ]);
+      });
+
+      return {
+        newGold: updatedUser.gold,
+        inventoryItem: inventoryEntry,
+      };
+    });
 
     return NextResponse.json({
       success: true,
       message: `Purchased ${item.name}! Added to your adventurer knapsack.`,
-      newGold: updatedUser.gold,
-      inventoryItem: inventoryEntry,
+      newGold: result.newGold,
+      inventoryItem: result.inventoryItem,
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "ALREADY_OWNED") {
+      return NextResponse.json(
+        { error: "You already own this relic! Even adventuring greed has practical limits." },
+        { status: 400 }
+      );
+    }
+    if (error.message === "INSUFFICIENT_GOLD") {
+      return NextResponse.json(
+        { error: "Insufficient Gold! Go slay some quests before shopping." },
+        { status: 400 }
+      );
+    }
+
     console.error("Purchase error:", error);
     return NextResponse.json(
       { error: "The shopkeeper dropped your coins down a floor grate." },

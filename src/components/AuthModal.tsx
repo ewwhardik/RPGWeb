@@ -3,9 +3,29 @@
 import React, { useState } from "react";
 import { Shield, Sparkles, Sword, User, Lock, Mail, ChevronRight, Wand2, Axe, Compass } from "lucide-react";
 
+export interface AuthUserData {
+  id: string;
+  username: string;
+  email: string;
+  level: number;
+  xp: number;
+  gold: number;
+  streakCount: number;
+  title: string;
+  avatar: string;
+  stats?: {
+    strength: number;
+    intellect: number;
+    vitality: number;
+    dexterity: number;
+    charisma: number;
+    sanity: number;
+  };
+}
+
 interface AuthModalProps {
   isOpen: boolean;
-  onSuccess: (userData: any) => void;
+  onSuccess: (userData: AuthUserData) => void;
   onClose?: () => void;
 }
 

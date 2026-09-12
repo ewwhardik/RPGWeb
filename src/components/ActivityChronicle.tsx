@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Scroll, Sparkles, Award, ShoppingBag, Flame, Trash2 } from "lucide-react";
+import { Scroll, Sparkles, Award, ShoppingBag, Flame } from "lucide-react";
 
 interface ActivityLogItem {
   id: string;

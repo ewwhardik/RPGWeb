@@ -13,7 +13,7 @@ import {
   Flame,
   Sparkles,
 } from "lucide-react";
-import { CATEGORY_DETAILS, LevelInfo } from "@/lib/rpgEngine";
+import { LevelInfo } from "@/lib/rpgEngine";
 
 interface StatRadarMeterProps {
   stats: {
@@ -44,69 +44,92 @@ export default function StatRadarMeter({
     { key: "sanity", label: "Sanity", val: stats.sanity, icon: Smile, color: "#34d399" },
   ];
 
-  // Maximum value for proportional bar representation
   const maxStat = Math.max(30, ...statList.map((s) => s.val));
 
   return (
-    <div className="rpg-panel border border-slate-800 bg-[#121822] p-5">
-      {/* Top Banner: Level and Streak */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-4">
+    <div className="rpg-panel carved-panel p-5 sm:p-6 flex flex-col justify-between">
+      {/* Top Banner: Big Numbers & Distinct Type Hierarchy */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800/80 mb-5 gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="wax-stamp text-xs px-2 py-0.5 border-amber-500 text-amber-400">
-              LVL {levelInfo.level}
-            </span>
-            <span className="text-sm font-bold text-slate-100">{levelInfo.title}</span>
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400/80">
+            Adventurer Status
+          </span>
+          <div className="flex items-baseline gap-3 mt-0.5">
+            <h2 className="text-2xl sm:text-3xl font-bold font-title text-amber-300">
+              {levelInfo.title}
+            </h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 bg-amber-950/40 border border-amber-800/40 px-2.5 py-1 rounded-md text-xs font-bold text-amber-300">
-            <Coins className="w-3.5 h-3.5 text-amber-400" />
-            <span>{gold} Gold</span>
+        {/* Primary Metric Badges with Big Numbers */}
+        <div className="flex items-center gap-2.5">
+          {/* Level Badge */}
+          <div className="bg-[#0b0e14] border border-amber-500/40 px-3.5 py-1.5 rounded-lg text-center shadow-inner">
+            <div className="text-[9px] uppercase font-bold text-slate-400">Level</div>
+            <div className="text-xl font-black text-amber-400 leading-none">
+              {levelInfo.level}
+            </div>
           </div>
 
+          {/* Gold Badge */}
+          <div className="bg-[#0b0e14] border border-amber-700/50 px-3.5 py-1.5 rounded-lg text-center shadow-inner">
+            <div className="text-[9px] uppercase font-bold text-slate-400 flex items-center justify-center gap-1">
+              <Coins className="w-2.5 h-2.5 text-amber-400" />
+              <span>Treasury</span>
+            </div>
+            <div className="text-xl font-black text-amber-300 leading-none">
+              {gold}g
+            </div>
+          </div>
+
+          {/* Streak Badge */}
           <div
-            className="flex items-center gap-1 bg-orange-950/40 border border-orange-800/40 px-2.5 py-1 rounded-md text-xs font-bold text-orange-400"
-            title="Consecutive Days of Heroic Activity"
+            className="bg-[#0b0e14] border border-orange-700/50 px-3.5 py-1.5 rounded-lg text-center shadow-inner"
+            title="Consecutive Days of Activity"
           >
-            <Flame className="w-3.5 h-3.5 text-orange-400" />
-            <span>{streakCount}d Streak</span>
+            <div className="text-[9px] uppercase font-bold text-slate-400 flex items-center justify-center gap-1">
+              <Flame className="w-2.5 h-2.5 text-orange-400" />
+              <span>Streak</span>
+            </div>
+            <div className="text-xl font-black text-orange-400 leading-none">
+              {streakCount}d
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Level XP Progress Bar */}
-      <div className="mb-5">
-        <div className="flex items-center justify-between text-xs mb-1.5">
-          <span className="text-slate-400 font-semibold flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            Experience Progression
+      {/* Level XP Progress Bar with Animated Diagonal Shimmer Stripes */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between text-xs mb-2">
+          <span className="text-slate-300 font-semibold flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Experience Progression</span>
           </span>
           <span className="text-amber-300 font-bold">
             {levelInfo.currentXp} / {levelInfo.xpNeededForNextLevel} XP ({levelInfo.progressPercent}%)
           </span>
         </div>
 
-        {/* Uiverse-style tactile progress bar */}
-        <div className="w-full h-3.5 bg-[#0b0e14] rounded-full p-0.5 border border-slate-800 overflow-hidden shadow-inner">
+        {/* Textured XP progress meter with animated stripes */}
+        <div className="w-full h-4 bg-[#0b0e14] rounded-full p-0.5 border border-slate-700/80 overflow-hidden shadow-inner relative">
           <div
-            className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-600 via-amber-500 to-amber-300 relative shadow"
+            className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-600 via-amber-500 to-amber-300 relative shadow-md xp-shimmer-stripes"
             style={{ width: `${levelInfo.progressPercent}%` }}
-          >
-            <div className="absolute inset-0 bg-white/20 animate-pulse" />
-          </div>
+          />
         </div>
       </div>
 
-      {/* Attribute Meters */}
+      {/* Attribute Meters with Stamina Tick Marks & Colored Glow */}
       <div className="space-y-3">
-        <h4 className="text-xs uppercase tracking-wider font-bold text-slate-400 flex items-center gap-1.5">
-          <Shield className="w-3.5 h-3.5 text-slate-400" />
-          <span>Character Attributes</span>
-        </h4>
+        <div className="flex items-center justify-between">
+          <h4 className="text-[11px] uppercase tracking-wider font-extrabold text-slate-400 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-slate-400" />
+            <span>Character Attributes (Stamina Meters)</span>
+          </h4>
+          <span className="text-[10px] text-slate-500">6 Specialized Stats</span>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {statList.map((stat) => {
             const Icon = stat.icon;
             const pct = Math.min(100, Math.round((stat.val / maxStat) * 100));
@@ -114,24 +137,31 @@ export default function StatRadarMeter({
             return (
               <div
                 key={stat.key}
-                className="bg-[#0b0e14] border border-slate-800/90 rounded-lg p-2.5 flex flex-col gap-1.5"
+                className="bg-[#0b0e14] border border-slate-800/90 rounded-lg p-2.5 flex flex-col gap-1.5 hover:border-slate-700 transition-colors"
+                style={{
+                  borderLeft: `3px solid ${stat.color}`,
+                }}
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 text-slate-300 font-semibold">
+                  <span className="flex items-center gap-1.5 text-slate-200 font-semibold">
                     <Icon className="w-3.5 h-3.5" style={{ color: stat.color }} />
                     {stat.label}
                   </span>
-                  <span className="font-bold text-slate-100">{stat.val} PTS</span>
+                  <span className="font-mono font-bold text-slate-100">{stat.val} PTS</span>
                 </div>
 
-                <div className="w-full h-2 bg-slate-900 rounded-full border border-slate-800/80 overflow-hidden shadow-inner">
+                {/* Segmented Stamina Meter */}
+                <div className="w-full h-2.5 bg-slate-950 rounded-full border border-slate-800/90 overflow-hidden shadow-inner relative">
                   <div
-                    className="h-full rounded-full transition-all duration-300"
+                    className="h-full rounded-full transition-all duration-300 relative"
                     style={{
                       width: `${pct}%`,
                       backgroundColor: stat.color,
+                      boxShadow: `0 0 8px ${stat.color}66`,
                     }}
                   />
+                  {/* Segmented Tick Marks Overlay */}
+                  <div className="stamina-meter-ticks" />
                 </div>
               </div>
             );

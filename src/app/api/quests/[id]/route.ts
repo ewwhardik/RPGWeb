@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { calculateLevelFromTotalXp, DIFFICULTY_MULTIPLIERS, QuestCategory, QuestDifficulty } from "@/lib/rpgEngine";
+import { updateQuestActionSchema } from "@/lib/validations";
 
 export async function PATCH(
   req: Request,
@@ -15,113 +16,137 @@ export async function PATCH(
 
     const { id } = await context.params;
     const body = await req.json();
-    const { action } = body;
+    const parseResult = updateQuestActionSchema.safeParse(body);
 
-    const task = await prisma.task.findFirst({
-      where: { id, userId: user.id },
-    });
-
-    if (!task) {
-      return NextResponse.json({ error: "Quest not found in your log." }, { status: 404 });
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || "Invalid quest update payload.";
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
 
+    const { action, title, description, category, difficulty, dueDate } = parseResult.data;
+
+    // Concurrency-safe atomic transaction for quest completion
     if (action === "COMPLETE") {
-      if (task.status === "COMPLETED") {
-        return NextResponse.json(
-          { error: "This quest has already been certified and slain. No double-dipping in the treasury!" },
-          { status: 400 }
-        );
-      }
+      const result = await prisma.$transaction(async (tx) => {
+        const task = await tx.task.findFirst({
+          where: { id, userId: user.id },
+        });
 
-      const xpEarned = task.xpReward;
-      const goldEarned = task.goldReward;
-      const category = task.category as QuestCategory;
-      const statBonus = DIFFICULTY_MULTIPLIERS[task.difficulty as QuestDifficulty]?.statPoints || 2;
+        if (!task) {
+          throw new Error("QUEST_NOT_FOUND");
+        }
 
-      // Progression calculation
-      const newTotalXp = user.xp + xpEarned;
-      const newGold = user.gold + goldEarned;
-      const levelResult = calculateLevelFromTotalXp(newTotalXp);
-      const didLevelUp = levelResult.level > user.level;
+        if (task.status === "COMPLETED") {
+          throw new Error("ALREADY_COMPLETED");
+        }
 
-      // Update task status
-      const updatedTask = await prisma.task.update({
-        where: { id: task.id },
-        data: {
-          status: "COMPLETED",
-          completedAt: new Date(),
-        },
-      });
+        // Fresh user state inside transaction
+        const freshUser = await tx.user.findUnique({
+          where: { id: user.id },
+        });
 
-      // Update user level, total xp, gold, and title
-      const updatedUser = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          level: levelResult.level,
-          xp: newTotalXp,
-          gold: newGold,
-          title: levelResult.title,
-        },
-      });
+        if (!freshUser) {
+          throw new Error("USER_NOT_FOUND");
+        }
 
-      // Update specific character stat
-      const statField = category.toLowerCase() as
-        | "strength"
-        | "intellect"
-        | "vitality"
-        | "dexterity"
-        | "charisma"
-        | "sanity";
+        const xpEarned = task.xpReward;
+        const goldEarned = task.goldReward;
+        const questCategory = task.category as QuestCategory;
+        const statBonus = DIFFICULTY_MULTIPLIERS[task.difficulty as QuestDifficulty]?.statPoints || 2;
 
-      const updatedStats = await prisma.userStats.upsert({
-        where: { userId: user.id },
-        create: {
-          userId: user.id,
-          [statField]: 10 + statBonus,
-        },
-        update: {
-          [statField]: { increment: statBonus },
-        },
-      });
+        const newTotalXp = freshUser.xp + xpEarned;
+        const newGold = freshUser.gold + goldEarned;
+        const levelResult = calculateLevelFromTotalXp(newTotalXp);
+        const didLevelUp = levelResult.level > freshUser.level;
 
-      // Add activity log
-      await prisma.activityLog.create({
-        data: {
-          userId: user.id,
-          actionType: didLevelUp ? "LEVEL_UP" : "QUEST_COMPLETED",
-          message: didLevelUp
-            ? `Leveled up to Level ${levelResult.level} (${levelResult.title})! Slew "${task.title}".`
-            : `Slew "${task.title}". Collected +${xpEarned} XP, +${goldEarned} Gold, +${statBonus} ${category}.`,
-          xpChange: xpEarned,
-          goldChange: goldEarned,
-        },
+        // Update task status atomically
+        const updatedTask = await tx.task.update({
+          where: { id: task.id },
+          data: {
+            status: "COMPLETED",
+            completedAt: new Date(),
+          },
+        });
+
+        // Update user state atomically
+        const updatedUser = await tx.user.update({
+          where: { id: freshUser.id },
+          data: {
+            level: levelResult.level,
+            xp: newTotalXp,
+            gold: newGold,
+            title: levelResult.title,
+          },
+        });
+
+        // Update specific character stat atomically
+        const statField = questCategory.toLowerCase() as
+          | "strength"
+          | "intellect"
+          | "vitality"
+          | "dexterity"
+          | "charisma"
+          | "sanity";
+
+        const updatedStats = await tx.userStats.upsert({
+          where: { userId: freshUser.id },
+          create: {
+            userId: freshUser.id,
+            [statField]: 10 + statBonus,
+          },
+          update: {
+            [statField]: { increment: statBonus },
+          },
+        });
+
+        // Create activity log inside transaction
+        await tx.activityLog.create({
+          data: {
+            userId: freshUser.id,
+            actionType: didLevelUp ? "LEVEL_UP" : "QUEST_COMPLETED",
+            message: didLevelUp
+              ? `Leveled up to Level ${levelResult.level} (${levelResult.title})! Slew "${task.title}".`
+              : `Slew "${task.title}". Collected +${xpEarned} XP, +${goldEarned} Gold, +${statBonus} ${questCategory}.`,
+            xpChange: xpEarned,
+            goldChange: goldEarned,
+          },
+        });
+
+        return {
+          updatedTask,
+          updatedUser: {
+            ...updatedUser,
+            stats: updatedStats,
+          },
+          rewards: {
+            xp: xpEarned,
+            gold: goldEarned,
+            statCategory: questCategory,
+            statBonus,
+          },
+          didLevelUp,
+          newLevel: levelResult.level,
+          newTitle: levelResult.title,
+        };
       });
 
       return NextResponse.json({
         success: true,
-        message: didLevelUp
-          ? `GLORIOUS VICTORY! Leveled up to Level ${levelResult.level}: ${levelResult.title}!`
-          : `Quest slain! Earned +${xpEarned} XP and +${goldEarned} Gold.`,
-        task: updatedTask,
-        user: {
-          ...updatedUser,
-          stats: updatedStats,
-        },
-        rewards: {
-          xp: xpEarned,
-          gold: goldEarned,
-          statCategory: category,
-          statBonus,
-        },
-        didLevelUp,
-        newLevel: levelResult.level,
-        newTitle: levelResult.title,
+        message: result.didLevelUp
+          ? `GLORIOUS VICTORY! Leveled up to Level ${result.newLevel}: ${result.newTitle}!`
+          : `Quest slain! Earned +${result.rewards.xp} XP and +${result.rewards.gold} Gold.`,
+        task: result.updatedTask,
+        user: result.updatedUser,
+        rewards: result.rewards,
+        didLevelUp: result.didLevelUp,
+        newLevel: result.newLevel,
+        newTitle: result.newTitle,
       });
     }
 
     if (action === "ABANDON") {
       const updatedTask = await prisma.task.update({
-        where: { id: task.id },
+        where: { id },
         data: { status: "ABANDONED" },
       });
 
@@ -129,7 +154,7 @@ export async function PATCH(
         data: {
           userId: user.id,
           actionType: "QUEST_ABANDONED",
-          message: `Abandoned quest: "${task.title}". The guild archivist filed a formal sigh.`,
+          message: `Abandoned quest: "${updatedTask.title}". The guild archivist filed a formal sigh.`,
         },
       });
 
@@ -141,21 +166,28 @@ export async function PATCH(
     }
 
     if (action === "EDIT") {
-      const { title, description, category, difficulty, dueDate } = body;
-      const safeCategory = (category || task.category) as QuestCategory;
-      const safeDifficulty = (difficulty || task.difficulty) as QuestDifficulty;
+      const existingTask = await prisma.task.findFirst({
+        where: { id, userId: user.id },
+      });
+
+      if (!existingTask) {
+        return NextResponse.json({ error: "Quest not found." }, { status: 404 });
+      }
+
+      const safeCategory = (category || existingTask.category) as QuestCategory;
+      const safeDifficulty = (difficulty || existingTask.difficulty) as QuestDifficulty;
       const rewards = DIFFICULTY_MULTIPLIERS[safeDifficulty] || DIFFICULTY_MULTIPLIERS.MEDIUM;
 
       const updatedTask = await prisma.task.update({
-        where: { id: task.id },
+        where: { id: existingTask.id },
         data: {
-          title: title ? String(title).trim() : task.title,
-          description: description !== undefined ? (description ? String(description).trim() : null) : task.description,
+          title: title !== undefined ? title : existingTask.title,
+          description: description !== undefined ? description : existingTask.description,
           category: safeCategory,
           difficulty: safeDifficulty,
           xpReward: rewards.xp,
           goldReward: rewards.gold,
-          dueDate: dueDate ? new Date(dueDate) : task.dueDate,
+          dueDate: dueDate ? new Date(dueDate) : existingTask.dueDate,
         },
       });
 
@@ -166,8 +198,18 @@ export async function PATCH(
       });
     }
 
-    return NextResponse.json({ error: "Invalid guild action specified." }, { status: 400 });
-  } catch (error) {
+    return NextResponse.json({ error: "Invalid action specified." }, { status: 400 });
+  } catch (error: any) {
+    if (error.message === "ALREADY_COMPLETED") {
+      return NextResponse.json(
+        { error: "This quest has already been certified and slain. No double-dipping in the treasury!" },
+        { status: 400 }
+      );
+    }
+    if (error.message === "QUEST_NOT_FOUND") {
+      return NextResponse.json({ error: "Quest not found in your log." }, { status: 404 });
+    }
+
     console.error("Update quest error:", error);
     return NextResponse.json(
       { error: "The quest scribe spilled coffee on your parchment." },

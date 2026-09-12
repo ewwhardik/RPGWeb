@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { equipItemSchema } from "@/lib/validations";
 
 export async function POST(req: Request) {
   try {
@@ -10,11 +11,14 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { itemId } = body;
+    const parseResult = equipItemSchema.safeParse(body);
 
-    if (!itemId) {
-      return NextResponse.json({ error: "Item ID required." }, { status: 400 });
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || "Invalid item payload.";
+      return NextResponse.json({ error: firstError }, { status: 400 });
     }
+
+    const { itemId } = parseResult.data;
 
     const inv = await prisma.userInventory.findUnique({
       where: {
@@ -37,8 +41,7 @@ export async function POST(req: Request) {
     const delta = willEquip ? statBoost : -statBoost;
     const statType = inv.item.statType;
 
-    // Determine stat updates
-    const statUpdates: any = {};
+    const statUpdates: Record<string, { increment: number }> = {};
     if (statType === "ALL") {
       statUpdates.strength = { increment: delta };
       statUpdates.intellect = { increment: delta };

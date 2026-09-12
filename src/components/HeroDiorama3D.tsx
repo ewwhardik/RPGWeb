@@ -143,7 +143,7 @@ export default function HeroDiorama3D({
     mount.addEventListener("click", handleClick);
 
     // Animation Loop
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       animFrameId.current = requestAnimationFrame(animate);
@@ -210,9 +210,14 @@ export default function HeroDiorama3D({
   }, [level, xpProgress, avatarType, gold]);
 
   return (
-    <div className="relative w-full h-[240px] flex items-center justify-center cursor-pointer select-none group">
+    <div className="relative w-full h-[340px] diorama-box flex items-center justify-center cursor-pointer select-none group overflow-hidden">
       <div ref={mountRef} className="w-full h-full" />
-      <div className="absolute bottom-1 right-2 text-[10px] text-slate-400 bg-black/60 px-2 py-0.5 rounded border border-slate-800 opacity-60 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-3 left-4 flex items-center gap-2 z-10 pointer-events-none">
+        <span className="wax-stamp text-[9px] py-0.5 px-2 border-amber-400 text-amber-300 bg-amber-950/40">
+          DIORAMA SANCTUM
+        </span>
+      </div>
+      <div className="absolute bottom-3 right-3 text-[10px] text-amber-200/80 bg-black/70 backdrop-blur px-2.5 py-1 rounded-md border border-amber-800/40 opacity-70 group-hover:opacity-100 transition-opacity">
         Interactive 3D Artifact (Click to Spin)
       </div>
     </div>
