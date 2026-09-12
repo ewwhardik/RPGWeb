@@ -73,10 +73,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: firstError }, { status: 400 });
     }
 
-    const { title, description, category, difficulty, dueDate } = parseResult.data;
+    const { title, description, category, difficulty, dueDate, isRecurring, recurrenceType } = parseResult.data;
 
-    const safeCategory = category as QuestCategory;
-    const safeDifficulty = difficulty as QuestDifficulty;
+    const safeCategory = (category || "INTELLECT") as QuestCategory;
+    const safeDifficulty = (difficulty || "MEDIUM") as QuestDifficulty;
     const rewards = DIFFICULTY_MULTIPLIERS[safeDifficulty] || DIFFICULTY_MULTIPLIERS.MEDIUM;
 
     const task = await prisma.task.create({
@@ -89,6 +89,8 @@ export async function POST(req: Request) {
         xpReward: rewards.xp,
         goldReward: rewards.gold,
         dueDate: dueDate ? new Date(dueDate) : null,
+        isRecurring: isRecurring || false,
+        recurrenceType: recurrenceType || null,
         status: "TODO",
       },
     });

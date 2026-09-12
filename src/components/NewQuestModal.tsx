@@ -105,6 +105,8 @@ export default function NewQuestModal({
   const [category, setCategory] = useState<QuestCategory>("INTELLECT");
   const [difficulty, setDifficulty] = useState<QuestDifficulty>("MEDIUM");
   const [dueDate, setDueDate] = useState("");
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrenceType, setRecurrenceType] = useState("DAILY");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -115,6 +117,8 @@ export default function NewQuestModal({
       setCategory((initialData.category as QuestCategory) || "INTELLECT");
       setDifficulty((initialData.difficulty as QuestDifficulty) || "MEDIUM");
       setDueDate(initialData.dueDate ? initialData.dueDate.substring(0, 10) : "");
+      setIsRecurring(initialData.isRecurring || false);
+      setRecurrenceType(initialData.recurrenceType || "DAILY");
     } else {
       setTitle("");
       setDescription("");
@@ -329,19 +333,44 @@ export default function NewQuestModal({
             </div>
           </div>
 
-          {/* Due Date */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
-              Deadline / Target Date
-            </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
-              />
+          {/* Due Date & Recurrence Row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                Deadline / Target Date
+              </label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
+                <span>Recurring Quest</span>
+                <input 
+                  type="checkbox" 
+                  checked={isRecurring} 
+                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  className="accent-amber-500 w-3 h-3"
+                />
+              </label>
+              {isRecurring && (
+                <select
+                  value={recurrenceType}
+                  onChange={(e) => setRecurrenceType(e.target.value)}
+                  className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 px-2 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500"
+                >
+                  <option value="DAILY">Daily</option>
+                  <option value="WEEKLY">Weekly</option>
+                  <option value="MONTHLY">Monthly</option>
+                </select>
+              )}
             </div>
           </div>
 

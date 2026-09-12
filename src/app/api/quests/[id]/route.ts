@@ -98,12 +98,37 @@ export async function PATCH(
 
         // Update task status atomically
         const updatedTask = await tx.task.update({
-          where: { id: task.id },
+          where: { id },
           data: {
             status: "COMPLETED",
             completedAt: new Date(),
           },
         });
+
+        if (updatedTask.isRecurring && updatedTask.recurrenceType) {
+          const nextDue = new Date();
+          if (updatedTask.recurrenceType === "DAILY") {
+            nextDue.setDate(nextDue.getDate() + 1);
+          } else if (updatedTask.recurrenceType === "WEEKLY") {
+            nextDue.setDate(nextDue.getDate() + 7);
+          } else if (updatedTask.recurrenceType === "MONTHLY") {
+            nextDue.setMonth(nextDue.getMonth() + 1);
+          }
+          await tx.task.create({
+            data: {
+              userId: freshUser.id,
+              title: updatedTask.title,
+              description: updatedTask.description,
+              category: updatedTask.category,
+              difficulty: updatedTask.difficulty,
+              xpReward: updatedTask.xpReward,
+              goldReward: updatedTask.goldReward,
+              isRecurring: true,
+              recurrenceType: updatedTask.recurrenceType,
+              dueDate: nextDue,
+            },
+          });
+        }
 
         // Update user state atomically
         const updatedUser = await tx.user.update({
@@ -115,6 +140,22 @@ export async function PATCH(
             title: levelResult.title,
           },
         });
+
+        // Economy Sink: Degrade durability of equipped items
+        const equippedItems = await tx.userInventory.findMany({
+          where: { userId: freshUser.id, isEquipped: true },
+        });
+
+        for (const item of equippedItems) {
+          const newDurability = Math.max(0, item.durability - 5);
+          await tx.userInventory.update({
+            where: { id: item.id },
+            data: {
+              durability: newDurability,
+              isEquipped: newDurability === 0 ? false : true, // unequip if broken
+            },
+          });
+        }
 
         // Update specific character stat and refresh decay cadence timestamp
         const statField = questCategory.toLowerCase() as

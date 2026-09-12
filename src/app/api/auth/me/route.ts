@@ -23,6 +23,7 @@ export async function GET() {
       title: user.title,
       avatar: user.avatar,
       characterClass: user.characterClass,
+      prestigeLevel: user.prestigeLevel,
       stats: user.stats,
       inventory: user.inventory,
     };

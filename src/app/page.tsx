@@ -436,7 +436,17 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
                   <div className="text-right hidden md:block">
                     <div className="text-xs font-bold text-slate-700 dark:text-slate-200">{user.username}</div>
-                    <div className="text-[10px] text-amber-400 font-mono">Lvl {levelInfo.level}</div>
+                    <div className="text-[10px] text-amber-400 font-mono">
+                      Lvl {levelInfo.level} {user.prestigeLevel > 0 && `★${user.prestigeLevel}`}
+                    </div>
+                    {levelInfo.level >= 50 && (
+                      <button 
+                        onClick={async () => { await fetch('/api/user/prestige', { method: 'POST' }); window.location.reload(); }}
+                        className="btn-gold text-[8px] py-0.5 px-1.5 mt-0.5"
+                      >
+                        Ascend
+                      </button>
+                    )}
                   </div>
                   <button
                     type="button"

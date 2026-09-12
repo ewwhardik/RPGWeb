@@ -496,7 +496,7 @@ export default function PartyBossWidget({
                       )}
                     </div>
                     <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                      Lvl {member.user.level} {member.user.characterClass || "Warrior"}
+                      Lvl {member.user.level} {member.user.prestigeLevel > 0 && `★${member.user.prestigeLevel}`} {member.user.characterClass || "Warrior"}
                     </div>
                   </div>
                 </div>

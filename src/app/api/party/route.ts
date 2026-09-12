@@ -26,10 +26,10 @@ export async function GET() {
                     id: true,
                     username: true,
                     level: true,
-                    title: true,
-                    avatar: true,
-                    characterClass: true,
                     streakCount: true,
+                    characterClass: true,
+                    prestigeLevel: true,
+                    xp: true,
                   },
                 },
               },
@@ -40,15 +40,18 @@ export async function GET() {
     });
 
     if (!membership || !membership.party) {
-      return NextResponse.json({ inParty: false });
+      return NextResponse.json({ inParty: false }, { status: 200 });
     }
 
-    const currentBoss = BOSS_TIERS.find((b) => b.name === membership.party.bossName) || {
-      name: membership.party.bossName,
-      maxHp: membership.party.bossMaxHp,
-      description: "A fearsome dread lingering over your schedule.",
-      humorQuote: "You can defeat me, but laundry day comes for us all.",
-    };
+    const party = membership.party;
+    const bossInfo = BOSS_TIERS.find((b) => b.name === party.bossName) || BOSS_TIERS[0];
+    
+    // Sort members: Prestige > Level > XP
+    party.members.sort((a, b) => {
+      if (b.user.prestigeLevel !== a.user.prestigeLevel) return b.user.prestigeLevel - a.user.prestigeLevel;
+      if (b.user.level !== a.user.level) return b.user.level - a.user.level;
+      return b.user.xp - a.user.xp;
+    });
 
     return NextResponse.json({
       inParty: true,
@@ -59,7 +62,7 @@ export async function GET() {
         bossName: membership.party.bossName,
         bossMaxHp: membership.party.bossMaxHp,
         bossCurrentHp: membership.party.bossCurrentHp,
-        bossInfo: currentBoss,
+        bossInfo,
         members: membership.party.members.map((m) => ({
           id: m.id,
           joinedAt: m.joinedAt,
