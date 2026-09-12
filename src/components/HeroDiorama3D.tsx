@@ -12,6 +12,27 @@ interface HeroDiorama3DProps {
   gold: number;
 }
 
+/**
+ * SphericalCatmullRomCurve
+ * Ensures all sampled points of the Catmull-Rom spline lie precisely on a sphere of radius R.
+ */
+class SphericalCatmullRomCurve extends THREE.Curve<THREE.Vector3> {
+  private baseCurve: THREE.CatmullRomCurve3;
+  private radius: number;
+
+  constructor(controlPoints: THREE.Vector3[], radius: number) {
+    super();
+    this.baseCurve = new THREE.CatmullRomCurve3(controlPoints);
+    this.radius = radius;
+  }
+
+  getPoint(t: number, optionalTarget = new THREE.Vector3()): THREE.Vector3 {
+    this.baseCurve.getPoint(t, optionalTarget);
+    optionalTarget.normalize().multiplyScalar(this.radius);
+    return optionalTarget;
+  }
+}
+
 export default function HeroDiorama3D({
   level,
 }: HeroDiorama3DProps) {
@@ -26,52 +47,89 @@ export default function HeroDiorama3D({
     const height = mount.clientHeight || 300;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 5.3);
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 5.6);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance",
+    });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
     mount.appendChild(renderer.domElement);
 
-    // Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xfff8f0, 0.9);
+    // ==========================================
+    // 1. Studio Lighting Setup (Matching Reference Render)
+    // ==========================================
+    const ambientLight = new THREE.AmbientLight(0xfff5ea, 1.3);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfffaed, 3.2);
-    keyLight.position.set(3.5, 4.5, 5);
+    // Primary High-Key Directional Light (Top-Left)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.8);
+    keyLight.position.set(-4, 5, 4.5);
     scene.add(keyLight);
 
-    const rimGoldLight = new THREE.PointLight(0xf59e0b, 3.5, 12);
-    rimGoldLight.position.set(-3.5, 2.5, -2);
-    scene.add(rimGoldLight);
+    // Secondary Warm Soft Key Light (Top-Right)
+    const secondaryKeyLight = new THREE.DirectionalLight(0xfff3e0, 2.2);
+    secondaryKeyLight.position.set(4.5, 3.5, 3.5);
+    scene.add(secondaryKeyLight);
 
-    const cyanFillLight = new THREE.PointLight(0x38bdf8, 2.2, 10);
-    cyanFillLight.position.set(2.5, -2.5, 2.5);
-    scene.add(cyanFillLight);
+    // Crisp Specular Rim Light (Creating the glass shell perimeter highlights)
+    const rimLight = new THREE.PointLight(0xffffff, 4.2, 16);
+    rimLight.position.set(-3.8, 3.2, -2.5);
+    scene.add(rimLight);
 
-    // Root Group
+    // Bottom Warm Bounce Fill Light (Under-eye organic bounce)
+    const bounceLight = new THREE.PointLight(0xfef08a, 1.8, 12);
+    bounceLight.position.set(1.2, -4, 2.5);
+    scene.add(bounceLight);
+
+    // Master Eye Root Group
     const eyeRootGroup = new THREE.Group();
+    // Default 3/4 hero presentation angle matching reference image
+    eyeRootGroup.rotation.y = 0.38;
+    eyeRootGroup.rotation.x = -0.12;
+    eyeRootGroup.rotation.z = -0.05;
     scene.add(eyeRootGroup);
 
-    // 1. Procedural Sclera with Anatomical Vascular Nerves & Capillaries
+    // Eyeball group that reacts to mouse gaze tracking
+    const eyeballGroup = new THREE.Group();
+    eyeRootGroup.add(eyeballGroup);
+
+    // ==========================================
+    // 2. Procedural Canvas Textures
+    // ==========================================
+
+    // SCLERA TEXTURE: Warm ivory base with sub-surface capillaries & organic undertones
     const createScleraTexture = () => {
       const canvas = document.createElement("canvas");
       canvas.width = 1024;
       canvas.height = 512;
       const ctx = canvas.getContext("2d")!;
 
-      // Base Sclera: Off-white ivory with warm biological tissue undertone
-      const baseGrad = ctx.createRadialGradient(512, 256, 120, 512, 256, 500);
-      baseGrad.addColorStop(0, "#fcfbf9");
-      baseGrad.addColorStop(0.6, "#f4eee6");
-      baseGrad.addColorStop(0.85, "#ebd9d0");
-      baseGrad.addColorStop(1, "#dfc6bd");
+      // Base ivory/cream radial gradient
+      const baseGrad = ctx.createRadialGradient(512, 256, 90, 512, 256, 512);
+      baseGrad.addColorStop(0, "#fffef9");
+      baseGrad.addColorStop(0.35, "#fef8ee");
+      baseGrad.addColorStop(0.65, "#fef0d6");
+      baseGrad.addColorStop(0.85, "#fed7aa");
+      baseGrad.addColorStop(1, "#fdba74");
       ctx.fillStyle = baseGrad;
       ctx.fillRect(0, 0, 1024, 512);
 
-      // Helper function to draw organic branching vascular nerves
-      const drawVascularBranch = (
+      // Warm organic fleshy washes
+      const washGrad = ctx.createLinearGradient(0, 0, 1024, 512);
+      washGrad.addColorStop(0, "rgba(251, 191, 36, 0.15)");
+      washGrad.addColorStop(0.5, "rgba(244, 63, 94, 0.12)");
+      washGrad.addColorStop(1, "rgba(217, 119, 6, 0.18)");
+      ctx.fillStyle = washGrad;
+      ctx.fillRect(0, 0, 1024, 512);
+
+      // Recursive Sub-surface Capillary Branches
+      const drawCapillary = (
         startX: number,
         startY: number,
         targetX: number,
@@ -85,70 +143,61 @@ export default function HeroDiorama3D({
         ctx.beginPath();
         ctx.moveTo(startX, startY);
 
-        // Curvature jitter
-        const midX = (startX + targetX) / 2 + (Math.random() - 0.5) * 28;
-        const midY = (startY + targetY) / 2 + (Math.random() - 0.5) * 24;
-
+        const midX = (startX + targetX) / 2 + (Math.random() - 0.5) * 26;
+        const midY = (startY + targetY) / 2 + (Math.random() - 0.5) * 22;
         ctx.quadraticCurveTo(midX, midY, targetX, targetY);
 
-        // Vessel color: deep arterial crimson with subtle transparency
-        const alpha = 0.25 + depth * 0.18;
-        ctx.strokeStyle = `rgba(185, 28, 28, ${alpha})`;
+        const alpha = 0.2 + depth * 0.15;
+        const redHue = depth > 2 ? "rgba(185, 28, 28, " : "rgba(234, 88, 12, ";
+        ctx.strokeStyle = `${redHue}${alpha})`;
         ctx.lineWidth = width;
         ctx.lineCap = "round";
-        ctx.lineJoin = "round";
         ctx.stroke();
         ctx.restore();
 
-        // Branch out children
         if (depth > 1) {
-          const numBranches = Math.random() > 0.4 ? 2 : 1;
-          for (let b = 0; b < numBranches; b++) {
-            const angle = Math.atan2(targetY - startY, targetX - startX) + (Math.random() - 0.5) * 0.9;
-            const branchLen = 20 + Math.random() * 32;
+          const branches = Math.random() > 0.45 ? 2 : 1;
+          for (let b = 0; b < branches; b++) {
+            const angle =
+              Math.atan2(targetY - startY, targetX - startX) + (Math.random() - 0.5) * 0.95;
+            const branchLen = 22 + Math.random() * 38;
             const endX = targetX + Math.cos(angle) * branchLen;
             const endY = targetY + Math.sin(angle) * branchLen;
-            drawVascularBranch(targetX, targetY, endX, endY, width * 0.65, depth - 1);
+            drawCapillary(targetX, targetY, endX, endY, width * 0.68, depth - 1);
           }
         }
       };
 
-      // Generate realistic capillary trees radiating from peripheral sides toward center
-      const vesselRoots = [
-        // Temporal / Medial roots
-        { x: 140, y: 160, angle: 0.2 },
-        { x: 120, y: 260, angle: 0.05 },
-        { x: 150, y: 360, angle: -0.2 },
-        { x: 880, y: 150, angle: 3.0 },
-        { x: 900, y: 250, angle: 3.14 },
-        { x: 870, y: 350, angle: -3.0 },
-        // Superior / Inferior roots
-        { x: 420, y: 60, angle: 1.4 },
-        { x: 600, y: 60, angle: 1.7 },
-        { x: 430, y: 450, angle: -1.4 },
-        { x: 590, y: 450, angle: -1.7 },
+      // Capillary root points radiating across sclera
+      const roots = [
+        { x: 120, y: 150, angle: 0.18 },
+        { x: 100, y: 260, angle: 0.02 },
+        { x: 130, y: 380, angle: -0.2 },
+        { x: 910, y: 140, angle: 2.95 },
+        { x: 930, y: 260, angle: 3.14 },
+        { x: 900, y: 380, angle: -2.95 },
+        { x: 440, y: 50, angle: 1.45 },
+        { x: 590, y: 50, angle: 1.68 },
+        { x: 430, y: 460, angle: -1.45 },
+        { x: 600, y: 460, angle: -1.68 },
       ];
 
-      vesselRoots.forEach((root) => {
-        const len = 70 + Math.random() * 60;
+      roots.forEach((root) => {
+        const len = 80 + Math.random() * 70;
         const targetX = root.x + Math.cos(root.angle) * len;
         const targetY = root.y + Math.sin(root.angle) * len;
-        drawVascularBranch(root.x, root.y, targetX, targetY, 2.2, 4);
+        drawCapillary(root.x, root.y, targetX, targetY, 2.2, 4);
       });
 
-      // Subtle fine micro-capillary web
-      for (let i = 0; i < 40; i++) {
-        const x = Math.random() * 1024;
-        const y = Math.random() * 512;
-        // Keep clear of the direct center cornea pole
-        const distToCenter = Math.hypot(x - 512, y - 256);
-        if (distToCenter > 110 && distToCenter < 400) {
-          ctx.beginPath();
-          ctx.arc(x, y, 0.75 + Math.random() * 1.2, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(220, 38, 38, 0.18)";
-          ctx.fill();
-        }
-      }
+      // Subtle warm junction shadow around the anterior aperture collar
+      const junctionGrad = ctx.createRadialGradient(512, 256, 80, 512, 256, 140);
+      junctionGrad.addColorStop(0, "rgba(69, 26, 3, 0.4)");
+      junctionGrad.addColorStop(0.6, "rgba(180, 83, 9, 0.2)");
+      junctionGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = junctionGrad;
+      ctx.beginPath();
+      ctx.arc(512, 256, 140, 0, Math.PI * 2);
+      ctx.fill();
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.wrapS = THREE.RepeatWrapping;
@@ -156,142 +205,215 @@ export default function HeroDiorama3D({
       return texture;
     };
 
-    // 2. Procedural Anatomical Iris with Limbal Ring & Crypts of Fuchs
-    const createIrisTexture = (pupilScale: number = 0.28) => {
+    // IRIS TEXTURE: Golden Sunburst with Starburst Collarette & Curved Studio Window Reflection
+    const createIrisTexture = (pupilRatio: number = 0.32) => {
       const canvas = document.createElement("canvas");
-      canvas.width = 512;
-      canvas.height = 512;
+      canvas.width = 1024;
+      canvas.height = 1024;
       const ctx = canvas.getContext("2d")!;
-      const center = 256;
-      const radius = 240;
+      const center = 512;
+      const radius = 480;
 
-      // Outer Deep Limbal Ring (Crucial for human realism)
-      const limbalGrad = ctx.createRadialGradient(center, center, radius * 0.75, center, center, radius);
-      limbalGrad.addColorStop(0, "#78350f");
-      limbalGrad.addColorStop(0.7, "#291507");
-      limbalGrad.addColorStop(0.95, "#0c0a09");
-      limbalGrad.addColorStop(1, "#1c1917");
+      // Dark Limbal Border
+      const limbalGrad = ctx.createRadialGradient(center, center, radius * 0.82, center, center, radius);
+      limbalGrad.addColorStop(0, "#b45309");
+      limbalGrad.addColorStop(0.6, "#78350f");
+      limbalGrad.addColorStop(0.9, "#291507");
+      limbalGrad.addColorStop(1, "#0c0a09");
       ctx.fillStyle = limbalGrad;
       ctx.beginPath();
       ctx.arc(center, center, radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Base Stroma Radial Texture
-      const stromaGrad = ctx.createRadialGradient(center, center, radius * 0.3, center, center, radius * 0.85);
-      stromaGrad.addColorStop(0, "#fbbf24");
-      stromaGrad.addColorStop(0.35, "#d97706");
-      stromaGrad.addColorStop(0.75, "#92400e");
+      // Golden Stroma Base
+      const stromaGrad = ctx.createRadialGradient(center, center, radius * 0.3, center, center, radius * 0.88);
+      stromaGrad.addColorStop(0, "#fef08a");
+      stromaGrad.addColorStop(0.25, "#f59e0b");
+      stromaGrad.addColorStop(0.6, "#d97706");
+      stromaGrad.addColorStop(0.85, "#92400e");
       stromaGrad.addColorStop(1, "#451a03");
       ctx.fillStyle = stromaGrad;
       ctx.beginPath();
-      ctx.arc(center, center, radius * 0.94, 0, Math.PI * 2);
+      ctx.arc(center, center, radius * 0.95, 0, Math.PI * 2);
       ctx.fill();
 
-      // 360 Layered Dense Iris Fibers
+      // 480 Layered Radial Fibers & Furrows
       ctx.save();
       ctx.translate(center, center);
-      for (let i = 0; i < 360; i++) {
-        ctx.rotate((Math.PI * 2) / 360);
+      for (let i = 0; i < 480; i++) {
+        ctx.rotate((Math.PI * 2) / 480);
         ctx.beginPath();
-        const startR = radius * (pupilScale + 0.02);
-        const endR = radius * (0.92 + Math.random() * 0.05);
+        const startR = radius * (pupilRatio + 0.02);
+        const endR = radius * (0.92 + Math.random() * 0.06);
         ctx.moveTo(startR, 0);
 
-        // Natural wavy fiber stroke
-        const wave = (Math.random() - 0.5) * 3;
+        const wave = (Math.random() - 0.5) * 4.5;
         ctx.quadraticCurveTo(radius * 0.55, wave, endR, 0);
 
         const hue =
-          i % 3 === 0
-            ? "rgba(251, 191, 36, 0.7)"
-            : i % 3 === 1
-            ? "rgba(245, 158, 11, 0.5)"
-            : "rgba(217, 119, 6, 0.4)";
+          i % 4 === 0
+            ? "rgba(254, 240, 138, 0.75)"
+            : i % 4 === 1
+            ? "rgba(251, 191, 36, 0.65)"
+            : i % 4 === 2
+            ? "rgba(217, 119, 6, 0.45)"
+            : "rgba(120, 53, 15, 0.5)";
         ctx.strokeStyle = hue;
-        ctx.lineWidth = 0.8 + Math.random() * 1.4;
+        ctx.lineWidth = 1.0 + Math.random() * 1.8;
         ctx.stroke();
       }
       ctx.restore();
 
-      // Collarette Undulating Golden Ridge
+      // Undulating Golden Starburst Collarette (Exact match to reference image teeth)
       ctx.save();
       ctx.translate(center, center);
+      const starTeeth = 54;
       ctx.beginPath();
-      for (let a = 0; a < Math.PI * 2; a += 0.08) {
-        const rColl = radius * (0.48 + Math.sin(a * 12) * 0.04);
-        const px = Math.cos(a) * rColl;
-        const py = Math.sin(a) * rColl;
-        if (a === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
+      for (let s = 0; s < starTeeth; s++) {
+        const a1 = (s / starTeeth) * Math.PI * 2;
+        const a2 = ((s + 0.5) / starTeeth) * Math.PI * 2;
+        const rInner = radius * (pupilRatio + 0.08);
+        const rOuter = radius * (0.58 + (s % 2 === 0 ? 0.08 : -0.04));
+
+        const x1 = Math.cos(a1) * rInner;
+        const y1 = Math.sin(a1) * rInner;
+        const x2 = Math.cos(a2) * rOuter;
+        const y2 = Math.sin(a2) * rOuter;
+
+        if (s === 0) ctx.moveTo(x1, y1);
+        else ctx.lineTo(x1, y1);
+        ctx.lineTo(x2, y2);
       }
       ctx.closePath();
-      ctx.strokeStyle = "rgba(253, 230, 138, 0.85)";
-      ctx.lineWidth = 2.5;
+      ctx.fillStyle = "rgba(254, 240, 138, 0.55)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(253, 230, 138, 0.9)";
+      ctx.lineWidth = 2.8;
       ctx.stroke();
       ctx.restore();
 
-      // Crypts of Fuchs (Darker pigment pits)
-      for (let c = 0; c < 30; c++) {
-        const pitAngle = Math.random() * Math.PI * 2;
-        const pitDist = radius * (0.55 + Math.random() * 0.3);
-        const px = center + Math.cos(pitAngle) * pitDist;
-        const py = center + Math.sin(pitAngle) * pitDist;
-        ctx.beginPath();
-        ctx.ellipse(px, py, 2.5 + Math.random() * 3, 1.5 + Math.random() * 2, pitAngle, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(69, 26, 3, 0.6)";
-        ctx.fill();
-      }
-
-      // Deep Void Pupil with soft organic feathered margin
+      // Deep Black Pupil
+      const pupilRadius = radius * pupilRatio;
       const pupilGrad = ctx.createRadialGradient(
         center,
         center,
-        radius * (pupilScale * 0.7),
+        pupilRadius * 0.6,
         center,
         center,
-        radius * pupilScale
+        pupilRadius
       );
       pupilGrad.addColorStop(0, "#000000");
-      pupilGrad.addColorStop(0.9, "#040406");
+      pupilGrad.addColorStop(0.85, "#040407");
       pupilGrad.addColorStop(1, "#18181b");
       ctx.fillStyle = pupilGrad;
       ctx.beginPath();
-      ctx.arc(center, center, radius * pupilScale, 0, Math.PI * 2);
+      ctx.arc(center, center, pupilRadius, 0, Math.PI * 2);
       ctx.fill();
+
+      // Warm Pupil Ambient Bounce Light (Bottom reflection)
+      const bounceGrad = ctx.createRadialGradient(
+        center + pupilRadius * 0.35,
+        center + pupilRadius * 0.45,
+        10,
+        center + pupilRadius * 0.35,
+        center + pupilRadius * 0.45,
+        pupilRadius * 0.7
+      );
+      bounceGrad.addColorStop(0, "rgba(217, 119, 6, 0.35)");
+      bounceGrad.addColorStop(0.7, "rgba(180, 83, 9, 0.1)");
+      bounceGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = bounceGrad;
+      ctx.beginPath();
+      ctx.arc(center, center, pupilRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // CURVED STUDIO SOFTBOX GRID WINDOW REFLECTION (Signature highlight from reference image)
+      ctx.save();
+      // Upper-left quadrant reflection over the pupil and cornea
+      const winX = center - pupilRadius * 0.72;
+      const winY = center - pupilRadius * 0.68;
+      const winW = pupilRadius * 0.78;
+      const winH = pupilRadius * 0.65;
+
+      // Rotate window to align with spherical curvature
+      ctx.translate(winX + winW / 2, winY + winH / 2);
+      ctx.rotate(-0.35);
+
+      // Soft white specular outer aura
+      ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
+      ctx.beginPath();
+      ctx.roundRect(-winW / 2 - 8, -winH / 2 - 8, winW + 16, winH + 16, 12);
+      ctx.fill();
+
+      // 4-Pane Softbox Grid
+      const paneW = winW * 0.44;
+      const paneH = winH * 0.42;
+      const gap = 3.5;
+
+      const drawPane = (px: number, py: number) => {
+        const paneGrad = ctx.createLinearGradient(px, py, px + paneW, py + paneH);
+        paneGrad.addColorStop(0, "rgba(255, 255, 255, 0.98)");
+        paneGrad.addColorStop(0.6, "rgba(240, 245, 255, 0.9)");
+        paneGrad.addColorStop(1, "rgba(220, 235, 255, 0.75)");
+        ctx.fillStyle = paneGrad;
+        ctx.beginPath();
+        ctx.roundRect(px, py, paneW, paneH, 4);
+        ctx.fill();
+      };
+
+      drawPane(-winW / 2, -winH / 2);
+      drawPane(-winW / 2 + paneW + gap, -winH / 2);
+      drawPane(-winW / 2, -winH / 2 + paneH + gap);
+      drawPane(-winW / 2 + paneW + gap, -winH / 2 + paneH + gap);
+
+      ctx.restore();
 
       return new THREE.CanvasTexture(canvas);
     };
 
-    // Eyeball Mesh Group
-    const eyeballGroup = new THREE.Group();
-    eyeRootGroup.add(eyeballGroup);
+    // ==========================================
+    // 3. Eyeball Meshes Construction
+    // ==========================================
 
-    // Anatomical Sclera Sphere
-    const scleraGeo = new THREE.SphereGeometry(1.5, 64, 64);
+    // A. Anatomical Sclera Sphere
+    const scleraRadius = 1.46;
+    const scleraGeo = new THREE.SphereGeometry(scleraRadius, 64, 64);
     const scleraMat = new THREE.MeshStandardMaterial({
       map: createScleraTexture(),
-      roughness: 0.12,
+      roughness: 0.18,
       metalness: 0.04,
     });
     const scleraMesh = new THREE.Mesh(scleraGeo, scleraMat);
-    // Rotate sclera so texture poles align anatomically
+    // Align texture poles so aperture faces forward (+Z)
     scleraMesh.rotation.y = Math.PI / 2;
     eyeballGroup.add(scleraMesh);
 
-    // Iris Disc
-    const irisGeo = new THREE.CircleGeometry(0.74, 64);
-    const irisTexture = createIrisTexture(0.28);
-    const irisMat = new THREE.MeshStandardMaterial({
-      map: irisTexture,
-      roughness: 0.25,
+    // B. Anatomical Beveled Aperture Collar (The White Bezel Ring from Reference Image)
+    // Major radius = 0.77, tube radius = 0.062, positioned right at Z = 1.25
+    const collarGeo = new THREE.TorusGeometry(0.77, 0.062, 24, 64);
+    const collarMat = new THREE.MeshStandardMaterial({
+      color: 0xfcfbf9,
+      roughness: 0.28,
       metalness: 0.08,
     });
+    const collarMesh = new THREE.Mesh(collarGeo, collarMat);
+    collarMesh.position.z = 1.25;
+    eyeballGroup.add(collarMesh);
+
+    // C. Detailed Golden Sunburst Iris Disc (Recessed inside the collar)
+    const irisGeo = new THREE.CircleGeometry(0.75, 64);
+    const irisTexture = createIrisTexture(0.32);
+    const irisMat = new THREE.MeshStandardMaterial({
+      map: irisTexture,
+      roughness: 0.22,
+      metalness: 0.06,
+    });
     const irisMesh = new THREE.Mesh(irisGeo, irisMat);
-    irisMesh.position.z = 1.48;
+    irisMesh.position.z = 1.24;
     eyeballGroup.add(irisMesh);
 
-    // Wet Optical Glass Cornea (Refractive Tear Film)
-    const corneaGeo = new THREE.SphereGeometry(0.86, 48, 48, 0, Math.PI * 2, 0, Math.PI * 0.4);
+    // D. Glossy Convex Crystal Cornea Dome (Optical wet tear film bulging outward)
+    const corneaGeo = new THREE.SphereGeometry(0.82, 48, 48, 0, Math.PI * 2, 0, Math.PI * 0.42);
     const corneaMat = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       transmission: 0.98,
@@ -301,64 +423,120 @@ export default function HeroDiorama3D({
       ior: 1.376, // Exact biological cornea refractive index
       clearcoat: 1.0,
       clearcoatRoughness: 0.02,
-      reflectivity: 0.9,
+      reflectivity: 0.95,
+      depthWrite: false,
     });
     const corneaMesh = new THREE.Mesh(corneaGeo, corneaMat);
-    corneaMesh.position.z = 1.06;
+    corneaMesh.position.z = 0.86;
     eyeballGroup.add(corneaMesh);
 
-    // Orbital Celestial Rune Rings
-    const ringMat1 = new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      metalness: 0.9,
-      roughness: 0.2,
-      emissive: 0x92400e,
-      emissiveIntensity: 0.45,
+    // ==========================================
+    // 4. Real 3D Raised Tubular Surface Arteries (Tier 1 Surface Vessels)
+    // ==========================================
+    const vesselGroup = new THREE.Group();
+    eyeballGroup.add(vesselGroup);
+
+    const vesselMat = new THREE.MeshStandardMaterial({
+      color: 0x881337, // Rich deep arterial crimson
+      roughness: 0.24,
+      metalness: 0.12,
     });
-    const ringGeo1 = new THREE.TorusGeometry(2.1, 0.035, 16, 120);
-    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
-    ring1.rotation.x = Math.PI / 3;
-    ring1.rotation.y = Math.PI / 6;
-    eyeRootGroup.add(ring1);
 
-    const ringMat2 = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      metalness: 0.85,
-      roughness: 0.25,
-      emissive: 0x0369a1,
-      emissiveIntensity: 0.35,
+    // Curvature definitions hugging the sphere surface (radius = 1.482)
+    const vesselCurvesData = [
+      // 1. Primary Lateral Arterial Trunk (Right side, branching forward across equator)
+      {
+        points: [
+          new THREE.Vector3(1.25, -0.35, 0.35),
+          new THREE.Vector3(1.15, -0.05, 0.68),
+          new THREE.Vector3(1.05, 0.18, 0.88),
+          new THREE.Vector3(0.82, 0.42, 1.08),
+          new THREE.Vector3(0.55, 0.62, 1.22),
+          new THREE.Vector3(0.28, 0.74, 1.28),
+        ],
+        radius: 0.034,
+      },
+      // 2. Lateral Trunk Lower Bifurcation
+      {
+        points: [
+          new THREE.Vector3(1.05, 0.18, 0.88),
+          new THREE.Vector3(0.92, -0.15, 1.02),
+          new THREE.Vector3(0.75, -0.38, 1.15),
+          new THREE.Vector3(0.48, -0.58, 1.24),
+        ],
+        radius: 0.026,
+      },
+      // 3. Lateral Trunk Upper Twig
+      {
+        points: [
+          new THREE.Vector3(1.15, -0.05, 0.68),
+          new THREE.Vector3(1.18, 0.28, 0.72),
+          new THREE.Vector3(1.02, 0.52, 0.85),
+          new THREE.Vector3(0.78, 0.68, 1.05),
+        ],
+        radius: 0.018,
+      },
+      // 4. Superior Vessel (Top pole creeping down over collar rim)
+      {
+        points: [
+          new THREE.Vector3(-0.35, 1.32, 0.35),
+          new THREE.Vector3(-0.18, 1.15, 0.72),
+          new THREE.Vector3(-0.05, 0.95, 1.02),
+          new THREE.Vector3(0.08, 0.78, 1.25),
+        ],
+        radius: 0.024,
+      },
+      // 5. Inferior Vessel (Bottom pole winding upward toward lower collar rim)
+      {
+        points: [
+          new THREE.Vector3(-0.25, -1.35, 0.35),
+          new THREE.Vector3(-0.08, -1.12, 0.75),
+          new THREE.Vector3(0.12, -0.88, 1.05),
+          new THREE.Vector3(0.22, -0.74, 1.25),
+        ],
+        radius: 0.025,
+      },
+      // 6. Left Lateral Branch (Left cheek curling forward)
+      {
+        points: [
+          new THREE.Vector3(-1.22, 0.15, 0.45),
+          new THREE.Vector3(-1.05, 0.32, 0.78),
+          new THREE.Vector3(-0.82, 0.45, 1.08),
+          new THREE.Vector3(-0.62, 0.52, 1.22),
+        ],
+        radius: 0.022,
+      },
+    ];
+
+    vesselCurvesData.forEach(({ points, radius }) => {
+      const sphericalCurve = new SphericalCatmullRomCurve(points, 1.482);
+      const tubeGeo = new THREE.TubeGeometry(sphericalCurve, 42, radius, 8, false);
+      const tubeMesh = new THREE.Mesh(tubeGeo, vesselMat);
+      vesselGroup.add(tubeMesh);
     });
-    const ringGeo2 = new THREE.TorusGeometry(2.35, 0.025, 16, 120);
-    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-    ring2.rotation.x = -Math.PI / 4;
-    ring2.rotation.z = Math.PI / 5;
-    eyeRootGroup.add(ring2);
 
-    // Cosmic Starlight Particles
-    const particlesCount = 85;
-    const posArray = new Float32Array(particlesCount * 3);
-    for (let i = 0; i < particlesCount * 3; i += 3) {
-      const radius = 2.4 + Math.random() * 1.5;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = (Math.random() - 0.5) * Math.PI;
-
-      posArray[i] = radius * Math.cos(phi) * Math.cos(theta);
-      posArray[i + 1] = radius * Math.sin(phi);
-      posArray[i + 2] = radius * Math.cos(phi) * Math.sin(theta);
-    }
-    const particlesGeo = new THREE.BufferGeometry();
-    particlesGeo.setAttribute("position", new THREE.BufferAttribute(posArray, 3));
-    const particlesMat = new THREE.PointsMaterial({
-      size: 0.045,
-      color: 0xfcd34d,
+    // ==========================================
+    // 5. Outer Crystal-Clear Glass Capsule Shell (Encapsulating Capsule)
+    // ==========================================
+    const glassCapsuleGeo = new THREE.SphereGeometry(1.62, 64, 64);
+    const glassCapsuleMat = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      transmission: 0.96,
+      opacity: 1,
       transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
+      roughness: 0.02,
+      ior: 1.5, // Optical crown glass / clear resin
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      reflectivity: 0.95,
+      depthWrite: false, // Prevents depth-sorting occlusion of the inner vessels and iris
     });
-    const particleSystem = new THREE.Points(particlesGeo, particlesMat);
-    eyeRootGroup.add(particleSystem);
+    const glassCapsuleMesh = new THREE.Mesh(glassCapsuleGeo, glassCapsuleMat);
+    eyeballGroup.add(glassCapsuleMesh);
 
-    // Mouse Tracking Targets & Microsaccades
+    // ==========================================
+    // 6. Mouse Tracking, Microsaccades & Interactions
+    // ==========================================
     let targetRotX = 0;
     let targetRotY = 0;
     let currentRotX = 0;
@@ -369,13 +547,13 @@ export default function HeroDiorama3D({
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
 
-      // Screen-wide responsive gaze tracking
-      const deltaX = (e.clientX - centerX) / (window.innerWidth * 0.45);
-      const deltaY = (e.clientY - centerY) / (window.innerHeight * 0.45);
+      // Responsive gaze tracking relative to viewport
+      const deltaX = (e.clientX - centerX) / (window.innerWidth * 0.42);
+      const deltaY = (e.clientY - centerY) / (window.innerHeight * 0.42);
 
-      // Anatomically clamped eyeball limits (~35 degrees)
-      targetRotY = Math.max(-0.6, Math.min(0.6, deltaX * 0.65));
-      targetRotX = Math.max(-0.45, Math.min(0.45, deltaY * 0.55));
+      // Clamped anatomical excursion angles (~30 degrees)
+      targetRotY = Math.max(-0.55, Math.min(0.55, deltaX * 0.6));
+      targetRotX = Math.max(-0.4, Math.min(0.4, deltaY * 0.5));
     };
 
     const handleClick = () => {
@@ -383,7 +561,7 @@ export default function HeroDiorama3D({
       spawnCombatText("DIVINE GAZE RESONANCE!", "crit");
 
       // Dynamic pupillary dilation shockwave
-      irisMesh.scale.set(1.3, 1.3, 1.3);
+      irisMesh.scale.set(1.22, 1.22, 1.22);
       setTimeout(() => {
         irisMesh.scale.set(1, 1, 1);
       }, 350);
@@ -392,34 +570,28 @@ export default function HeroDiorama3D({
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     mount.addEventListener("click", handleClick);
 
-    // Main Render Loop
+    // ==========================================
+    // 7. Render Loop
+    // ==========================================
     const clock = new THREE.Clock();
 
     const animate = () => {
       const elapsed = clock.getElapsedTime();
 
-      // Biological microsaccades: subtle micro-jitter mimicking living fixation drifts
-      const saccadeJitterX = Math.sin(elapsed * 7.4) * Math.cos(elapsed * 13.7) * 0.006;
-      const saccadeJitterY = Math.cos(elapsed * 9.1) * Math.sin(elapsed * 11.2) * 0.005;
+      // Living biological microsaccades (subtle micro-jitter mimicking human fixation)
+      const saccadeJitterX = Math.sin(elapsed * 7.4) * Math.cos(elapsed * 13.7) * 0.005;
+      const saccadeJitterY = Math.cos(elapsed * 9.1) * Math.sin(elapsed * 11.2) * 0.004;
 
-      // Smooth gaze damping with lerp
-      currentRotX += (targetRotX + saccadeJitterX - currentRotX) * 0.08;
-      currentRotY += (targetRotY + saccadeJitterY - currentRotY) * 0.08;
+      // Damped gaze tracking lerp
+      currentRotX += (targetRotX + saccadeJitterX - currentRotX) * 0.075;
+      currentRotY += (targetRotY + saccadeJitterY - currentRotY) * 0.075;
 
       eyeballGroup.rotation.x = currentRotX;
       eyeballGroup.rotation.y = currentRotY;
 
-      // Orbital Rings Rotation
-      ring1.rotation.z = elapsed * 0.22;
-      ring2.rotation.y = -elapsed * 0.18;
-
-      // Particle Constellation Drift
-      particleSystem.rotation.y = elapsed * 0.06;
-      particleSystem.rotation.x = elapsed * 0.03;
-
-      // Subtle biological breathing scale
-      const breath = 1 + Math.sin(elapsed * 1.8) * 0.015;
-      eyeballGroup.scale.set(breath, breath, breath);
+      // Subtle biological pulse
+      const pulse = 1 + Math.sin(elapsed * 1.6) * 0.008;
+      eyeballGroup.scale.set(pulse, pulse, pulse);
 
       renderer.render(scene, camera);
       animFrameId.current = requestAnimationFrame(animate);
@@ -448,16 +620,20 @@ export default function HeroDiorama3D({
       renderer.dispose();
       scleraGeo.dispose();
       scleraMat.dispose();
+      collarGeo.dispose();
+      collarMat.dispose();
       irisGeo.dispose();
       irisMat.dispose();
       corneaGeo.dispose();
       corneaMat.dispose();
-      ringGeo1.dispose();
-      ringMat1.dispose();
-      ringGeo2.dispose();
-      ringMat2.dispose();
-      particlesGeo.dispose();
-      particlesMat.dispose();
+      glassCapsuleGeo.dispose();
+      glassCapsuleMat.dispose();
+      vesselMat.dispose();
+      vesselGroup.children.forEach((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry.dispose();
+        }
+      });
       if (mount.contains(renderer.domElement)) {
         mount.removeChild(renderer.domElement);
       }
@@ -468,12 +644,12 @@ export default function HeroDiorama3D({
     <div
       ref={mountRef}
       className="w-full h-full min-h-[300px] flex items-center justify-center relative cursor-pointer select-none group"
-      title="The All-Seeing Cosmic Eye of Karmaraj. Click to focus divine gaze!"
+      title="The All-Seeing Anatomical Eye of Karmaraj. Click to focus divine gaze!"
     >
-      {/* Dynamic ambient halo */}
-      <div className="absolute inset-0 bg-gradient-radial from-amber-500/10 via-transparent to-transparent opacity-60 pointer-events-none group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-widest uppercase text-amber-400/70 pointer-events-none bg-stone-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/20 backdrop-blur-sm">
-        Cosmic Iris • Gaze Active
+      {/* Studio Radial Soft Ambient Glow */}
+      <div className="absolute inset-0 bg-radial from-amber-500/10 via-transparent to-transparent opacity-60 pointer-events-none group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-widest uppercase text-amber-300/80 pointer-events-none bg-stone-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/30 backdrop-blur-md shadow-sm">
+        Anatomical Eye • Living Gaze Active
       </div>
     </div>
   );
