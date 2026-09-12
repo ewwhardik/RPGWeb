@@ -114,7 +114,15 @@ export default function NewQuestModal({
       setDueDate("");
     }
     setErrorMsg("");
-  }, [initialData, isOpen]);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [initialData, isOpen, onClose]);
 
   if (!isOpen) return null;
 

@@ -31,6 +31,16 @@ export default function WheelOfFateModal({
   const [resultMessage, setResultMessage] = useState<string | null>(null);
   const [errorNotice, setErrorNotice] = useState("");
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !spinning) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, spinning, onClose]);
+
   if (!isOpen) return null;
 
   async function handleSpin() {
