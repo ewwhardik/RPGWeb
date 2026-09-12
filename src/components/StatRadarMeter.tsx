@@ -12,8 +12,14 @@ import {
   Coins,
   Flame,
   Sparkles,
+  AlertTriangle,
+  Axe,
+  Wand2,
+  Sword,
 } from "lucide-react";
 import { LevelInfo } from "@/lib/rpgEngine";
+import { CHARACTER_CLASSES, CharacterClassType } from "@/lib/classes";
+import { soundFx } from "@/lib/audio";
 
 interface StatRadarMeterProps {
   stats: {
@@ -27,6 +33,9 @@ interface StatRadarMeterProps {
   levelInfo: LevelInfo;
   gold: number;
   streakCount: number;
+  characterClass?: string;
+  onOpenClassModal?: () => void;
+  decayAlerts?: string[];
 }
 
 export default function StatRadarMeter({
@@ -34,6 +43,9 @@ export default function StatRadarMeter({
   levelInfo,
   gold,
   streakCount,
+  characterClass = "WARRIOR",
+  onOpenClassModal,
+  decayAlerts = [],
 }: StatRadarMeterProps) {
   const statList = [
     { key: "strength", label: "Strength", val: stats.strength, icon: Dumbbell, color: "#ef4444" },
@@ -45,16 +57,50 @@ export default function StatRadarMeter({
   ];
 
   const maxStat = Math.max(30, ...statList.map((s) => s.val));
+  const classKey = (characterClass.toUpperCase() as CharacterClassType) || "WARRIOR";
+  const classDef = CHARACTER_CLASSES[classKey] || CHARACTER_CLASSES.WARRIOR;
+
+  function getClassIcon() {
+    switch (classKey) {
+      case "WARRIOR":
+        return <Axe className="w-3.5 h-3.5 text-red-400" />;
+      case "MAGE":
+        return <Wand2 className="w-3.5 h-3.5 text-sky-400" />;
+      case "ROGUE":
+        return <Sword className="w-3.5 h-3.5 text-amber-400" />;
+      case "PALADIN":
+        return <Shield className="w-3.5 h-3.5 text-emerald-400" />;
+    }
+  }
 
   return (
     <div className="rpg-panel carved-panel p-5 sm:p-6 flex flex-col justify-between">
       {/* Top Banner: Big Numbers & Distinct Type Hierarchy */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800/80 mb-5 gap-4">
         <div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400/80">
-            Adventurer Status
-          </span>
-          <div className="flex items-baseline gap-3 mt-0.5">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-400/80">
+              Adventurer Status
+            </span>
+            {/* Clickable Class Specialization Badge */}
+            {onOpenClassModal && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  onOpenClassModal();
+                }}
+                className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 border border-amber-600/50 text-amber-300 hover:bg-slate-800 transition-colors"
+                title="Click to Switch RPG Class Specialization"
+              >
+                {getClassIcon()}
+                <span>{classDef.name}</span>
+                <span className="text-amber-500 text-[9px] font-mono">(Edit)</span>
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-baseline gap-3">
             <h2 className="text-2xl sm:text-3xl font-bold font-title text-amber-300">
               {levelInfo.title}
             </h2>
@@ -98,6 +144,29 @@ export default function StatRadarMeter({
         </div>
       </div>
 
+      {/* Active Class Perk Notification Callout */}
+      <div className="mb-4 px-3 py-1.5 rounded-md bg-[#0b0e14] border border-slate-800 text-[11px] flex items-center justify-between">
+        <span className="text-slate-400 flex items-center gap-1.5">
+          <span className="font-bold text-amber-300">{classDef.perkTitle}:</span>
+          <span className="line-clamp-1">{classDef.perkDescription}</span>
+        </span>
+      </div>
+
+      {/* Stat Decay Warning (if any stats decayed recently) */}
+      {decayAlerts.length > 0 && (
+        <div className="mb-4 p-2.5 bg-amber-950/40 border border-amber-500/50 rounded-lg text-amber-300 text-xs flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <span className="font-bold">Neglect Notice:</span>
+            {decayAlerts.map((msg, i) => (
+              <p key={i} className="text-[11px] text-amber-200/90 leading-tight">
+                {msg}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Level XP Progress Bar with Animated Diagonal Shimmer Stripes */}
       <div className="mb-6">
         <div className="flex items-center justify-between text-xs mb-2">
@@ -110,7 +179,6 @@ export default function StatRadarMeter({
           </span>
         </div>
 
-        {/* Textured XP progress meter with animated stripes */}
         <div className="w-full h-4 bg-[#0b0e14] rounded-full p-0.5 border border-slate-700/80 overflow-hidden shadow-inner relative">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-amber-600 via-amber-500 to-amber-300 relative shadow-md xp-shimmer-stripes"
@@ -150,7 +218,6 @@ export default function StatRadarMeter({
                   <span className="font-mono font-bold text-slate-100">{stat.val} PTS</span>
                 </div>
 
-                {/* Segmented Stamina Meter */}
                 <div className="w-full h-2.5 bg-slate-950 rounded-full border border-slate-800/90 overflow-hidden shadow-inner relative">
                   <div
                     className="h-full rounded-full transition-all duration-300 relative"
@@ -160,7 +227,6 @@ export default function StatRadarMeter({
                       boxShadow: `0 0 8px ${stat.color}66`,
                     }}
                   />
-                  {/* Segmented Tick Marks Overlay */}
                   <div className="stamina-meter-ticks" />
                 </div>
               </div>

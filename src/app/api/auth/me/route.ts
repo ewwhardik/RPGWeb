@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { checkAndApplyStatDecay } from "@/lib/statDecay";
 
 export async function GET() {
   try {
@@ -8,10 +9,27 @@ export async function GET() {
       return NextResponse.json({ user: null }, { status: 200 });
     }
 
-    const { passwordHash: _, ...safeUser } = user;
+    // Run stat decay check for neglected attributes
+    const decayResult = await checkAndApplyStatDecay(user.id);
+
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      level: user.level,
+      xp: user.xp,
+      gold: user.gold,
+      streakCount: user.streakCount,
+      title: user.title,
+      avatar: user.avatar,
+      characterClass: user.characterClass,
+      stats: user.stats,
+      inventory: user.inventory,
+    };
 
     return NextResponse.json({
       user: safeUser,
+      decayAlerts: decayResult.hasDecayed ? decayResult.messages : [],
     });
   } catch (error) {
     console.error("Fetch current user error:", error);

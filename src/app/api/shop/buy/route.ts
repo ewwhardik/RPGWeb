@@ -90,14 +90,14 @@ export async function POST(req: Request) {
       newGold: result.newGold,
       inventoryItem: result.inventoryItem,
     });
-  } catch (error: any) {
-    if (error.message === "ALREADY_OWNED") {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "ALREADY_OWNED") {
       return NextResponse.json(
         { error: "You already own this relic! Even adventuring greed has practical limits." },
         { status: 400 }
       );
     }
-    if (error.message === "INSUFFICIENT_GOLD") {
+    if (error instanceof Error && error.message === "INSUFFICIENT_GOLD") {
       return NextResponse.json(
         { error: "Insufficient Gold! Go slay some quests before shopping." },
         { status: 400 }

@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { calculateLevelFromTotalXp, DIFFICULTY_MULTIPLIERS, QuestCategory, QuestDifficulty } from "@/lib/rpgEngine";
 import { updateQuestActionSchema } from "@/lib/validations";
+import { CharacterClassType, calculateDiminishingReturnsMultiplier, applyClassPassives } from "@/lib/classes";
 
 export async function PATCH(
   req: Request,
@@ -49,10 +50,45 @@ export async function PATCH(
           throw new Error("USER_NOT_FOUND");
         }
 
-        const xpEarned = task.xpReward;
-        const goldEarned = task.goldReward;
         const questCategory = task.category as QuestCategory;
-        const statBonus = DIFFICULTY_MULTIPLIERS[task.difficulty as QuestDifficulty]?.statPoints || 2;
+        const charClass = (freshUser.characterClass as CharacterClassType) || "WARRIOR";
+
+        // Count quests completed in this category today for diminishing returns (min_max reference)
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const completedTodayCount = await tx.task.count({
+          where: {
+            userId: freshUser.id,
+            category: task.category,
+            status: "COMPLETED",
+            completedAt: { gte: startOfToday },
+          },
+        });
+
+        const diminishing = calculateDiminishingReturnsMultiplier(
+          completedTodayCount,
+          charClass,
+          questCategory
+        );
+
+        const baseRewards = {
+          xp: Math.max(5, Math.round(task.xpReward * diminishing.multiplier)),
+          gold: Math.max(1, Math.round(task.goldReward * diminishing.multiplier)),
+          statPoints: DIFFICULTY_MULTIPLIERS[task.difficulty as QuestDifficulty]?.statPoints || 2,
+        };
+
+        // Apply class perks (Habitica reference)
+        const { finalRewards, perkMessages } = applyClassPassives(
+          charClass,
+          questCategory,
+          task.difficulty,
+          baseRewards
+        );
+
+        const xpEarned = finalRewards.xp;
+        const goldEarned = finalRewards.gold;
+        const statBonus = finalRewards.statPoints;
 
         const newTotalXp = freshUser.xp + xpEarned;
         const newGold = freshUser.gold + goldEarned;
@@ -79,7 +115,7 @@ export async function PATCH(
           },
         });
 
-        // Update specific character stat atomically
+        // Update specific character stat and refresh decay cadence timestamp
         const statField = questCategory.toLowerCase() as
           | "strength"
           | "intellect"
@@ -88,25 +124,48 @@ export async function PATCH(
           | "charisma"
           | "sanity";
 
+        const dateFieldMap: Record<string, string> = {
+          strength: "lastStrengthDate",
+          intellect: "lastIntellectDate",
+          vitality: "lastVitalityDate",
+          dexterity: "lastDexterityDate",
+          charisma: "lastCharismaDate",
+          sanity: "lastSanityDate",
+        };
+
+        const dateFieldName = dateFieldMap[statField] || "lastStrengthDate";
+
         const updatedStats = await tx.userStats.upsert({
           where: { userId: freshUser.id },
           create: {
             userId: freshUser.id,
             [statField]: 10 + statBonus,
+            [dateFieldName]: new Date(),
           },
           update: {
             [statField]: { increment: statBonus },
+            [dateFieldName]: new Date(),
           },
         });
 
-        // Create activity log inside transaction
+        // Construct narrative log
+        const narrativeParts = [
+          `Slew "${task.title}". Collected +${xpEarned} XP, +${goldEarned} Gold, +${statBonus} ${questCategory}.`,
+        ];
+        if (perkMessages.length > 0) {
+          narrativeParts.push(perkMessages.join(" "));
+        }
+        if (diminishing.notice) {
+          narrativeParts.push(diminishing.notice);
+        }
+
         await tx.activityLog.create({
           data: {
             userId: freshUser.id,
             actionType: didLevelUp ? "LEVEL_UP" : "QUEST_COMPLETED",
             message: didLevelUp
-              ? `Leveled up to Level ${levelResult.level} (${levelResult.title})! Slew "${task.title}".`
-              : `Slew "${task.title}". Collected +${xpEarned} XP, +${goldEarned} Gold, +${statBonus} ${questCategory}.`,
+              ? `Leveled up to Level ${levelResult.level} (${levelResult.title})! ${narrativeParts.join(" ")}`
+              : narrativeParts.join(" "),
             xpChange: xpEarned,
             goldChange: goldEarned,
           },
@@ -124,6 +183,8 @@ export async function PATCH(
             statCategory: questCategory,
             statBonus,
           },
+          perkMessages,
+          diminishingNotice: diminishing.notice,
           didLevelUp,
           newLevel: levelResult.level,
           newTitle: levelResult.title,
@@ -138,6 +199,8 @@ export async function PATCH(
         task: result.updatedTask,
         user: result.updatedUser,
         rewards: result.rewards,
+        perkMessages: result.perkMessages,
+        diminishingNotice: result.diminishingNotice,
         didLevelUp: result.didLevelUp,
         newLevel: result.newLevel,
         newTitle: result.newTitle,
@@ -199,14 +262,15 @@ export async function PATCH(
     }
 
     return NextResponse.json({ error: "Invalid action specified." }, { status: 400 });
-  } catch (error: any) {
-    if (error.message === "ALREADY_COMPLETED") {
+  } catch (error: unknown) {
+    const err = error as Error;
+    if (err.message === "ALREADY_COMPLETED") {
       return NextResponse.json(
         { error: "This quest has already been certified and slain. No double-dipping in the treasury!" },
         { status: 400 }
       );
     }
-    if (error.message === "QUEST_NOT_FOUND") {
+    if (err.message === "QUEST_NOT_FOUND") {
       return NextResponse.json({ error: "Quest not found in your log." }, { status: 404 });
     }
 

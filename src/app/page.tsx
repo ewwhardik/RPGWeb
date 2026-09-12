@@ -33,6 +33,8 @@ import MimicChest from "@/components/MimicChest";
 import ActivityChronicle from "@/components/ActivityChronicle";
 import AuthModal from "@/components/AuthModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import ClassSelectModal from "@/components/ClassSelectModal";
+import { CharacterClassType } from "@/lib/classes";
 
 interface UserProfile {
   id: string;
@@ -44,6 +46,7 @@ interface UserProfile {
   streakCount: number;
   title: string;
   avatar: string;
+  characterClass?: string;
   stats?: {
     strength: number;
     intellect: number;
@@ -82,6 +85,8 @@ export default function DashboardPage() {
   const [editingQuest, setEditingQuest] = useState<QuestItem | null>(null);
   const [isShopModalOpen, setIsShopModalOpen] = useState(false);
   const [isFateModalOpen, setIsFateModalOpen] = useState(false);
+  const [isClassModalOpen, setIsClassModalOpen] = useState(false);
+  const [decayAlerts, setDecayAlerts] = useState<string[]>([]);
   const [levelUpData, setLevelUpData] = useState<{ level: number; title: string } | null>(null);
 
   // Audio mute state
@@ -98,6 +103,9 @@ export default function DashboardPage() {
       const data = await res.json();
       if (data.user) {
         setUser(data.user);
+        if (data.decayAlerts && Array.isArray(data.decayAlerts)) {
+          setDecayAlerts(data.decayAlerts);
+        }
         setIsAuthModalOpen(false);
       } else {
         setIsAuthModalOpen(true);
@@ -324,6 +332,22 @@ export default function DashboardPage() {
                 <span className="hidden sm:inline">Merchant Bazaar</span>
               </button>
 
+              {/* Class Archetype */}
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playClick();
+                    setIsClassModalOpen(true);
+                  }}
+                  className="btn-dark text-xs py-2 px-3 flex items-center gap-1.5 text-amber-300 border-amber-500/30"
+                  title="Change Class Archetype"
+                >
+                  <Shield className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">{user.characterClass || "WARRIOR"}</span>
+                </button>
+              )}
+
               {/* User Profile & Logout */}
               {user ? (
                 <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
@@ -397,6 +421,9 @@ export default function DashboardPage() {
                 levelInfo={levelInfo}
                 gold={user?.gold || 0}
                 streakCount={user?.streakCount || 1}
+                characterClass={user?.characterClass || "WARRIOR"}
+                onOpenClassModal={() => setIsClassModalOpen(true)}
+                decayAlerts={decayAlerts}
               />
             </div>
           </section>
@@ -663,6 +690,17 @@ export default function DashboardPage() {
                   }
                 : null
             );
+            fetchLogs();
+          }}
+        />
+
+        <ClassSelectModal
+          isOpen={isClassModalOpen}
+          currentClass={(user?.characterClass as CharacterClassType) || "WARRIOR"}
+          onClose={() => setIsClassModalOpen(false)}
+          onClassSelected={(newClass) => {
+            setUser((prev) => (prev ? { ...prev, characterClass: newClass } : null));
+            fetchCurrentUser();
             fetchLogs();
           }}
         />
