@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+:root {
+  --bg-obsidian: #0b0e14;
+  --bg-surface: #121820;
+  --bg-elevated: #1a2330;
+  --border-subtle: #243042;
+  --border-highlight: #3b4d66;
+
+  --gold-50: #fffbeb;
+  --gold-100: #fef3c7;
+  --gold-400: #fbbf24;
+  --gold-500: #f59e0b;
+  --gold-600: #d97706;
+  --gold-700: #b45309;
+  --gold-900: #78350f;
+
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+
+  --crimson-400: #f87171;
+  --crimson-500: #ef4444;
+  --crimson-600: #dc2626;
+
+  --parchment-paper: #f7f3e8;
+  --parchment-border: #d4c5a9;
+}
+
+body {
+  background-color: var(--bg-obsidian);
+  color: #f1f5f9;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom Tactical & Uiverse Inspired Utilities */
+
+/* 3D Gold Action Button */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #f59e0b;
+  color: #1c1404;
+  font-weight: 700;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d97706;
+  box-shadow: 0 4px 0 #92400e, 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn-gold:hover {
+  background-color: #fbbf24;
+}
+
+.btn-gold:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #92400e, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.btn-gold:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 0 #92400e;
+}
+
+/* 3D Emerald Action Button */
+.btn-emerald {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #10b981;
+  color: #022013;
+  font-weight: 700;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #059669;
+  box-shadow: 0 4px 0 #065f46, 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn-emerald:hover {
+  background-color: #34d399;
+}
+
+.btn-emerald:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #065f46, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 3D Dark/Secondary Action Button */
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #1e293b;
+  color: #e2e8f0;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 0 #0f172a, 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn-dark:hover {
+  background-color: #334155;
+  color: #ffffff;
+}
+
+.btn-dark:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #0f172a, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 3D Crimson / Danger Button */
+.btn-crimson {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #ef4444;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dc2626;
+  box-shadow: 0 4px 0 #991b1b, 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn-crimson:hover {
+  background-color: #f87171;
+}
+
+.btn-crimson:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #991b1b, 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Tactile RPG Card with metallic brass rivets and subtle depth */
+.rpg-panel {
+  background: #131922;
+  border: 1px solid #28374d;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.rpg-panel-gold {
+  background: #141b24;
+  border: 1px solid #78350f;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(245, 158, 11, 0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Parchment Quest Paper */
+.parchment-card {
+  background-color: #f6f1e3;
+  color: #1e1b18;
+  border: 2px solid #bba378;
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+/* Tactile Wax Stamp Simulation */
+.wax-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.625rem;
+  border: 2px solid #b91c1c;
+  border-radius: 0.375rem;
+  color: #b91c1c;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transform: rotate(-6deg);
+  user-select: none;
+}
+
+/* Custom Scrollbar for RPG feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0e14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #243042;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
