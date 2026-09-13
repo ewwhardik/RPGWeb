@@ -125,28 +125,39 @@ export default function ClassSkillsBar({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [classSkills, currentMp, castingSkillId, handleCast]);
 
+  const CLASS_NICKNAMES: Record<string, string> = {
+    WARRIOR: "Solar Berserker",
+    MAGE: "Shadow Sorcerer",
+    ROGUE: "Astral Ronin",
+    PALADIN: "Dharma Paladin",
+  };
+
   return (
     // Outer Shell (Double-Bezel)
     <div className="w-full p-1.5 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-white/0 shadow-lg ring-1 ring-white/15 mb-6">
       {/* Inner Core */}
       <div className="relative w-full p-3.5 rounded-[calc(1rem-0.125rem)] bg-[#0c1017]/95 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 pb-2.5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-xs text-amber-300">
-              ⚡
-            </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-neutral-200">
-              {cleanClass} Class Arcana
+            <span className="text-amber-400 font-mono font-black text-sm">#</span>
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-200">
+              HERO ACTIONS ({classSkills.length})
             </span>
             <span className="hidden sm:inline-block text-[10px] text-neutral-400 font-mono">
-              (Press [1] - [4] to channel)
+              • Press [1] - [{classSkills.length}]
             </span>
           </div>
-          {toastMessage && (
-            <div className="text-xs text-amber-300 bg-black/80 border border-amber-500/40 px-3 py-1 rounded-full shadow animate-in fade-in duration-150">
-              {toastMessage}
-            </div>
-          )}
+
+          <div className="flex items-center gap-3">
+            {toastMessage && (
+              <div className="text-xs text-amber-300 bg-black/80 border border-amber-500/40 px-3 py-1 rounded-full shadow animate-in fade-in duration-150">
+                {toastMessage}
+              </div>
+            )}
+            <span className="text-xs font-serif italic text-amber-300/90 tracking-wide font-medium">
+              {CLASS_NICKNAMES[cleanClass] || `${cleanClass} Champion`}
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">

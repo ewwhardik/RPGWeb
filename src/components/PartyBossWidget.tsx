@@ -636,11 +636,17 @@ export default function PartyBossWidget({
             </div>
 
             {/* Boss HP Bar */}
-            <div className="w-full bg-stone-950 dark:bg-background h-3.5 rounded-full overflow-hidden p-0.5 border border-stone-700 dark:border-slate-800 mb-2 shadow-inner">
+            <div className="w-full bg-stone-950 dark:bg-background h-3.5 rounded-full overflow-hidden p-0.5 border border-stone-700 dark:border-slate-800 mb-1.5 shadow-inner">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${hpColor}`}
                 style={{ width: `${hpPercent}%` }}
               />
+            </div>
+
+            {/* Beast Strike Prompt */}
+            <div className="flex items-center gap-1.5 text-[11px] text-amber-300/90 font-mono mb-2.5">
+              <Flame className="w-3 h-3 text-orange-400 animate-pulse flex-shrink-0" />
+              <span>Complete quests to strike the beast with your weapon.</span>
             </div>
 
             {/* Boss Rage Meter */}

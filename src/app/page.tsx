@@ -24,6 +24,7 @@ import {
   BarChart3,
   Trophy,
   Settings,
+  Tv,
 } from "lucide-react";
 import { calculateLevelFromTotalXp } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
@@ -64,6 +65,7 @@ import DocsModal from "@/components/DocsModal";
 import AccountModal from "@/components/AccountModal";
 import LeaderboardModal from "@/components/LeaderboardModal";
 import GlassPortalLoader from "@/components/GlassPortalLoader";
+import AxiomCodexRibbon from "@/components/AxiomCodexRibbon";
 import {
   DEMO_USER_PROFILE,
   DEMO_HABITS,
@@ -150,6 +152,7 @@ export default function DashboardPage() {
   const [isChallengesModalOpen, setIsChallengesModalOpen] = useState(false);
   const [todayWeather] = useState<KingdomWeather>(getTodayKingdomWeather());
   const [ambience, setAmbience] = useState<"hearth" | "dungeon" | "tanpura" | null>(null);
+  const [crtMode, setCrtMode] = useState(false);
   const [decayAlerts, setDecayAlerts] = useState<string[]>([]);
   const [levelUpData, setLevelUpData] = useState<{ level: number; title: string } | null>(null);
   const [raidToast, setRaidToast] = useState<{ message: string; isVictory: boolean } | null>(null);
@@ -548,6 +551,12 @@ export default function DashboardPage() {
     }
   };
 
+  const handleClassSelected = (newClass: CharacterClassType) => {
+    setUser((prev) => (prev ? { ...prev, characterClass: newClass } : null));
+    fetchCurrentUser();
+    fetchLogs();
+  };
+
   // Buy Standard Shop Reward (Health Potion, Mana Potion, Enchanted Armoire)
   const handleBuyStandardReward = async (rewardId: string, cost: number) => {
     if (!user || user.gold < cost) return;
@@ -697,7 +706,7 @@ export default function DashboardPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-[#111418] text-stone-100">
+      <div className={`min-h-screen flex flex-col bg-[#111418] text-stone-100 ${crtMode ? "crt-scanlines" : ""}`}>
         {/* Top Tavern Navigation Bar: Pure Floating Rounded Glass Pill Dock */}
         <header className="site-header sticky top-2 sm:top-3 z-40 w-full px-2 sm:px-4 lg:px-6 pointer-events-none transition-all duration-300">
           <div className="site-header__inner pointer-events-auto w-full max-w-none mx-auto flex items-center justify-between gap-1.5 sm:gap-3 px-3 sm:px-5 py-2 rounded-full bg-stone-950/85 backdrop-blur-2xl border border-white/[0.14] shadow-[0_10px_35px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.2)] animate-header-float transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_12px_40px_rgba(245,158,11,0.2),inset_0_1px_2px_0_rgba(255,255,255,0.25)]">
@@ -758,6 +767,23 @@ export default function DashboardPage() {
                 title={isMuted ? "Unmute Audio SFX (M)" : "Mute Audio SFX (M)"}
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
+              </button>
+
+              {/* CRT Scanline Retro Gaming Shader Toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setCrtMode((prev) => !prev);
+                }}
+                className={`p-2 rounded-full border transition-all duration-200 hover:scale-110 active:scale-95 shadow-sm backdrop-blur-md ${
+                  crtMode
+                    ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.35)]"
+                    : "bg-white/[0.06] hover:bg-white/[0.12] border-white/10 text-stone-400 hover:text-amber-300"
+                }`}
+                title={crtMode ? "CRT Scanlines Mode Active (Click to Disable)" : "Enable CRT Retro Scanlines Filter"}
+              >
+                <Tv className="w-4 h-4" />
               </button>
 
               {/* Keyboard Shortcuts Button */}
@@ -1007,6 +1033,9 @@ export default function DashboardPage() {
           {/* Atmospheric Minimalist Clock, Weather & Life Elapsed Timeline Strip */}
           <ChronoTopBar />
 
+          {/* Ancient Axiom / Codex Inscription Ribbon */}
+          <AxiomCodexRibbon />
+
           {/* Faint Alert Banner */}
           {faintAlert && (
             <div className="p-4 rounded-xl bg-red-950/90 border-2 border-red-600 text-red-200 shadow-2xl flex items-center justify-between gap-4 animate-bounce">
@@ -1039,6 +1068,7 @@ export default function DashboardPage() {
                 }
               }}
               onOpenStable={() => setIsPetModalOpen(true)}
+              onClassSelected={handleClassSelected}
             />
           )}
 

@@ -9,8 +9,11 @@ import {
   PawPrint,
   ChevronRight,
   Shield,
+  Flame,
+  Sparkles,
 } from "lucide-react";
 import { soundFx } from "@/lib/audio";
+import { CharacterClassType } from "@/lib/classes";
 
 interface HeroVitalsHeaderProps {
   user: {
@@ -34,6 +37,7 @@ interface HeroVitalsHeaderProps {
   onOpenClassSelect: () => void;
   onOpenParty: () => void;
   onOpenStable: () => void;
+  onClassSelected?: (newClass: CharacterClassType) => void;
 }
 
 export default function HeroVitalsHeader({
@@ -42,6 +46,7 @@ export default function HeroVitalsHeader({
   onOpenClassSelect,
   onOpenParty,
   onOpenStable,
+  onClassSelected,
 }: HeroVitalsHeaderProps) {
   const [isTogglingInn, setIsTogglingInn] = useState(false);
 
@@ -65,6 +70,71 @@ export default function HeroVitalsHeader({
   };
 
   const charClass = (user.characterClass || "WARRIOR").toUpperCase();
+  const [switchingClass, setSwitchingClass] = useState(false);
+
+  const CLASS_META: Record<
+    string,
+    { title: string; weapon: string; primaryStat: string; icon: string; short: string }
+  > = {
+    WARRIOR: {
+      title: "SOLAR BERSERKER",
+      weapon: "Gada of Thunder",
+      primaryStat: "STRENGTH",
+      icon: "⚔️",
+      short: "KNIGHT",
+    },
+    MAGE: {
+      title: "SHADOW SORCERER",
+      weapon: "Eye of the Void Staff",
+      primaryStat: "INTELLIGENCE",
+      icon: "🧙",
+      short: "SORC.",
+    },
+    ROGUE: {
+      title: "ASTRAL RONIN",
+      weapon: "Dual Void Chakrams",
+      primaryStat: "DEXTERITY",
+      icon: "🥷",
+      short: "RONIN",
+    },
+    PALADIN: {
+      title: "DHARMA PALADIN",
+      weapon: "Kavacha Aegis",
+      primaryStat: "VITALITY",
+      icon: "🛡️",
+      short: "ROGUE",
+    },
+  };
+
+  const currentClassMeta = CLASS_META[charClass] || CLASS_META.WARRIOR;
+
+  const currentHour = new Date().getHours();
+  const timeGreeting =
+    currentHour < 12
+      ? "GOOD MORNING,"
+      : currentHour < 17
+      ? "GOOD AFTERNOON,"
+      : "GOOD EVENING,";
+
+  const handleQuickClassSwitch = async (targetClass: CharacterClassType) => {
+    if (targetClass === charClass || switchingClass) return;
+    setSwitchingClass(true);
+    soundFx.playLevelUp();
+    try {
+      const res = await fetch("/api/user/class", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ characterClass: targetClass }),
+      });
+      if (res.ok) {
+        onClassSelected?.(targetClass);
+      }
+    } catch (err) {
+      console.error("Quick class switch error:", err);
+    } finally {
+      setSwitchingClass(false);
+    }
+  };
 
   return (
     // Outer Shell (Double-Bezel)
@@ -76,6 +146,66 @@ export default function HeroVitalsHeader({
 
       {/* Inner Core */}
       <div className="relative w-full p-4 sm:p-5 rounded-[calc(1.75rem-0.375rem)] bg-[#0d1117]/95 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
+        {/* Grand Champion Honorific & Archetype Switcher Bar */}
+        <div className="pb-3.5 mb-3.5 border-b border-white/[0.08] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 relative z-10">
+          <div>
+            <div className="text-[10px] font-mono tracking-widest uppercase text-stone-400 font-bold mb-0.5 flex items-center gap-1.5">
+              <span>{timeGreeting}</span>
+              <span className="text-amber-500/70">—</span>
+              <span className="text-amber-400/90">CHOSEN CHAMPION</span>
+            </div>
+
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h2 className="text-xl sm:text-2xl font-black font-title tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 drop-shadow-[0_2px_8px_rgba(245,158,11,0.25)]">
+                {currentClassMeta.title}
+              </h2>
+              <span className="text-xs font-mono font-black px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 border border-amber-300 shadow-sm">
+                LVL {user.level}
+              </span>
+            </div>
+
+            <div className="text-[11px] text-stone-400 font-mono mt-1 flex items-center gap-2 flex-wrap">
+              <span className="text-stone-300">ACOLYTE OF DHARMA</span>
+              <span className="text-stone-600">•</span>
+              <span className="text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 rounded font-bold">
+                {currentClassMeta.primaryStat} (+{user.level * 2 + 10})
+              </span>
+              <span className="text-stone-600">•</span>
+              <span className="text-stone-300">{currentClassMeta.weapon}</span>
+            </div>
+          </div>
+
+          {/* Quick Archetype Switcher Pills */}
+          <div className="flex flex-col items-start md:items-end gap-1 flex-shrink-0">
+            <div className="text-[9px] font-mono tracking-wider uppercase text-stone-400 font-bold">
+              ARCHETYPE
+            </div>
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md">
+              {(["WARRIOR", "MAGE", "ROGUE", "PALADIN"] as CharacterClassType[]).map((cls) => {
+                const isActive = charClass === cls;
+                const meta = CLASS_META[cls];
+                return (
+                  <button
+                    key={cls}
+                    type="button"
+                    onClick={() => handleQuickClassSwitch(cls)}
+                    disabled={switchingClass}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold tracking-wide transition-all flex items-center gap-1 active:scale-95 ${
+                      isActive
+                        ? "bg-amber-500/20 border border-amber-500 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.25)]"
+                        : "text-stone-400 hover:text-stone-200 border border-transparent hover:border-white/10 hover:bg-white/5"
+                    }`}
+                    title={`Switch to ${meta.title}`}
+                  >
+                    <span>{meta.icon}</span>
+                    <span>{cls.slice(0, 4)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-5 relative z-10">
           {/* Left Side: Character Avatar & Vitals Bars */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
@@ -124,7 +254,7 @@ export default function HeroVitalsHeader({
                   </button>
                   {user.isSleeping && (
                     <span className="text-[10px] font-semibold text-amber-300 bg-amber-950/70 border border-amber-500/40 px-2.5 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
-                      <BedDouble className="w-3 h-3" /> Resting in Tavern
+                      <Flame className="w-3 h-3 text-orange-400" /> Resting at Bonfire
                     </span>
                   )}
                 </div>
@@ -261,8 +391,8 @@ export default function HeroVitalsHeader({
                 </>
               ) : (
                 <>
-                  <BedDouble className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>Rest in Tavern</span>
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Rest at Bonfire</span>
                 </>
               )}
             </button>

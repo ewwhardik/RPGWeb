@@ -110,6 +110,54 @@ export function parseChecklistItems(raw: unknown): SubtaskChecklistItem[] {
   }
 }
 
+const CATEGORY_ICONS: Record<string, string> = {
+  STRENGTH: "🏋️",
+  INTELLECT: "📜",
+  VITALITY: "🧪",
+  DEXTERITY: "⚡",
+  CHARISMA: "🎭",
+  SANITY: "🧘",
+};
+
+const DIFFICULTY_XP: Record<string, number> = {
+  TRIVIAL: 15,
+  EASY: 25,
+  MEDIUM: 45,
+  HARD: 75,
+};
+
+const DIFFICULTY_STAT: Record<string, number> = {
+  TRIVIAL: 5,
+  EASY: 8,
+  MEDIUM: 15,
+  HARD: 25,
+};
+
+export function getTaskStatBadge(task: TaskItem) {
+  const cat = (task.category || "STRENGTH").toUpperCase();
+  const diff = (task.difficulty || "MEDIUM").toUpperCase();
+  const xp = DIFFICULTY_XP[diff] || 35;
+  const statVal = DIFFICULTY_STAT[diff] || 12;
+  const statName =
+    cat === "STRENGTH"
+      ? "Strength"
+      : cat === "INTELLECT"
+      ? "Intellect"
+      : cat === "VITALITY"
+      ? "Vitality"
+      : cat === "DEXTERITY"
+      ? "Dexterity"
+      : cat === "CHARISMA"
+      ? "Charisma"
+      : "Focus";
+
+  return {
+    xpText: `+${xp} XP`,
+    statText: `+${statVal} ${statName}`,
+    icon: CATEGORY_ICONS[cat] || "✨",
+  };
+}
+
 interface TaskBoardGridProps {
   habits: TaskItem[];
   dailies: TaskItem[];
@@ -271,6 +319,7 @@ export default function TaskBoardGrid({
           ) : (
             filteredHabits.map((habit) => {
               const color = getHabitColorDetails(habit.value);
+              const statBadge = getTaskStatBadge(habit);
 
               return (
                 <div
@@ -296,8 +345,27 @@ export default function TaskBoardGrid({
                   {/* Habit Info */}
                   <div className="flex-1 min-w-0 py-0.5">
                     <div className="flex items-start justify-between gap-1">
-                      <div className="text-xs font-bold text-stone-100 tracking-wide line-clamp-2">
-                        {habit.title}
+                      <div className="flex items-start gap-2 min-w-0 flex-1">
+                        <span
+                          className="w-5 h-5 rounded bg-stone-900/90 border border-white/10 flex items-center justify-center text-[11px] flex-shrink-0 mt-0.5 shadow-inner"
+                          title={`${habit.category} Habit`}
+                        >
+                          {statBadge.icon}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold text-stone-100 tracking-wide line-clamp-2">
+                            {habit.title}
+                          </div>
+                          {/* Gaming Stat Reward Badges */}
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/25">
+                              {statBadge.xpText}
+                            </span>
+                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-stone-800/80 text-stone-300 border border-stone-700/50">
+                              {statBadge.statText}
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Menu trigger */}
@@ -443,6 +511,7 @@ export default function TaskBoardGrid({
                 ? daily.repeatDays.split(",")
                 : ["0", "1", "2", "3", "4", "5", "6"];
               const neglect = getTaskNeglectDetails(daily.value);
+              const statBadge = getTaskStatBadge(daily);
 
               return (
                 <div
@@ -474,16 +543,34 @@ export default function TaskBoardGrid({
                   {/* Daily Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-1">
-                      <div>
-                        <span
-                          className={`text-xs font-bold tracking-wide transition-all ${
-                            daily.completedToday
-                              ? "text-stone-400 line-through"
-                              : "text-stone-100"
-                          }`}
-                        >
-                          {daily.title}
-                        </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start gap-2">
+                          <span
+                            className="w-5 h-5 rounded bg-stone-900/90 border border-white/10 flex items-center justify-center text-[11px] flex-shrink-0 mt-0.5 shadow-inner"
+                            title={`${daily.category} Daily`}
+                          >
+                            {statBadge.icon}
+                          </span>
+                          <span
+                            className={`text-xs font-bold tracking-wide transition-all ${
+                              daily.completedToday
+                                ? "text-stone-400 line-through"
+                                : "text-stone-100"
+                            }`}
+                          >
+                            {daily.title}
+                          </span>
+                        </div>
+
+                        {/* Gaming Stat Reward Badges */}
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/25">
+                            {statBadge.xpText}
+                          </span>
+                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-stone-800/80 text-stone-300 border border-stone-700/50">
+                            {statBadge.statText}
+                          </span>
+                        </div>
                         {neglect.badgeText && !daily.completedToday && (
                           <div className="mt-1">
                             <span
@@ -649,6 +736,7 @@ export default function TaskBoardGrid({
               const hasChecklist = Array.isArray(checklistItems) && checklistItems.length > 0;
               const isChecklistOpen = openChecklists[todo.id] ?? false;
               const neglect = getTaskNeglectDetails(todo.value);
+              const statBadge = getTaskStatBadge(todo);
 
               return (
                 <div
@@ -681,14 +769,32 @@ export default function TaskBoardGrid({
                     {/* To-Do Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-1">
-                        <div>
-                          <span
-                            className={`text-xs font-bold tracking-wide transition-all ${
-                              isCompleted ? "text-stone-400 line-through" : "text-stone-100"
-                            }`}
-                          >
-                            {todo.title}
-                          </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start gap-2">
+                            <span
+                              className="w-5 h-5 rounded bg-stone-900/90 border border-white/10 flex items-center justify-center text-[11px] flex-shrink-0 mt-0.5 shadow-inner"
+                              title={`${todo.category} To-Do`}
+                            >
+                              {statBadge.icon}
+                            </span>
+                            <span
+                              className={`text-xs font-bold tracking-wide transition-all ${
+                                isCompleted ? "text-stone-400 line-through" : "text-stone-100"
+                              }`}
+                            >
+                              {todo.title}
+                            </span>
+                          </div>
+
+                          {/* Gaming Stat Reward Badges */}
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-300 border border-amber-500/25">
+                              {statBadge.xpText}
+                            </span>
+                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-stone-800/80 text-stone-300 border border-stone-700/50">
+                              {statBadge.statText}
+                            </span>
+                          </div>
                           {neglect.badgeText && !isCompleted && (
                             <div className="mt-1">
                               <span
