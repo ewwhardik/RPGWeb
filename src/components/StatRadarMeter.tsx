@@ -20,6 +20,7 @@ import {
 import { LevelInfo } from "@/lib/rpgEngine";
 import { CHARACTER_CLASSES, CharacterClassType } from "@/lib/classes";
 import { soundFx } from "@/lib/audio";
+import AnimatedCounter from "./AnimatedCounter";
 
 interface StatRadarMeterProps {
   stats: {
@@ -140,7 +141,7 @@ export default function StatRadarMeter({
           <div className="bg-card border border-amber-400/60 dark:border-amber-500/40 px-3.5 py-1.5 rounded-xl text-center shadow-sm">
             <div className="text-[9px] uppercase font-bold text-stone-500 dark:text-slate-400">Level</div>
             <div className="text-xl font-black text-amber-900 dark:text-amber-400 leading-none">
-              {levelInfo.level}
+              <AnimatedCounter value={levelInfo.level} />
             </div>
           </div>
 
@@ -151,7 +152,7 @@ export default function StatRadarMeter({
               <span>Treasury</span>
             </div>
             <div className="text-xl font-black text-amber-900 dark:text-amber-300 leading-none">
-              {gold}g
+              <AnimatedCounter value={gold} suffix="g" />
             </div>
           </div>
 
@@ -165,7 +166,7 @@ export default function StatRadarMeter({
               <span>Streak</span>
             </div>
             <div className="text-xl font-black text-orange-800 dark:text-orange-400 leading-none">
-              {streakCount}d
+              <AnimatedCounter value={streakCount} suffix="d" />
             </div>
           </div>
         </div>

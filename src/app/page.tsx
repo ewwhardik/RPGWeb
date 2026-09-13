@@ -63,6 +63,7 @@ import GuideWalkthroughModal from "@/components/GuideWalkthroughModal";
 import DocsModal from "@/components/DocsModal";
 import AccountModal from "@/components/AccountModal";
 import LeaderboardModal from "@/components/LeaderboardModal";
+import GlassPortalLoader from "@/components/GlassPortalLoader";
 import {
   DEMO_USER_PROFILE,
   DEMO_HABITS,
@@ -159,11 +160,31 @@ export default function DashboardPage() {
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
+  const [isInitialHydrating, setIsInitialHydrating] = useState(true);
   const [dashboardView, setDashboardView] = useState<"CLASSIC_BOARD" | "CHRONO_STUDIO" | "ANALYTICS">("CLASSIC_BOARD");
   const [chronoActiveSection, setChronoActiveSection] = useState("chrono-habits");
 
   // Audio mute state
   const [isMuted, setIsMuted] = useState(false);
+
+  // Compute if any modal is currently active for spatial focal depth
+  const isAnyModalOpen =
+    isNewTaskModalOpen ||
+    isPetModalOpen ||
+    isShopModalOpen ||
+    isFateModalOpen ||
+    isClassModalOpen ||
+    isVaultModalOpen ||
+    isCodexModalOpen ||
+    isDarshanModalOpen ||
+    isQuestScrollsModalOpen ||
+    isChallengesModalOpen ||
+    isHelpModalOpen ||
+    isGuideModalOpen ||
+    isDocsModalOpen ||
+    isAccountModalOpen ||
+    isLeaderboardModalOpen ||
+    (isAuthModalOpen && authChecked);
 
   // Instant Demo Universe Hydration
   const handleLoadDemoUniverse = () => {
@@ -202,7 +223,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setIsMuted(soundFx.getMuted());
-    fetchCurrentUser();
+    fetchCurrentUser().finally(() => {
+      setTimeout(() => {
+        setIsInitialHydrating(false);
+      }, 700);
+    });
   }, []);
 
   async function fetchCurrentUser() {
@@ -971,8 +996,14 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Main Content Dashboard */}
-        <main className="dashboard-main flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Main Content Dashboard with Spatial Focal Depth */}
+        <main
+          className={`dashboard-main dashboard-spatial-layer flex-1 w-full max-w-[1720px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isAnyModalOpen
+              ? "scale-[0.985] filter brightness-[0.72] blur-[0.6px] pointer-events-none select-none"
+              : "scale-100 filter brightness-100 blur-0"
+          }`}
+        >
           {/* Atmospheric Minimalist Clock, Weather & Life Elapsed Timeline Strip */}
           <ChronoTopBar />
 
@@ -1116,7 +1147,7 @@ export default function DashboardPage() {
 
           {/* VIEW 1: CHRONO FOCUS RPG STUDIO (Sidebar + Habit Gallery) */}
           {dashboardView === "CHRONO_STUDIO" && (
-            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-in fade-in zoom-in-95 duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
               <div className="lg:col-span-4 xl:col-span-3">
                 <ChronoStatusSidebar
                   user={{
@@ -1154,7 +1185,7 @@ export default function DashboardPage() {
 
           {/* VIEW 2: CLASSIC 4-COLUMN QUEST BOARD */}
           {dashboardView === "CLASSIC_BOARD" && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
               {/* Search, Tag Filters & + Add Task Bar */}
               <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-4 shadow-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                 {/* Tag Attribute Filter Chips */}
@@ -1253,7 +1284,7 @@ export default function DashboardPage() {
 
           {/* VIEW 3: REAL PROGRESS ANALYTICS GRAPHS */}
           {dashboardView === "ANALYTICS" && (
-            <section>
+            <section className="animate-in fade-in zoom-in-95 duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
               <ProgressAnalyticsGraphs
                 user={{
                   id: user?.id,
@@ -1771,6 +1802,11 @@ export default function DashboardPage() {
             </div>
           </div>
         </footer>
+
+        {/* Initial Liquid Glass Merging Portal Entrance for Reloads / First Sign-up */}
+        {isInitialHydrating && (
+          <GlassPortalLoader isVisible={true} message="Synthesizing Cyber-Vedic Prana..." />
+        )}
       </div>
     </ErrorBoundary>
   );

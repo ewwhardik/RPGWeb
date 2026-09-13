@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { Shield, Sparkles, Sword, User, Lock, Mail, ChevronRight, Wand2, Axe, Compass } from "lucide-react";
 
+import GlassPortalLoader from "./GlassPortalLoader";
+
 export interface AuthUserData {
   id: string;
   username: string;
@@ -53,8 +55,13 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
   const [selectedAvatar, setSelectedAvatar] = useState("warrior");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPortalMerging, setIsPortalMerging] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isPortalMerging) return null;
+
+  if (isPortalMerging) {
+    return <GlassPortalLoader isVisible={true} message="Materializing Hero Avatar into the Realm..." />;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,12 +84,17 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
 
       if (!res.ok) {
         setErrorMsg(data.error || "The guild scribe dropped the ink pot. Try again.");
+        setLoading(false);
       } else {
-        onSuccess(data.user);
+        setIsPortalMerging(true);
+        setTimeout(() => {
+          onSuccess(data.user);
+          setIsPortalMerging(false);
+          setLoading(false);
+        }, 1100);
       }
     } catch {
       setErrorMsg("Network goblins cut the connection cords. Try again in a moment.");
-    } finally {
       setLoading(false);
     }
   }
@@ -116,16 +128,26 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
         });
         const regData = await regRes.json();
         if (regRes.ok) {
-          onSuccess(regData.user);
+          setIsPortalMerging(true);
+          setTimeout(() => {
+            onSuccess(regData.user);
+            setIsPortalMerging(false);
+            setLoading(false);
+          }, 1100);
         } else {
           setErrorMsg(regData.error || "Demo registration failed.");
+          setLoading(false);
         }
       } else {
-        onSuccess(data.user);
+        setIsPortalMerging(true);
+        setTimeout(() => {
+          onSuccess(data.user);
+          setIsPortalMerging(false);
+          setLoading(false);
+        }, 1100);
       }
     } catch {
       setErrorMsg("Could not summon demo character.");
-    } finally {
       setLoading(false);
     }
   }

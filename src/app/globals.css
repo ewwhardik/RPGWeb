@@ -491,4 +491,82 @@ body {
   animation-play-state: paused;
 }
 
+/* Liquid Glass Merging Metaball Animations */
+@keyframes glass-merge-1 {
+  0%, 100% {
+    transform: translate(-38px, -24px) scale(0.95);
+  }
+  35% {
+    transform: translate(32px, 20px) scale(1.15);
+  }
+  70% {
+    transform: translate(-10px, 34px) scale(0.85);
+  }
+}
+
+@keyframes glass-merge-2 {
+  0%, 100% {
+    transform: translate(36px, -26px) scale(1.1);
+  }
+  40% {
+    transform: translate(-30px, 28px) scale(0.9);
+  }
+  75% {
+    transform: translate(24px, 32px) scale(1.05);
+  }
+}
+
+@keyframes glass-merge-3 {
+  0%, 100% {
+    transform: translate(0px, 36px) scale(0.88);
+  }
+  50% {
+    transform: translate(0px, -32px) scale(1.22);
+  }
+}
+
+.animate-glass-merge-1 {
+  animation: glass-merge-1 3.8s ease-in-out infinite;
+}
+
+.animate-glass-merge-2 {
+  animation: glass-merge-2 4.4s ease-in-out infinite;
+}
+
+.animate-glass-merge-3 {
+  animation: glass-merge-3 3.2s ease-in-out infinite;
+}
+
+/* Card Interactive Spotlight Glare Effect */
+.card-spotlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-spotlight::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(245, 158, 11, 0.12),
+    transparent 80%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.card-spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Modal Depth Defocus Layer */
+.dashboard-spatial-layer {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, filter;
+}
+
 
