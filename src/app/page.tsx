@@ -67,6 +67,7 @@ import LeaderboardModal from "@/components/LeaderboardModal";
 import GlassPortalLoader from "@/components/GlassPortalLoader";
 import AxiomCodexRibbon from "@/components/AxiomCodexRibbon";
 import MeghnaWelcomeModal from "@/components/MeghnaWelcomeModal";
+import InteractiveSideQuests from "@/components/InteractiveSideQuests";
 import {
   DEMO_USER_PROFILE,
   DEMO_HABITS,
@@ -202,6 +203,11 @@ export default function DashboardPage() {
     setTodos(DEMO_TODOS);
     setRewards(DEMO_REWARDS);
     setLogs(DEMO_LOGS);
+    try {
+      localStorage.removeItem("karmaraj_meghna_dismissed");
+      localStorage.setItem("karmaraj_just_signed_up", "true");
+    } catch {}
+    setIsMeghnaWelcomeOpen(true);
   };
 
   // Pomodoro Focus Chamber Session Reward
@@ -568,6 +574,19 @@ export default function DashboardPage() {
   const handleClassSelected = (newClass: CharacterClassType) => {
     setUser((prev) => (prev ? { ...prev, characterClass: newClass } : null));
     fetchCurrentUser();
+    fetchLogs();
+  };
+
+  const handleSideQuestReward = (xp: number, gold: number, statName: string, statAmount: number) => {
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            xp: prev.xp + xp,
+            gold: prev.gold + gold,
+          }
+        : null
+    );
     fetchLogs();
   };
 
@@ -1110,6 +1129,9 @@ export default function DashboardPage() {
               }}
             />
           )}
+
+          {/* Heroic Interactive Side-Quests & Micro-Encounters */}
+          <InteractiveSideQuests onReward={handleSideQuestReward} />
 
           {/* View Switcher: Classic Board vs Chrono Studio vs Analytics */}
           <div className="flex items-center justify-between flex-wrap gap-3 pb-2 border-b border-white/[0.06]">

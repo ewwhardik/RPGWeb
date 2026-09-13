@@ -110,6 +110,11 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
     setErrorMsg("");
     setLoading(true);
     try {
+      try {
+        localStorage.removeItem("karmaraj_meghna_dismissed");
+        localStorage.setItem("karmaraj_just_signed_up", "true");
+      } catch {}
+
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -136,7 +141,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
         if (regRes.ok) {
           setIsPortalMerging(true);
           setTimeout(() => {
-            onSuccess(regData.user);
+            onSuccess(regData.user, true);
             setIsPortalMerging(false);
             setLoading(false);
           }, 1100);
@@ -147,7 +152,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
       } else {
         setIsPortalMerging(true);
         setTimeout(() => {
-          onSuccess(data.user);
+          onSuccess(data.user, true);
           setIsPortalMerging(false);
           setLoading(false);
         }, 1100);
@@ -228,7 +233,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="e.g. SirGrindALot"
-                    className="w-full bg-stone-50 dark:bg-background border border-stone-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-stone-900 dark:text-slate-100 focus:outline-none focus:border-amber-600 focus:bg-white"
+                    className="w-full bg-[#12161f] border border-stone-700 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-stone-400 focus:outline-none focus:border-amber-500 focus:bg-[#161c28] focus:ring-1 focus:ring-amber-500/40 transition-colors"
                   />
                 </div>
               </div>
@@ -284,7 +289,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                   }
                 }}
                 placeholder={isLogin ? "Email or adventurer username" : "adventurer@realm.com"}
-                className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-[#12161f] border border-stone-700 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-stone-400 focus:outline-none focus:border-amber-500 focus:bg-[#161c28] focus:ring-1 focus:ring-amber-500/40 transition-colors"
               />
             </div>
           </div>
@@ -301,7 +306,7 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 6 secure runes..."
-                className="w-full bg-background border border-slate-300 dark:border-slate-700 rounded-md py-2 pl-9 pr-3 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-[#12161f] border border-stone-700 rounded-lg py-2 pl-9 pr-3 text-sm text-white placeholder-stone-400 focus:outline-none focus:border-amber-500 focus:bg-[#161c28] focus:ring-1 focus:ring-amber-500/40 transition-colors"
               />
             </div>
           </div>
