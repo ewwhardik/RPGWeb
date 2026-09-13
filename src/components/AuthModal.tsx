@@ -35,7 +35,7 @@ export interface AuthUserData {
 
 interface AuthModalProps {
   isOpen: boolean;
-  onSuccess: (userData: AuthUserData) => void;
+  onSuccess: (userData: AuthUserData, isNewRegistration?: boolean) => void;
   onClose?: () => void;
 }
 
@@ -86,9 +86,15 @@ export default function AuthModal({ isOpen, onSuccess }: AuthModalProps) {
         setErrorMsg(data.error || "The guild scribe dropped the ink pot. Try again.");
         setLoading(false);
       } else {
+        const isNewSignup = !isLogin;
+        if (isNewSignup) {
+          try {
+            localStorage.setItem("karmaraj_just_signed_up", "true");
+          } catch {}
+        }
         setIsPortalMerging(true);
         setTimeout(() => {
-          onSuccess(data.user);
+          onSuccess(data.user, isNewSignup);
           setIsPortalMerging(false);
           setLoading(false);
         }, 1100);

@@ -66,6 +66,7 @@ import AccountModal from "@/components/AccountModal";
 import LeaderboardModal from "@/components/LeaderboardModal";
 import GlassPortalLoader from "@/components/GlassPortalLoader";
 import AxiomCodexRibbon from "@/components/AxiomCodexRibbon";
+import MeghnaWelcomeModal from "@/components/MeghnaWelcomeModal";
 import {
   DEMO_USER_PROFILE,
   DEMO_HABITS,
@@ -163,6 +164,7 @@ export default function DashboardPage() {
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
+  const [isMeghnaWelcomeOpen, setIsMeghnaWelcomeOpen] = useState(false);
   const [isInitialHydrating, setIsInitialHydrating] = useState(true);
   const [dashboardView, setDashboardView] = useState<"CLASSIC_BOARD" | "CHRONO_STUDIO" | "ANALYTICS">("CLASSIC_BOARD");
   const [chronoActiveSection, setChronoActiveSection] = useState("chrono-habits");
@@ -187,6 +189,7 @@ export default function DashboardPage() {
     isDocsModalOpen ||
     isAccountModalOpen ||
     isLeaderboardModalOpen ||
+    isMeghnaWelcomeOpen ||
     (isAuthModalOpen && authChecked);
 
   // Instant Demo Universe Hydration
@@ -263,6 +266,17 @@ export default function DashboardPage() {
       setAuthChecked(true);
     }
   }
+
+  // Check if first-time signup waiting for Meghna's welcome
+  useEffect(() => {
+    try {
+      const justSignedUp = localStorage.getItem("karmaraj_just_signed_up");
+      const dismissed = localStorage.getItem("karmaraj_meghna_dismissed");
+      if (justSignedUp === "true" && !dismissed) {
+        setIsMeghnaWelcomeOpen(true);
+      }
+    } catch {}
+  }, []);
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -1487,7 +1501,7 @@ export default function DashboardPage() {
         {/* Modals */}
         <AuthModal
           isOpen={isAuthModalOpen && authChecked}
-          onSuccess={(userData) => {
+          onSuccess={(userData, isNewRegistration) => {
             setUser({
               ...userData,
               hp: userData.hp ?? 50,
@@ -1500,7 +1514,24 @@ export default function DashboardPage() {
             });
             setIsAuthModalOpen(false);
             soundFx.playLevelUp();
+
+            if (isNewRegistration) {
+              try {
+                const dismissed = localStorage.getItem("karmaraj_meghna_dismissed");
+                if (!dismissed) {
+                  setIsMeghnaWelcomeOpen(true);
+                }
+              } catch {
+                setIsMeghnaWelcomeOpen(true);
+              }
+            }
           }}
+        />
+
+        {/* Meghna First-time Welcome & Orientation Guide */}
+        <MeghnaWelcomeModal
+          isOpen={isMeghnaWelcomeOpen}
+          onClose={() => setIsMeghnaWelcomeOpen(false)}
         />
 
         <TaskEditorModal
