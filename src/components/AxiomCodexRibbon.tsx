@@ -90,7 +90,7 @@ export default function AxiomCodexRibbon() {
 
   const handleContemplate = () => {
     soundFx.playLevelUp();
-    spawnCombatText("🧘 AXIOM CONTEMPLATED • +5 FOCUS HARMONY", "mana");
+    spawnCombatText("🧘 CODEX AXIOM CONTEMPLATED • +5 FOCUS", "mana");
   };
 
   const handleCopy = () => {
@@ -123,9 +123,9 @@ export default function AxiomCodexRibbon() {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-amber-400/90 font-bold uppercase flex items-center gap-1.5">
-                  <span>AXIOM INSCRIPTION</span>
+                  <span>ANCIENT CODEX</span>
                   <span className="text-stone-600">•</span>
-                  <span className="text-stone-400">CONSULT ANCIENT CODEX</span>
+                  <span className="text-stone-400">DAILY AXIOM</span>
                 </span>
                 <span className="text-[8px] font-mono px-1.5 py-0.2 rounded bg-stone-800/80 text-stone-300 border border-stone-700/60 uppercase">
                   {currentAxiom.category}

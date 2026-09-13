@@ -317,7 +317,7 @@ export default function ChronoStatusSidebar({
             }`}
           >
             <CheckSquare className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-            <span>Good Habits</span>
+            <span>Sacred Rituals</span>
           </button>
 
           <button
@@ -330,7 +330,7 @@ export default function ChronoStatusSidebar({
             }`}
           >
             <Ban className="w-4 h-4 text-rose-400 flex-shrink-0" />
-            <span>Bad Habits</span>
+            <span>Shadow Habits</span>
           </button>
 
           <button
@@ -343,7 +343,7 @@ export default function ChronoStatusSidebar({
             }`}
           >
             <Gift className="w-4 h-4 text-amber-400 flex-shrink-0" />
-            <span>Rewards</span>
+            <span>Treasury Spoils</span>
           </button>
 
           <button
@@ -356,7 +356,7 @@ export default function ChronoStatusSidebar({
             }`}
           >
             <BarChart3 className="w-4 h-4 text-sky-400 flex-shrink-0" />
-            <span>Progress Graphs</span>
+            <span>Hero Chronicle</span>
           </button>
 
           <button
@@ -369,7 +369,7 @@ export default function ChronoStatusSidebar({
             }`}
           >
             <BookOpen className="w-4 h-4 text-purple-400 flex-shrink-0" />
-            <span>Guide & Docs</span>
+            <span>Codex & Docs</span>
           </button>
         </nav>
       </div>

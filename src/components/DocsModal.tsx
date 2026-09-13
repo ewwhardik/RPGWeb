@@ -328,13 +328,24 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                 </div>
 
                 <div className="bg-[#141922] p-4 rounded-2xl border border-stone-800 space-y-2 font-mono text-[11px]">
-                  <div className="font-bold text-amber-300 text-xs font-sans">2. Habit Score Multiplier</div>
+                  <div className="font-bold text-amber-300 text-xs font-sans">2. Bounty & Ritual Multiplier</div>
                   <div className="text-stone-300 bg-black/40 p-2.5 rounded-lg border border-white/5">
                     GoldReward = BaseReward * (1 + Streak * 0.05) * DifficultyMultiplier
                   </div>
                   <p className="text-stone-400 text-[11px] font-sans">
                     Difficulty multipliers: TRIVIAL (0.8x), EASY (1.0x), MEDIUM (1.5x), HARD (2.0x).
                   </p>
+                </div>
+
+                <div className="bg-[#141922] p-4 rounded-2xl border border-stone-800 space-y-2 text-[11px]">
+                  <div className="font-bold text-amber-300 text-xs font-sans">3. The 4 Behavioral Pillars (Bounty Board)</div>
+                  <ul className="text-stone-300 space-y-1 font-sans">
+                    <li>• <strong>Rituals:</strong> Positive virtues & shadow vices molding your stats.</li>
+                    <li>• <strong>Daily Quests:</strong> Recurring routines building streak multipliers.</li>
+                    <li>• <strong>Bounties:</strong> One-off project milestones with checklist sub-tasks.</li>
+                    <li>• <strong>Treasury:</strong> Armory potions & personal spoils unlocked with gold.</li>
+                    <li>• <strong>Codex Bounties:</strong> Bite-sized instant micro-deeds to ignite momentum.</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -366,7 +377,7 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800 space-y-1.5">
-                    <h4 className="font-bold text-emerald-300">2. 7-Day Habit Completion Matrix</h4>
+                    <h4 className="font-bold text-emerald-300">2. 7-Day Velocity Matrix</h4>
                     <p className="text-[11px] text-stone-400">
                       Calculates weekly success ratios and completion volumes across all four columns with dynamic SVG progress bars.
                     </p>
@@ -409,10 +420,10 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
             <div className="space-y-6 max-w-3xl">
               <div>
                 <span className="text-[10px] font-mono text-amber-400 tracking-widest uppercase font-bold">
-                  Document 05 • Chrono Focus & Productivity Architecture
+                  Document 05 • Focus Sanctum & Productivity Architecture
                 </span>
                 <h1 className="text-2xl font-black font-title text-stone-100 mt-1">
-                  Productivity Galleries & Pomodoro Chamber
+                  Focus Sanctum Galleries & Pomodoro Chamber
                 </h1>
               </div>
 
@@ -422,13 +433,13 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800">
-                    <h4 className="font-bold text-emerald-300 mb-1">Good Habits Gallery</h4>
+                    <h4 className="font-bold text-emerald-300 mb-1">Sacred Rituals Gallery</h4>
                     <p className="text-[11px] text-stone-400">
                       Pixel art cards for Deep Work, Workout, Healthy Diet, Reading, and Journaling with direct XP earnings.
                     </p>
                   </div>
                   <div className="p-3.5 rounded-2xl bg-[#141922] border border-stone-800">
-                    <h4 className="font-bold text-rose-300 mb-1">Bad Habits Danger Zone</h4>
+                    <h4 className="font-bold text-rose-300 mb-1">Shadow Habits Danger Zone</h4>
                     <p className="text-[11px] text-stone-400">
                       Clear warnings with action buttons to penalize slips, raise Boss Rage, and maintain self-awareness.
                     </p>

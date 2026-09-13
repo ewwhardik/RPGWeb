@@ -37,8 +37,8 @@ interface SideQuest {
 const SIDE_QUESTS: SideQuest[] = [
   {
     id: "elixir",
-    title: "Drink 500ml Celestial Elixir",
-    subtitle: "Hydrate your bodily vessel to restore cellular prana.",
+    title: "Elixir of Vitality",
+    subtitle: "Drink 500ml water to replenish cellular prana.",
     category: "VITALITY",
     icon: Droplets,
     iconColor: "text-cyan-400",
@@ -49,8 +49,8 @@ const SIDE_QUESTS: SideQuest[] = [
   },
   {
     id: "prana",
-    title: "5 Sacred Prana Breaths",
-    subtitle: "Align your central nadi with an interactive 4-4-4 rhythm.",
+    title: "Prana Breathwork",
+    subtitle: "Center your mind with 5 deep 4-4-4 breaths.",
     category: "SANITY",
     icon: Wind,
     iconColor: "text-emerald-400",
@@ -61,8 +61,8 @@ const SIDE_QUESTS: SideQuest[] = [
   },
   {
     id: "tab_purge",
-    title: "Banish 1 Distraction Tab",
-    subtitle: "Sever the psychic drain of lingering digital clutter.",
+    title: "Purge a Distraction",
+    subtitle: "Close 1 unnecessary tab to clear mental clutter.",
     category: "INTELLECT",
     icon: Trash2,
     iconColor: "text-rose-400",
@@ -73,8 +73,8 @@ const SIDE_QUESTS: SideQuest[] = [
   },
   {
     id: "spine_align",
-    title: "Warrior's Spine Realignment",
-    subtitle: "Stand upright, roll your shoulders back, and stretch for 60s.",
+    title: "Spine Realignment",
+    subtitle: "Stand tall, roll shoulders back, and stretch for 60s.",
     category: "STRENGTH",
     icon: Activity,
     iconColor: "text-amber-400",
@@ -85,8 +85,8 @@ const SIDE_QUESTS: SideQuest[] = [
   },
   {
     id: "gratitude",
-    title: "Inscribe 1 Sacred Blessing",
-    subtitle: "Record a single moment of genuine gratitude to elevate aura.",
+    title: "Inscribe Gratitude",
+    subtitle: "Write 1 sincere blessing to uplift your daily spirit.",
     category: "CHARISMA",
     icon: HeartHandshake,
     iconColor: "text-purple-400",
@@ -159,7 +159,7 @@ export default function InteractiveSideQuests({ onReward }: InteractiveSideQuest
     if (!quest) return;
 
     soundFx.playDailyComplete();
-    spawnCombatText(`⚔️ SIDE-QUEST CONQUERED! +${quest.xpReward} XP +${quest.goldReward} GOLD`, "crit");
+    spawnCombatText(`⚔️ CODEX BOUNTY CLAIMED! +${quest.xpReward} XP +${quest.goldReward} GOLD`, "crit");
 
     onReward(quest.xpReward, quest.goldReward, quest.statReward.name, quest.statReward.amount);
 
@@ -174,7 +174,7 @@ export default function InteractiveSideQuests({ onReward }: InteractiveSideQuest
   const handleClaimBonus = () => {
     if (bonusClaimed) return;
     soundFx.playLevelUp();
-    spawnCombatText("👑 ALL SIDE-QUESTS CONQUERED! +100 XP +50 GOLD", "crit");
+    spawnCombatText("👑 ALL CODEX BOUNTIES CLAIMED! +100 XP +50 GOLD", "crit");
     onReward(100, 50, "All Stats", 5);
     setBonusClaimed(true);
     try {
@@ -196,14 +196,14 @@ export default function InteractiveSideQuests({ onReward }: InteractiveSideQuest
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-bold font-title text-amber-300 tracking-wide uppercase">
-                Heroic Side-Quests & Micro-Encounters
+                Daily Codex Bounties
               </h3>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                {completedCount} / {SIDE_QUESTS.length} Done
+                {completedCount} / {SIDE_QUESTS.length} Claimed
               </span>
             </div>
             <p className="text-[11px] text-stone-400 font-mono">
-              Bite-sized deeds to ignite momentum and harvest instant karma.
+              Simple daily deeds to spark momentum and harvest instant karma.
             </p>
           </div>
         </div>

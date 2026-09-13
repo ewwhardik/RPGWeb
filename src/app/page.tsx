@@ -1130,7 +1130,7 @@ export default function DashboardPage() {
             />
           )}
 
-          {/* Heroic Interactive Side-Quests & Micro-Encounters */}
+          {/* Heroic Daily Codex Bounties */}
           <InteractiveSideQuests onReward={handleSideQuestReward} />
 
           {/* View Switcher: Classic Board vs Chrono Studio vs Analytics */}
@@ -1149,7 +1149,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <LayoutGrid className="w-3.5 h-3.5 text-amber-400" />
-                <span>4-Column Quest Board</span>
+                <span>Bounty Board</span>
               </button>
 
               <button
@@ -1165,7 +1165,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Chrono Focus Studio</span>
+                <span>Focus Sanctum</span>
               </button>
 
               <button
@@ -1181,7 +1181,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <BarChart3 className="w-3.5 h-3.5 text-sky-400" />
-                <span>Real Progress Analytics</span>
+                <span>Hero Chronicle</span>
               </button>
             </div>
 
@@ -1195,7 +1195,7 @@ export default function DashboardPage() {
                 className="text-xs px-3 py-1.5 rounded-lg bg-stone-900/60 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-amber-300 font-medium flex items-center gap-1.5 transition-all"
               >
                 <Compass className="w-3.5 h-3.5 text-amber-400" />
-                <span>Step-by-Step Guide</span>
+                <span>Wayfarer Guide</span>
               </button>
               <button
                 type="button"
@@ -1206,7 +1206,7 @@ export default function DashboardPage() {
                 className="text-xs px-3 py-1.5 rounded-lg bg-stone-900/60 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-purple-300 font-medium flex items-center gap-1.5 transition-all"
               >
                 <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-                <span>Documentation</span>
+                <span>Codex Docs</span>
               </button>
             </div>
           </div>
@@ -1288,7 +1288,7 @@ export default function DashboardPage() {
                   })}
                 </div>
 
-                {/* Search and + Add Task button */}
+                {/* Search and + Post Bounty button */}
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1 md:w-56">
                     <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-stone-500" />
@@ -1296,7 +1296,7 @@ export default function DashboardPage() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search tasks..."
+                      placeholder="Search bounties & quests..."
                       className="w-full bg-[#13161c] border border-stone-700 rounded-lg py-1.5 pl-9 pr-3 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500"
                     />
                   </div>
@@ -1312,7 +1312,7 @@ export default function DashboardPage() {
                     className="btn-gold text-xs py-2 px-4 flex items-center justify-center gap-1.5 whitespace-nowrap"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>+ Add Task</span>
+                    <span>+ Post Bounty</span>
                   </button>
                 </div>
               </div>

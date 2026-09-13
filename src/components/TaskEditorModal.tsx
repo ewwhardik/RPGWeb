@@ -174,7 +174,7 @@ export default function TaskEditorModal({
         <div className="flex items-center justify-between border-b border-stone-800 pb-4 mb-4">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-stone-100">
-              {editingTask ? "Edit Task" : "Create New Task"}
+              {editingTask ? "Edit Bounty or Quest" : "Inscribe New Deed"}
             </span>
           </div>
           <button
@@ -196,7 +196,7 @@ export default function TaskEditorModal({
           {!editingTask && (
             <div>
               <label className="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-1.5">
-                Task Type
+                Deed Category
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {(["HABIT", "DAILY", "TODO", "REWARD"] as const).map((t) => (
@@ -211,12 +211,12 @@ export default function TaskEditorModal({
                     }`}
                   >
                     {t === "HABIT"
-                      ? "Habit"
+                      ? "Ritual"
                       : t === "DAILY"
-                      ? "Daily"
+                      ? "Daily Quest"
                       : t === "TODO"
-                      ? "To-Do"
-                      : "Reward"}
+                      ? "Bounty"
+                      : "Treasury"}
                   </button>
                 ))}
               </div>
@@ -450,7 +450,7 @@ export default function TaskEditorModal({
               disabled={submitting}
               className="px-5 py-2 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-stone-950 transition-all shadow-md active:scale-95 disabled:opacity-50"
             >
-              {submitting ? "Saving..." : editingTask ? "Update Task" : "Create Task"}
+              {submitting ? "Inscribing..." : editingTask ? "Update Deed" : "Inscribe Deed"}
             </button>
           </div>
         </form>

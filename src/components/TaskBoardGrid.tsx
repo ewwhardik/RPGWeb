@@ -257,13 +257,13 @@ export default function TaskBoardGrid({
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
       {/* ---------------------------------------------------- */}
-      {/* COLUMN 1: HABITS */}
+      {/* COLUMN 1: RITUALS */}
       {/* ---------------------------------------------------- */}
       <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-3.5 shadow-xl flex flex-col gap-3 min-h-[500px]">
         {/* Column Header */}
         <div className="flex items-center justify-between gap-2 border-b border-stone-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-base font-bold text-stone-200">Habits</span>
+            <span className="text-base font-bold text-stone-200">Rituals</span>
             <span className="text-xs font-bold text-stone-400 bg-stone-800/80 px-2 py-0.5 rounded-full border border-stone-700">
               {filteredHabits.length}
             </span>
@@ -286,7 +286,7 @@ export default function TaskBoardGrid({
           </div>
         </div>
 
-        {/* Quick Add Habit */}
+        {/* Quick Add Ritual */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -296,7 +296,7 @@ export default function TaskBoardGrid({
         >
           <input
             type="text"
-            placeholder="Add a Habit..."
+            placeholder="Add a Ritual..."
             value={quickHabitTitle}
             onChange={(e) => setQuickHabitTitle(e.target.value)}
             className="w-full bg-[#13161c] border border-stone-700 rounded-lg pl-3 pr-8 py-2 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
@@ -304,17 +304,17 @@ export default function TaskBoardGrid({
           <button
             type="submit"
             className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-400 transition-colors"
-            title="Create Habit"
+            title="Inscribe Ritual"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        {/* Habits Cards List */}
+        {/* Rituals Cards List */}
         <div className="flex flex-col gap-2.5">
           {filteredHabits.length === 0 ? (
             <div className="p-6 text-center text-xs text-stone-500 border border-dashed border-stone-800 rounded-lg">
-              No habits found in this view.
+              No rituals found in this view.
             </div>
           ) : (
             filteredHabits.map((habit) => {
@@ -446,13 +446,13 @@ export default function TaskBoardGrid({
       </div>
 
       {/* ---------------------------------------------------- */}
-      {/* COLUMN 2: DAILIES */}
+      {/* COLUMN 2: DAILY QUESTS */}
       {/* ---------------------------------------------------- */}
       <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-3.5 shadow-xl flex flex-col gap-3 min-h-[500px]">
         {/* Column Header */}
         <div className="flex items-center justify-between gap-2 border-b border-stone-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-base font-bold text-stone-200">Dailies</span>
+            <span className="text-base font-bold text-stone-200">Daily Quests</span>
             <span className="text-xs font-bold text-stone-400 bg-stone-800/80 px-2 py-0.5 rounded-full border border-stone-700">
               {filteredDailies.length}
             </span>
@@ -475,7 +475,7 @@ export default function TaskBoardGrid({
           </div>
         </div>
 
-        {/* Quick Add Daily */}
+        {/* Quick Add Daily Quest */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -485,7 +485,7 @@ export default function TaskBoardGrid({
         >
           <input
             type="text"
-            placeholder="Add a Daily..."
+            placeholder="Add a Daily Quest..."
             value={quickDailyTitle}
             onChange={(e) => setQuickDailyTitle(e.target.value)}
             className="w-full bg-[#13161c] border border-stone-700 rounded-lg pl-3 pr-8 py-2 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
@@ -493,17 +493,17 @@ export default function TaskBoardGrid({
           <button
             type="submit"
             className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-400 transition-colors"
-            title="Create Daily"
+            title="Inscribe Daily Quest"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        {/* Dailies Cards List */}
+        {/* Daily Quests Cards List */}
         <div className="flex flex-col gap-2.5">
           {filteredDailies.length === 0 ? (
             <div className="p-6 text-center text-xs text-stone-500 border border-dashed border-stone-800 rounded-lg">
-              No dailies found in this view.
+              No daily quests found in this view.
             </div>
           ) : (
             filteredDailies.map((daily) => {
@@ -665,13 +665,13 @@ export default function TaskBoardGrid({
       </div>
 
       {/* ---------------------------------------------------- */}
-      {/* COLUMN 3: TO-DOS */}
+      {/* COLUMN 3: BOUNTIES */}
       {/* ---------------------------------------------------- */}
       <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-3.5 shadow-xl flex flex-col gap-3 min-h-[500px]">
         {/* Column Header */}
         <div className="flex items-center justify-between gap-2 border-b border-stone-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-base font-bold text-stone-200">To-Dos</span>
+            <span className="text-base font-bold text-stone-200">Bounties</span>
             <span className="text-xs font-bold text-stone-400 bg-stone-800/80 px-2 py-0.5 rounded-full border border-stone-700">
               {filteredTodos.length}
             </span>
@@ -688,13 +688,13 @@ export default function TaskBoardGrid({
                     : "text-stone-400 hover:text-stone-200"
                 }`}
               >
-                {f === "ACTIVE" ? "Active" : "Done"}
+                {f === "ACTIVE" ? "Active" : "Claimed"}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Quick Add To-Do */}
+        {/* Quick Add Bounty */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -704,7 +704,7 @@ export default function TaskBoardGrid({
         >
           <input
             type="text"
-            placeholder="Add a To-Do..."
+            placeholder="Post a Bounty..."
             value={quickTodoTitle}
             onChange={(e) => setQuickTodoTitle(e.target.value)}
             className="w-full bg-[#13161c] border border-stone-700 rounded-lg pl-3 pr-8 py-2 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
@@ -712,17 +712,17 @@ export default function TaskBoardGrid({
           <button
             type="submit"
             className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-400 transition-colors"
-            title="Create To-Do"
+            title="Post Bounty"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        {/* To-Dos Cards List */}
+        {/* Bounties Cards List */}
         <div className="flex flex-col gap-2.5">
           {filteredTodos.length === 0 ? (
             <div className="p-6 text-center text-xs text-stone-500 border border-dashed border-stone-800 rounded-lg">
-              No to-dos found in this view.
+              No bounties found in this view.
             </div>
           ) : (
             filteredTodos.map((todo) => {
@@ -748,7 +748,7 @@ export default function TaskBoardGrid({
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    {/* To-Do Checkbox */}
+                    {/* Bounty Checkbox */}
                     <button
                       type="button"
                       onClick={(e) => {
@@ -761,7 +761,7 @@ export default function TaskBoardGrid({
                           ? "bg-emerald-600 border-emerald-400 text-stone-950 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
                           : "bg-stone-900 border-stone-600 hover:border-amber-400 text-transparent"
                       }`}
-                      title={isCompleted ? "Uncheck To-Do" : "Complete To-Do"}
+                      title={isCompleted ? "Uncheck Bounty" : "Claim Bounty"}
                     >
                       <Check className="w-4 h-4 stroke-[3]" />
                     </button>
@@ -919,13 +919,13 @@ export default function TaskBoardGrid({
       </div>
 
       {/* ---------------------------------------------------- */}
-      {/* COLUMN 4: REWARDS */}
+      {/* COLUMN 4: TREASURY */}
       {/* ---------------------------------------------------- */}
       <div className="bg-[#1a1f26]/90 border border-[#2b3340] rounded-xl p-3.5 shadow-xl flex flex-col gap-3 min-h-[500px]">
         {/* Column Header */}
         <div className="flex items-center justify-between gap-2 border-b border-stone-800 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-base font-bold text-stone-200">Rewards</span>
+            <span className="text-base font-bold text-stone-200">Treasury</span>
             <span className="text-xs font-bold text-stone-400 bg-stone-800/80 px-2 py-0.5 rounded-full border border-stone-700">
               {rewards.length + STANDARD_SHOP_REWARDS.length}
             </span>
@@ -942,13 +942,13 @@ export default function TaskBoardGrid({
                     : "text-stone-400 hover:text-stone-200"
                 }`}
               >
-                {f === "ALL" ? "All" : f === "CUSTOM" ? "Custom" : "Shop"}
+                {f === "ALL" ? "All" : f === "CUSTOM" ? "Custom" : "Armory"}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Quick Add Custom Reward */}
+        {/* Quick Add Treasury Spoil */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -958,7 +958,7 @@ export default function TaskBoardGrid({
         >
           <input
             type="text"
-            placeholder="Add a Custom Reward..."
+            placeholder="Add a Treasury Spoil..."
             value={quickRewardTitle}
             onChange={(e) => setQuickRewardTitle(e.target.value)}
             className="w-full bg-[#13161c] border border-stone-700 rounded-lg pl-3 pr-8 py-2 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
@@ -966,7 +966,7 @@ export default function TaskBoardGrid({
           <button
             type="submit"
             className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-400 transition-colors"
-            title="Create Custom Reward"
+            title="Inscribe Treasury Spoil"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
