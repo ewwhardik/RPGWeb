@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { soundFx } from "@/lib/audio";
 import { spawnCombatText } from "./FloatingCombatText";
+import ChronoHumanoid3D from "./ChronoHumanoid3D";
 
 export interface ChronoStatusSidebarProps {
   user: {
@@ -372,6 +373,9 @@ export default function ChronoStatusSidebar({
           </button>
         </nav>
       </div>
+
+      {/* 4. Interactive 3D Astral Humanoid Model (Exclusive to Chrono Focus Mode) */}
+      <ChronoHumanoid3D />
     </aside>
   );
 }

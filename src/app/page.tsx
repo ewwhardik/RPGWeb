@@ -674,10 +674,10 @@ export default function DashboardPage() {
     <ErrorBoundary>
       <div className="min-h-screen flex flex-col bg-[#111418] text-stone-100">
         {/* Top Tavern Navigation Bar: Pure Floating Rounded Glass Pill Dock */}
-        <header className="site-header sticky top-2 sm:top-3 z-40 w-full px-2.5 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
-          <div className="site-header__inner pointer-events-auto w-full max-w-[1720px] mx-auto flex items-center justify-between gap-2 sm:gap-4 px-3.5 sm:px-6 py-2 rounded-full bg-stone-950/85 backdrop-blur-2xl border border-white/[0.14] shadow-[0_10px_35px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.2)] animate-header-float transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_12px_40px_rgba(245,158,11,0.2),inset_0_1px_2px_0_rgba(255,255,255,0.25)]">
-            <div className="site-header__brand flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-600/40 flex items-center justify-center p-0.5 shadow-sm overflow-hidden flex-shrink-0">
+        <header className="site-header sticky top-2 sm:top-3 z-40 w-full px-2 sm:px-4 lg:px-6 pointer-events-none transition-all duration-300">
+          <div className="site-header__inner pointer-events-auto w-full max-w-none mx-auto flex items-center justify-between gap-1.5 sm:gap-3 px-3 sm:px-5 py-2 rounded-full bg-stone-950/85 backdrop-blur-2xl border border-white/[0.14] shadow-[0_10px_35px_rgba(0,0,0,0.65),inset_0_1px_2px_0_rgba(255,255,255,0.2)] animate-header-float transition-all duration-300 hover:border-amber-500/40 hover:shadow-[0_12px_40px_rgba(245,158,11,0.2),inset_0_1px_2px_0_rgba(255,255,255,0.25)]">
+            <div className="site-header__brand flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-amber-500/10 border border-amber-600/40 flex items-center justify-center p-0.5 shadow-sm overflow-hidden flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/brand/karmaraj_emblem.png"
@@ -686,28 +686,19 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-black font-title tracking-wide text-amber-300">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <h1 className="text-lg sm:text-xl font-black font-title tracking-wide text-amber-300">
                     Karmaraj
                   </h1>
                   <span className="wax-stamp text-[9px] py-0.2 px-1.5 border-amber-500 text-amber-300 font-bold">
                     LIFE RPG
                   </span>
                 </div>
-                <p className="text-[11px] text-stone-400">The Guild Bureaucracy</p>
+                <p className="text-[10px] sm:text-[11px] text-stone-400">The Guild Bureaucracy</p>
               </div>
             </div>
 
-            <div className="site-header__actions flex items-center gap-1.5 sm:gap-2.5">
-              {/* World Weather Chip */}
-              <div
-                className={`hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-mono font-bold ${todayWeather.accentBorder} bg-black/40 backdrop-blur-md shadow-inner cursor-help transition-all hover:scale-105`}
-                title={`${todayWeather.name}: ${todayWeather.description}`}
-              >
-                <span className="text-sm">{todayWeather.icon}</span>
-                <span style={{ color: todayWeather.color }}>{todayWeather.name}</span>
-              </div>
-
+            <div className="site-header__actions flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-shrink">
               {/* Ambience Soundscape Toggle */}
               <button
                 type="button"
