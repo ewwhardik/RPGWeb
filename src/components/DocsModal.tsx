@@ -294,10 +294,10 @@ export default function DocsModal({ isOpen, onClose }: DocsModalProps) {
                 <div className="bg-[#141922] p-4 rounded-2xl border border-stone-800 space-y-2">
                   <div className="font-bold text-amber-300 flex items-center gap-1.5">
                     <Layers className="w-4 h-4" />
-                    <span>Prisma 6.4 + SQLite / Postgres</span>
+                    <span>Neon PostgreSQL + Prisma 6.4</span>
                   </div>
                   <p className="text-stone-400 text-[11px] leading-relaxed">
-                    ACID compliant schema with multi-column task indexes, user pet stables, and battle logs.
+                    ACID compliant cloud relational schema with cascading user account deletion, JWT auth tokens, live multi-metric consistency leaderboards, and activity chronicles.
                   </p>
                 </div>
               </div>

@@ -17,8 +17,9 @@ interface ShortcutEntry {
 
 const SHORTCUTS: ShortcutEntry[] = [
   { key: "N", description: "Draft a new quest dispatch", category: "Actions" },
+  { key: "L", description: "Open Hall of Masters (Live Leaderboard)", category: "Navigation" },
   { key: "S", description: "Visit the merchant bazaar shop", category: "Navigation" },
-  { key: "F", description: "Spin the Wheel of Unreasonable Fate", category: "Navigation" },
+  { key: "W", description: "Spin the Wheel of Unreasonable Fate", category: "Navigation" },
   { key: "C", description: "Switch Character Class archetype", category: "Navigation" },
   { key: "M", description: "Toggle audio sound effects on or off", category: "Audio" },
   { key: "?", description: "Open this keyboard shortcuts scroll", category: "Navigation" },

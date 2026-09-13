@@ -22,6 +22,8 @@ import {
   Compass,
   LayoutGrid,
   BarChart3,
+  Trophy,
+  Settings,
 } from "lucide-react";
 import { calculateLevelFromTotalXp } from "@/lib/rpgEngine";
 import { soundFx } from "@/lib/audio";
@@ -59,6 +61,8 @@ import ChronoHabitGallery from "@/components/ChronoHabitGallery";
 import ProgressAnalyticsGraphs from "@/components/ProgressAnalyticsGraphs";
 import GuideWalkthroughModal from "@/components/GuideWalkthroughModal";
 import DocsModal from "@/components/DocsModal";
+import AccountModal from "@/components/AccountModal";
+import LeaderboardModal from "@/components/LeaderboardModal";
 import {
   DEMO_USER_PROFILE,
   DEMO_HABITS,
@@ -153,6 +157,8 @@ export default function DashboardPage() {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
   const [dashboardView, setDashboardView] = useState<"CLASSIC_BOARD" | "CHRONO_STUDIO" | "ANALYTICS">("CLASSIC_BOARD");
   const [chronoActiveSection, setChronoActiveSection] = useState("chrono-habits");
 
@@ -346,6 +352,9 @@ export default function DashboardPage() {
       } else if (e.key === "w" || e.key === "W") {
         e.preventDefault();
         setIsFateModalOpen((prev) => !prev);
+      } else if (e.key === "l" || e.key === "L") {
+        e.preventDefault();
+        setIsLeaderboardModalOpen((prev) => !prev);
       } else if (e.key === "?") {
         e.preventDefault();
         setIsHelpModalOpen((prev) => !prev);
@@ -356,6 +365,8 @@ export default function DashboardPage() {
         setIsFateModalOpen(false);
         setIsHelpModalOpen(false);
         setIsClassModalOpen(false);
+        setIsAccountModalOpen(false);
+        setIsLeaderboardModalOpen(false);
       }
     }
 
@@ -885,6 +896,20 @@ export default function DashboardPage() {
                 <span className="hidden sm:inline font-medium">Fate</span>
               </button>
 
+              {/* Live Hall of Masters / Consistency Leaderboard */}
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playClick();
+                  setIsLeaderboardModalOpen(true);
+                }}
+                className="text-xs py-1.5 px-3 rounded-full flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border border-amber-500/50 text-amber-300 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_0_10px_rgba(245,158,11,0.2)] font-bold"
+                title="Hall of Masters (Live Consistency & Streaks Leaderboard - L)"
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Leaderboard</span>
+              </button>
+
               {/* Shop Bazaar */}
               <button
                 type="button"
@@ -893,21 +918,46 @@ export default function DashboardPage() {
                   setIsShopModalOpen(true);
                 }}
                 className="text-xs py-1.5 px-3.5 rounded-full flex items-center gap-1.5 bg-gradient-to-r from-amber-500/80 to-amber-600/80 hover:from-amber-500 hover:to-amber-600 text-stone-950 font-bold border border-amber-400/60 shadow-[0_0_12px_rgba(245,158,11,0.25)] backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95"
-                title="Visit Merchant Bazaar"
+                title="Visit Merchant Bazaar (S)"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span className="hidden sm:inline">Bazaar</span>
               </button>
 
-              {/* User Profile & Logout */}
+              {/* User Profile, Account Management & Logout */}
               {user ? (
-                <div className="flex items-center gap-2 pl-2 border-l border-white/10">
-                  <div className="text-right hidden md:block">
-                    <div className="text-xs font-bold text-stone-200">{user.username}</div>
+                <div className="flex items-center gap-1.5 sm:gap-2 pl-2 border-l border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playClick();
+                      setIsAccountModalOpen(true);
+                    }}
+                    className="text-right hidden md:flex flex-col items-end hover:opacity-85 transition-opacity"
+                    title="Account Settings (Change Passcode, Name, Profile)"
+                  >
+                    <div className="text-xs font-bold text-stone-200 hover:text-amber-300 transition-colors">
+                      {user.username}
+                    </div>
                     <div className="text-[10px] text-amber-400 font-mono font-bold">
                       Lvl {user.level} {(user.prestigeLevel ?? 0) > 0 && `★${user.prestigeLevel}`}
                     </div>
-                  </div>
+                  </button>
+
+                  {/* Account Settings Cog Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playClick();
+                      setIsAccountModalOpen(true);
+                    }}
+                    className="p-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-stone-300 hover:text-amber-300 hover:scale-110 active:scale-95 transition-all duration-200 shadow-sm"
+                    title="Account Management (Passcode, Name & Danger Zone)"
+                  >
+                    <Settings className="w-4 h-4 text-amber-400" />
+                  </button>
+
+                  {/* Logout Button */}
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -1613,6 +1663,34 @@ export default function DashboardPage() {
         <DocsModal
           isOpen={isDocsModalOpen}
           onClose={() => setIsDocsModalOpen(false)}
+        />
+
+        {/* Account Management Modal (Profile, Passcode, Danger Zone) */}
+        <AccountModal
+          isOpen={isAccountModalOpen}
+          onClose={() => setIsAccountModalOpen(false)}
+          currentUser={user}
+          onProfileUpdated={(updated) => {
+            setUser((prev) => (prev ? { ...prev, ...updated } : null));
+            fetchCurrentUser();
+          }}
+          onAccountDeleted={() => {
+            setUser(null);
+            setHabits([]);
+            setDailies([]);
+            setTodos([]);
+            setRewards([]);
+            setLogs([]);
+            setIsAccountModalOpen(false);
+            setIsAuthModalOpen(true);
+          }}
+        />
+
+        {/* Live Consistency & XP Leaderboard (Hall of Masters) */}
+        <LeaderboardModal
+          isOpen={isLeaderboardModalOpen}
+          onClose={() => setIsLeaderboardModalOpen(false)}
+          currentUsername={user?.username}
         />
 
         {/* Hardware-Accelerated Cyber-Fantasy Cursor */}
